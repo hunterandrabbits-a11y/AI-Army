@@ -1,0 +1,16 @@
+# 车型缩略图来源
+
+以下素材均为真实车辆照片，来自 Wikimedia Commons。为适配车型表格缩略图，下载后仅做居中裁切与缩放，最终统一为 `960 × 600` JPG（8:5），未使用 AI 生成或改变车辆外观。
+
+> 说明：项目中的“星途 E7”不是公开资料中可明确对应的量产车型名，因此三款 E7 配图按需求使用真实的星途星纪元 ES（Exeed Sterra ES）轿车照片代替。
+
+| 本地文件 | 项目车型 | 实际照片车型 / 角度 | 来源页面 | 下载地址 | 作者 | 许可 |
+| --- | --- | --- | --- | --- | --- | --- |
+| `e7-flagship-2025.jpg` | E7 2025 款 纯电旗舰版 | 星途星纪元 ES，车展前侧 | [Wikimedia Commons](https://commons.wikimedia.org/wiki/File:Exeed_Sterra_ES_001.jpg) | [1280px JPG](https://upload.wikimedia.org/wikipedia/commons/thumb/7/77/Exeed_Sterra_ES_001.jpg/1280px-Exeed_Sterra_ES_001.jpg) | JustAnotherCarDesigner | [CC BY-SA 4.0](https://creativecommons.org/licenses/by-sa/4.0/) |
+| `e7-yueye-2025.jpg` | E7 2025 款 悦野版 | 星途星纪元 ES，户外后侧 | [Wikimedia Commons](https://commons.wikimedia.org/wiki/File:Exeed_Sterra_ES_005.jpg) | [1280px JPG](https://upload.wikimedia.org/wikipedia/commons/thumb/7/7c/Exeed_Sterra_ES_005.jpg/1280px-Exeed_Sterra_ES_005.jpg) | Jengtingchen | [CC0 1.0](https://creativecommons.org/publicdomain/zero/1.0/) |
+| `e7-longrange-2024.jpg` | E7 2024 款 长续航版 | 星途星纪元 ES，户外前侧 | [Wikimedia Commons](https://commons.wikimedia.org/wiki/File:Exeed_Sterra_ES_011.jpg) | [1280px JPG](https://upload.wikimedia.org/wikipedia/commons/thumb/0/02/Exeed_Sterra_ES_011.jpg/1280px-Exeed_Sterra_ES_011.jpg) | Quzhouliulian | [CC0 1.0](https://creativecommons.org/publicdomain/zero/1.0/) |
+| `yaoguang-2wd-2025.jpg` | 瑶光 2025 款 两驱优享版 | 星途瑶光，车展前侧 | [Wikimedia Commons](https://commons.wikimedia.org/wiki/File:Exeed_Yaoguang,_front_1.jpg) | [1280px JPG](https://upload.wikimedia.org/wikipedia/commons/thumb/7/79/Exeed_Yaoguang%2C_front_1.jpg/1280px-Exeed_Yaoguang%2C_front_1.jpg) | Nortoncc1 | [CC BY-SA 4.0](https://creativecommons.org/licenses/by-sa/4.0/) |
+| `yaoguang-4wd-2024.jpg` | 瑶光 2024 款 四驱尊享版 | 星途瑶光，户外前侧 | [Wikimedia Commons](https://commons.wikimedia.org/wiki/File:Exeed_Yaoguang_005.jpg) | [1280px JPG](https://upload.wikimedia.org/wikipedia/commons/thumb/e/e6/Exeed_Yaoguang_005.jpg/1280px-Exeed_Yaoguang_005.jpg) | JustAnotherCarDesigner | [CC0 1.0](https://creativecommons.org/publicdomain/zero/1.0/) |
+| `fengyun-t9-120-2025.jpg` | 风云 T9 2025 款 120 长续航版 | 奇瑞风云 T9，车展后侧 | [Wikimedia Commons](https://commons.wikimedia.org/wiki/File:Chery_Fulwin_T9_001.jpg) | [1280px JPG](https://upload.wikimedia.org/wikipedia/commons/thumb/b/bd/Chery_Fulwin_T9_001.jpg/1280px-Chery_Fulwin_T9_001.jpg) | JustAnotherCarDesigner | [CC0 1.0](https://creativecommons.org/publicdomain/zero/1.0/) |
+| `fengyun-t9-80-2023.jpg` | 风云 T9 2023 款 80 标准版 | 奇瑞风云 T9，户外前侧 | [Wikimedia Commons](https://commons.wikimedia.org/wiki/File:Chery_Fulwin_T9_002.jpg) | [1280px JPG](https://upload.wikimedia.org/wikipedia/commons/thumb/0/0d/Chery_Fulwin_T9_002.jpg/1280px-Chery_Fulwin_T9_002.jpg) | JustAnotherCarDesigner | [CC0 1.0](https://creativecommons.org/publicdomain/zero/1.0/) |
+| `lingyun-300t-2025.jpg` | 凌云 2025 款 300T 两驱版 | 星途凌云，户外前侧 | [Wikimedia Commons](https://commons.wikimedia.org/wiki/File:Exeed_Lingyun_001.jpg) | [1280px JPG](https://upload.wikimedia.org/wikipedia/commons/thumb/1/10/Exeed_Lingyun_001.jpg/1280px-Exeed_Lingyun_001.jpg) | JustAnotherCarDesigner | [CC BY-SA 4.0](https://creativecommons.org/licenses/by-sa/4.0/) |

@@ -1,0 +1,358 @@
+/* Match the live-work result funnel used by the lead-hunter employees. */
+.results-prospect-dashboard.live-result-funnel {
+  --dashboard-line: #dfe6ee;
+  --dashboard-ink: #172536;
+  --dashboard-muted: #6d7b8c;
+  margin-bottom: 12px;
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  overflow: hidden;
+  border: 1px solid var(--dashboard-line);
+  border-radius: 17px;
+  background: #fff;
+}
+
+.results-prospect-dashboard.live-result-funnel .results-prospect-dashboard__metric {
+  position: relative;
+  min-width: 0;
+  min-height: 103px;
+  padding: 15px 20px;
+  border-right: 1px solid var(--dashboard-line);
+  border-top: 3px solid #3f8ee7;
+  background: #fff;
+}
+.results-prospect-dashboard.live-result-funnel .results-prospect-dashboard__metric:nth-child(2) { border-top-color: #4c9fbe; }
+.results-prospect-dashboard.live-result-funnel .results-prospect-dashboard__metric:nth-child(3) { border-top-color: #4da77b; }
+.results-prospect-dashboard.live-result-funnel .results-prospect-dashboard__metric:nth-child(4) { border-top-color: #d7a12c; border-right: 0; }
+.results-prospect-dashboard.live-result-funnel .results-prospect-dashboard__metric > span,
+.results-prospect-dashboard.live-result-funnel .results-prospect-dashboard__metric > strong,
+.results-prospect-dashboard.live-result-funnel .results-prospect-dashboard__metric > small { display: block; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.results-prospect-dashboard.live-result-funnel .results-prospect-dashboard__metric > span { color: var(--dashboard-muted); font-size: 12px; line-height: 1.35; }
+.results-prospect-dashboard.live-result-funnel .results-prospect-dashboard__metric > strong { margin-top: 8px; color: var(--dashboard-ink); font-size: 23px; line-height: 1.05; letter-spacing: -.025em; font-variant-numeric: tabular-nums; }
+.results-prospect-dashboard.live-result-funnel .results-prospect-dashboard__metric > small { margin-top: 5px; color: var(--dashboard-muted); font-size: 12px; line-height: 1.35; }
+.results-prospect-dashboard.live-result-funnel .results-prospect-dashboard__metric > b { position: absolute; z-index: 2; top: 50%; right: -14px; width: 28px; height: 28px; display: grid; place-items: center; border: 1px solid var(--dashboard-line); border-radius: 50%; color: #2878d4; background: #fff; font-size: 16px !important; font-weight: 500; transform: translateY(-50%); }
+.results-prospect-dashboard.live-result-funnel .results-prospect-dashboard__metric.is-blue > strong { color: #3479c9; }
+.results-prospect-dashboard.live-result-funnel .results-prospect-dashboard__metric.is-cyan > strong { color: #2d8da7; }
+.results-prospect-dashboard.live-result-funnel .results-prospect-dashboard__metric.is-green > strong { color: #2d976b; }
+.results-prospect-dashboard.live-result-funnel .results-prospect-dashboard__metric.is-amber > strong { color: #c48b1d; }
+
+/* The results center keeps a 12px minimum for all readable text. */
+[data-view="results"] .results-v12-shell :where(span, small, em, p, label, button, select, option, th, td, a, b) {
+  font-size: 12px !important;
+}
+[data-view="results"] .results-v12-shell .results-v12-heading h2 { font-size: 28px; }
+[data-view="results"] .results-v12-shell .results-v12-panel h3 { font-size: 15px; }
+[data-view="results"] .results-v12-shell .results-v12-table td strong { font-size: 12px; }
+
+@media (max-width: 900px) {
+  .results-prospect-dashboard.live-result-funnel { grid-template-columns: 1fr 1fr; }
+  .results-prospect-dashboard.live-result-funnel .results-prospect-dashboard__metric { border-bottom: 1px solid var(--dashboard-line); }
+  .results-prospect-dashboard.live-result-funnel .results-prospect-dashboard__metric:nth-child(2) { border-right: 0; }
+  .results-prospect-dashboard.live-result-funnel .results-prospect-dashboard__metric:nth-child(3),
+  .results-prospect-dashboard.live-result-funnel .results-prospect-dashboard__metric:nth-child(4) { border-bottom: 0; }
+  .results-prospect-dashboard.live-result-funnel .results-prospect-dashboard__metric > b { display: none; }
+}
+
+@media (max-width: 560px) {
+  .results-prospect-dashboard.live-result-funnel { grid-template-columns: 1fr; }
+  .results-prospect-dashboard.live-result-funnel .results-prospect-dashboard__metric,
+  .results-prospect-dashboard.live-result-funnel .results-prospect-dashboard__metric:nth-child(2),
+  .results-prospect-dashboard.live-result-funnel .results-prospect-dashboard__metric:nth-child(3) { border-right: 0; border-bottom: 1px solid var(--dashboard-line); }
+  .results-prospect-dashboard.live-result-funnel .results-prospect-dashboard__metric:nth-child(4) { border-bottom: 0; }
+}
+
+/* Prospect records redesign: match the reference workspace with a single aligned funnel and table. */
+[data-view="results"] .results-v12-shell {
+  min-height: calc(100vh - 86px);
+  padding: 8px 0 48px;
+  color: #16181c;
+}
+[data-view="results"] .results-prospect-heading {
+  min-height: 58px;
+  margin: 0 0 22px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 24px;
+}
+[data-view="results"] .results-prospect-heading__title h1 {
+  margin: 0;
+  color: #15171a;
+  font-size: 32px;
+  line-height: 1.1;
+  letter-spacing: -.02em;
+  font-weight: 750;
+}
+[data-view="results"] .results-prospect-heading__title span { display: none; }
+[data-view="results"] .results-prospect-heading .sr-only {
+  position: absolute !important;
+  width: 1px !important;
+  height: 1px !important;
+  padding: 0 !important;
+  margin: -1px !important;
+  overflow: hidden !important;
+  clip: rect(0, 0, 0, 0) !important;
+  white-space: nowrap !important;
+  border: 0 !important;
+}
+[data-view="results"] .results-prospect-heading__controls {
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  gap: 10px;
+  min-width: 0;
+}
+[data-view="results"] .results-prospect-date-range {
+  min-width: 316px;
+  height: 42px;
+  padding: 0 11px;
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto minmax(0, 1fr) 18px;
+  align-items: center;
+  gap: 7px;
+  border: 1px solid #e4e6e9;
+  border-radius: 10px;
+  background: #fff;
+}
+[data-view="results"] .results-prospect-date-range input {
+  width: 100%;
+  min-width: 0;
+  height: 38px;
+  padding: 0;
+  border: 0;
+  color: #73767c;
+  background: transparent;
+  font: inherit;
+  font-size: 13px;
+  outline: 0;
+}
+[data-view="results"] .results-prospect-date-range b { color: #9b9ea3; font-size: 13px; font-weight: 400; }
+[data-view="results"] .results-prospect-date-range i { color: #777b82; font-style: normal; font-size: 16px; text-align: center; }
+[data-view="results"] .results-prospect-range-group { display: inline-flex; align-items: center; gap: 8px; }
+[data-view="results"] .results-prospect-range {
+  height: 42px;
+  padding: 0 14px;
+  border: 1px solid transparent;
+  border-radius: 10px;
+  color: #777a80;
+  background: #fff;
+  font: inherit;
+  font-size: 13px;
+  cursor: pointer;
+}
+[data-view="results"] .results-prospect-range:hover { color: #1d65d6; background: #f5f8ff; }
+[data-view="results"] .results-prospect-range.is-active { border-color: #1967e8; color: #1464d2; background: #f7faff; }
+[data-view="results"] .results-prospect-account { min-width: 132px; }
+[data-view="results"] .results-prospect-account select {
+  width: 100%;
+  height: 42px;
+  padding: 0 30px 0 14px;
+  border: 1px solid #e4e6e9;
+  border-radius: 10px;
+  color: #73767c;
+  background: #fff;
+  font: inherit;
+  font-size: 13px;
+  outline: 0;
+}
+
+[data-view="results"] .results-prospect-dashboard.live-result-funnel {
+  margin: 0 0 28px;
+  grid-template-columns: repeat(5, minmax(0, 1fr));
+  overflow: hidden;
+  border: 1px solid #eceef0;
+  border-radius: 22px;
+  background: #fff;
+  box-shadow: 0 1px 2px rgba(19, 28, 40, .02);
+}
+[data-view="results"] .results-prospect-dashboard.live-result-funnel .results-prospect-dashboard__metric {
+  min-height: 124px;
+  padding: 23px 28px 20px;
+  border: 0;
+  border-right: 1px solid #eceef0;
+  border-top: 0;
+  background: #fff;
+}
+[data-view="results"] .results-prospect-dashboard.live-result-funnel .results-prospect-dashboard__metric:last-child {
+  border-right: 0;
+  background: #eef4ff;
+}
+[data-view="results"] .results-prospect-dashboard.live-result-funnel .results-prospect-dashboard__metric > span {
+  color: #73767c;
+  font-size: 14px;
+  line-height: 1.25;
+}
+[data-view="results"] .results-prospect-dashboard.live-result-funnel .results-prospect-dashboard__metric > strong {
+  margin-top: 10px;
+  color: #14161a;
+  font-size: 32px;
+  line-height: 1;
+  letter-spacing: -.025em;
+  font-weight: 700;
+}
+[data-view="results"] .results-prospect-dashboard.live-result-funnel .results-prospect-dashboard__metric > small {
+  margin-top: 8px;
+  color: #85888e;
+  font-size: 12px;
+  line-height: 1.25;
+}
+[data-view="results"] .results-prospect-dashboard.live-result-funnel .results-prospect-dashboard__metric > b {
+  right: -15px;
+  width: 30px;
+  height: 30px;
+  border-color: #dde1e7;
+  color: #2169df;
+  background: #fff;
+  font-size: 17px !important;
+}
+[data-view="results"] .results-prospect-dashboard.live-result-funnel .results-prospect-dashboard__metric.is-blue > strong,
+[data-view="results"] .results-prospect-dashboard.live-result-funnel .results-prospect-dashboard__metric.is-cyan > strong,
+[data-view="results"] .results-prospect-dashboard.live-result-funnel .results-prospect-dashboard__metric.is-green > strong,
+[data-view="results"] .results-prospect-dashboard.live-result-funnel .results-prospect-dashboard__metric.is-amber > strong { color: #14161a; }
+[data-view="results"] .results-prospect-dashboard.live-result-funnel .results-prospect-dashboard__metric.is-purple > strong { color: #1464d2; }
+
+[data-view="results"] .results-prospect-panel.results-v12-panel {
+  overflow: hidden;
+  border: 1px solid #eceef0;
+  border-radius: 22px;
+  background: #fff;
+  box-shadow: 0 1px 2px rgba(19, 28, 40, .02);
+}
+[data-view="results"] .results-prospect-panel > header {
+  min-height: 76px;
+  padding: 20px 28px 14px;
+  border-bottom: 0;
+}
+[data-view="results"] .results-prospect-panel > header h3 {
+  margin: 0;
+  color: #202226;
+  font-size: 19px;
+  line-height: 1.2;
+  font-weight: 700;
+}
+[data-view="results"] .results-prospect-panel > header p { margin: 6px 0 0; color: #8b8e94; font-size: 12px; }
+[data-view="results"] .results-prospect-panel > header button {
+  min-height: 36px;
+  padding: 0 14px;
+  border: 1px solid #e1e4e8;
+  border-radius: 8px;
+  color: #666b73;
+  background: #fff;
+  font-size: 12px;
+}
+[data-view="results"] .results-prospect-panel > header button:hover { border-color: #1967e8; color: #1967e8; }
+[data-view="results"] .results-prospect-panel .results-v12-legacy-filters {
+  grid-template-columns: repeat(5, minmax(0, 1fr));
+  gap: 14px;
+  padding: 17px 28px;
+  border-top: 1px solid #f0f1f3;
+  border-bottom: 1px solid #f0f1f3;
+  background: #fafafa;
+}
+[data-view="results"] .results-prospect-panel .results-v12-legacy-filters select {
+  width: 100%;
+  min-height: 42px;
+  padding: 0 31px 0 14px;
+  border: 1px solid #eceef0;
+  border-radius: 10px;
+  color: #777a80;
+  background: #fff;
+  font-size: 13px;
+}
+[data-view="results"] .results-prospect-panel .results-v12-table-wrap { overflow-x: auto; padding: 0 28px 20px; }
+[data-view="results"] .results-prospect-panel .results-v12-legacy-table {
+  width: 100%;
+  min-width: 1380px;
+  table-layout: fixed;
+  border-collapse: separate;
+  border-spacing: 0 8px;
+}
+[data-view="results"] .results-prospect-panel .results-v12-legacy-table thead th {
+  height: 48px;
+  padding: 0 16px;
+  color: #85888e;
+  background: #f7f7f8;
+  font-size: 13px;
+  font-weight: 500;
+  vertical-align: middle;
+}
+[data-view="results"] .results-prospect-panel .results-v12-legacy-table thead th:first-child { border-radius: 10px 0 0 10px; }
+[data-view="results"] .results-prospect-panel .results-v12-legacy-table thead th:last-child { border-radius: 0 10px 10px 0; }
+[data-view="results"] .results-prospect-panel .results-v12-legacy-table tbody tr { background: #fafafa; }
+[data-view="results"] .results-prospect-panel .results-v12-legacy-table tbody td {
+  height: 76px;
+  padding: 10px 16px;
+  border: 0;
+  color: #25272b;
+  background: #fafafa;
+  font-size: 13px;
+  vertical-align: middle;
+}
+[data-view="results"] .results-prospect-panel .results-v12-legacy-table tbody tr:hover td { background: #f5f8ff; }
+[data-view="results"] .results-prospect-panel .results-v12-legacy-table tbody td:first-child { border-radius: 12px 0 0 12px; }
+[data-view="results"] .results-prospect-panel .results-v12-legacy-table tbody td:last-child { border-radius: 0 12px 12px 0; }
+[data-view="results"] .results-prospect-panel .results-v12-legacy-table thead th:last-child,
+[data-view="results"] .results-prospect-panel .results-v12-legacy-table tbody td:last-child {
+  position: static !important;
+  right: auto !important;
+  z-index: auto !important;
+  box-shadow: none !important;
+}
+[data-view="results"] .results-prospect-panel .results-v12-legacy-table th:nth-child(1) { width: 230px; }
+[data-view="results"] .results-prospect-panel .results-v12-legacy-table th:nth-child(2) { width: 130px; }
+[data-view="results"] .results-prospect-panel .results-v12-legacy-table th:nth-child(3) { width: 130px; }
+[data-view="results"] .results-prospect-panel .results-v12-legacy-table th:nth-child(4) { width: 120px; }
+[data-view="results"] .results-prospect-panel .results-v12-legacy-table th:nth-child(5) { width: 170px; }
+[data-view="results"] .results-prospect-panel .results-v12-legacy-table th:nth-child(6),
+[data-view="results"] .results-prospect-panel .results-v12-legacy-table th:nth-child(7) { width: 120px; }
+[data-view="results"] .results-prospect-panel .results-v12-legacy-table th:nth-child(8),
+[data-view="results"] .results-prospect-panel .results-v12-legacy-table th:nth-child(9) { width: 190px; }
+[data-view="results"] .results-prospect-panel .results-v12-legacy-table th:nth-child(10) { width: 190px; }
+[data-view="results"] .results-prospect-panel .results-v12-legacy-table .results-prospect-person { gap: 12px; }
+[data-view="results"] .results-prospect-panel .results-v12-legacy-table .results-prospect-person > img { width: 46px; height: 46px; }
+[data-view="results"] .results-prospect-panel .results-v12-legacy-table .results-prospect-person strong { color: #24262a; font-size: 14px; }
+[data-view="results"] .results-prospect-panel .results-v12-legacy-table .results-prospect-person small { margin-top: 6px; gap: 7px; }
+[data-view="results"] .results-prospect-panel .results-v12-legacy-table .results-prospect-tag { padding: 4px 7px; border-radius: 4px; color: #1e64cf; background: #e8f0ff; font-size: 12px; }
+[data-view="results"] .results-prospect-panel .results-v12-legacy-table .results-prospect-tag.is-intent { color: #28a354; background: #e7f6e9; }
+[data-view="results"] .results-prospect-panel .results-v12-legacy-table .results-prospect-status { gap: 8px; color: #34373c; font-size: 13px; }
+[data-view="results"] .results-prospect-panel .results-v12-legacy-table .results-prospect-status i { width: 8px; height: 8px; }
+[data-view="results"] .results-prospect-panel .results-v12-legacy-table .results-prospect-status.is-touch.is-success i { background: #2169df; }
+[data-view="results"] .results-prospect-panel .results-v12-legacy-table .results-prospect-status.is-touch.is-danger i { background: #f15b67; }
+[data-view="results"] .results-prospect-panel .results-v12-legacy-table .results-prospect-status.is-reply i,
+[data-view="results"] .results-prospect-panel .results-v12-legacy-table .results-prospect-status.is-lead i { background: #b8bbc0; box-shadow: none; }
+[data-view="results"] .results-prospect-panel .results-v12-legacy-table .results-prospect-status.is-reply.is-success i,
+[data-view="results"] .results-prospect-panel .results-v12-legacy-table .results-prospect-status.is-lead.is-success i { background: #35a96b; }
+[data-view="results"] .results-prospect-panel .results-v12-legacy-table .results-prospect-actions { display: inline-flex; align-items: center; gap: 16px; white-space: nowrap; }
+[data-view="results"] .results-prospect-panel .results-v12-legacy-table .results-prospect-actions button { margin: 0; padding: 0; border: 0; color: #1768de; background: transparent; font: inherit; font-size: 13px; cursor: pointer; }
+[data-view="results"] .results-prospect-panel .results-v12-legacy-table .results-prospect-actions button:hover { color: #0b4fb5; text-decoration: underline; text-underline-offset: 3px; }
+
+@media (max-width: 1100px) {
+  [data-view="results"] .results-prospect-heading { align-items: flex-start; flex-direction: column; }
+  [data-view="results"] .results-prospect-heading__controls { width: 100%; justify-content: flex-start; flex-wrap: wrap; }
+  [data-view="results"] .results-prospect-dashboard.live-result-funnel { grid-template-columns: repeat(3, minmax(0, 1fr)); }
+  [data-view="results"] .results-prospect-dashboard.live-result-funnel .results-prospect-dashboard__metric:nth-child(3) { border-right: 0; }
+  [data-view="results"] .results-prospect-dashboard.live-result-funnel .results-prospect-dashboard__metric:nth-child(-n + 3) { border-bottom: 1px solid #eceef0; }
+  [data-view="results"] .results-prospect-panel .results-v12-legacy-filters { grid-template-columns: repeat(3, minmax(0, 1fr)); }
+}
+@media (max-width: 700px) {
+  [data-view="results"] .results-v12-shell { padding-top: 0; }
+  [data-view="results"] .results-prospect-heading__controls { display: grid; grid-template-columns: 1fr 1fr; }
+  [data-view="results"] .results-prospect-date-range, [data-view="results"] .results-prospect-account { min-width: 0; grid-column: 1 / -1; }
+  [data-view="results"] .results-prospect-range-group { grid-column: 1 / -1; justify-content: space-between; }
+  [data-view="results"] .results-prospect-range { flex: 1; padding-inline: 8px; }
+  [data-view="results"] .results-prospect-dashboard.live-result-funnel { grid-template-columns: 1fr 1fr; border-radius: 16px; }
+  [data-view="results"] .results-prospect-dashboard.live-result-funnel .results-prospect-dashboard__metric { min-height: 108px; padding: 18px 20px; }
+  [data-view="results"] .results-prospect-dashboard.live-result-funnel .results-prospect-dashboard__metric > strong { font-size: 26px; }
+  [data-view="results"] .results-prospect-dashboard.live-result-funnel .results-prospect-dashboard__metric:nth-child(2),
+  [data-view="results"] .results-prospect-dashboard.live-result-funnel .results-prospect-dashboard__metric:nth-child(4) { border-right: 0; }
+  [data-view="results"] .results-prospect-dashboard.live-result-funnel .results-prospect-dashboard__metric:nth-child(4),
+  [data-view="results"] .results-prospect-dashboard.live-result-funnel .results-prospect-dashboard__metric:nth-child(5) { border-bottom: 0; }
+  [data-view="results"] .results-prospect-panel { border-radius: 16px; }
+  [data-view="results"] .results-prospect-panel > header { padding-inline: 18px; }
+  [data-view="results"] .results-prospect-panel .results-v12-legacy-filters { grid-template-columns: 1fr 1fr; padding-inline: 18px; }
+  [data-view="results"] .results-prospect-panel .results-v12-table-wrap { padding-inline: 18px; }
+}
+@media (max-width: 480px) {
+  [data-view="results"] .results-prospect-heading__title h1 { font-size: 28px; }
+  [data-view="results"] .results-prospect-panel .results-v12-legacy-filters { grid-template-columns: 1fr; }
+}
