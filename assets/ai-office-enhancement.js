@@ -2503,11 +2503,41 @@
     const base = 4200 + accountIndex * 373;
     const generated = (v13State().generatedTasks || []).filter((task) => (task.accountIds || []).includes(accountId));
     V13_WORK_TITLES.forEach((title, i) => {
-      rows.push({ id: `${accountId}-work-${i}`, title, cover: v13Cover(accountIndex + i), duration: ["00:30", "00:45", "00:28"][i % 3], publishedAt: `08-2${(accountIndex + i) % 7 + 1} ${String(8 + (i % 3)).padStart(2, "0")}:30`, plays: base + i * 1800, likes: Math.round((base + i * 1800) * 0.058), comments: Math.max(2, Math.round((base + i * 1800) * 0.014)), favorites: Math.max(2, Math.round((base + i * 1800) * 0.02)), shares: Math.max(1, Math.round((base + i * 1800) * 0.008)), link: i === 0 ? "https://www.douyin.com/video/" : "" });
+      const status = V13_ACCOUNT_WORK_STATUSES[(accountIndex + i) % V13_ACCOUNT_WORK_STATUSES.length];
+      const douyinWorkId = `740123456789${String(accountIndex).padStart(2, "0")}${String(i).padStart(2, "0")}`;
+      rows.push({
+        id: `${accountId}-work-${i}`,
+        taskId: `task-history-${String(accountIndex + 1).padStart(2, "0")}`,
+        materialId: `material-${String(accountIndex + 1).padStart(2, "0")}-${i + 1}`,
+        materialTitle: title,
+        publishedTitle: title,
+        title,
+        cover: v13Cover(accountIndex + i),
+        duration: ["00:30", "00:45", "00:28"][i % 3],
+        publishedAt: `2026-08-2${(accountIndex + i) % 7 + 1} ${String(8 + (i % 3)).padStart(2, "0")}:30`,
+        plays: base + i * 1800,
+        likes: Math.round((base + i * 1800) * 0.058),
+        comments: Math.max(2, Math.round((base + i * 1800) * 0.014)),
+        favorites: Math.max(2, Math.round((base + i * 1800) * 0.02)),
+        shares: Math.max(1, Math.round((base + i * 1800) * 0.008)),
+        status,
+        douyinWorkId,
+        link: status === "发布完成" ? `https://www.douyin.com/video/${douyinWorkId}` : ""
+      });
     });
     generated.forEach((task, gi) => {
-      (task.workTitles || []).forEach((title, wi) => {
-        rows.unshift({ id: `${accountId}-${task.id || `task-${gi}`}-work-${wi}`, title, cover: v13Cover(accountIndex + gi + wi + 2), duration: "00:30", publishedAt: task.time, plays: 5200 + gi * 640 + wi * 210, likes: 310 + gi * 55, comments: 24 + wi * 6, favorites: 96 + gi * 12, shares: 41 + wi * 3, link: "" });
+      const distribution = (task.distribution || []).find((row) => row.accountId === accountId);
+      const assignedWorks = distribution
+        ? (distribution.workIds || []).map((workId) => {
+            const workIndex = (task.workIds || []).indexOf(workId);
+            return { workId, title: (task.workTitles || [])[workIndex] || workId };
+          })
+        : (task.workTitles || []).map((title, workIndex) => ({ workId: (task.workIds || [])[workIndex] || `generated-${gi}-${workIndex}`, title }));
+      assignedWorks.forEach((assignedWork, wi) => {
+        const title = assignedWork.title;
+        const taskCompleted = task.status === "已完成";
+        const douyinWorkId = taskCompleted ? `741987654321${String(accountIndex).padStart(2, "0")}${String(gi).padStart(2, "0")}${String(wi).padStart(2, "0")}` : "";
+        rows.unshift({ id: `${accountId}-${task.id || `task-${gi}`}-work-${wi}`, taskId: task.id || `task-${gi}`, materialId: assignedWork.workId, materialTitle: title, publishedTitle: title, title, cover: v13Cover(accountIndex + gi + wi + 2), duration: "00:30", publishedAt: task.publishedAt || task.createdAt || task.time, plays: taskCompleted ? 5200 + gi * 640 + wi * 210 : 0, likes: taskCompleted ? 310 + gi * 55 : 0, comments: taskCompleted ? 24 + wi * 6 : 0, favorites: taskCompleted ? 96 + gi * 12 : 0, shares: taskCompleted ? 41 + wi * 3 : 0, status: taskCompleted ? "发布完成" : "发布中", douyinWorkId, link: taskCompleted ? `https://www.douyin.com/video/${douyinWorkId}` : "" });
       });
     });
     return rows;
@@ -2515,16 +2545,64 @@
   const V13_ACCOUNT_WORK_STATUSES = ["发布完成", "发布中", "发布失败", "待发布"];
   function v13AccountWorkStatus(accountId, work, index) {
     const overrides = v13State().accountWorkStatuses || {};
-    return ["待发布", "发布中", "发布完成", "发布失败"].includes(overrides[work.id]) ? overrides[work.id] : V13_ACCOUNT_WORK_STATUSES[index % V13_ACCOUNT_WORK_STATUSES.length];
+    if (["待发布", "发布中", "发布完成", "发布失败"].includes(overrides[work.id])) return overrides[work.id];
+    if (["待发布", "发布中", "发布完成", "发布失败"].includes(work.status)) return work.status;
+    return V13_ACCOUNT_WORK_STATUSES[index % V13_ACCOUNT_WORK_STATUSES.length];
   }
   function v13AccountWorkStatusTone(status) {
     return { "待发布": "pending", "发布中": "publishing", "发布完成": "complete", "发布失败": "failed" }[status] || "pending";
   }
   function v13Published(account, index) {
-    const generated = (v13State().generatedTasks || []).filter((task) => (task.accountIds || []).includes(account.id));
+    const generated = (v13State().generatedTasks || []).filter((task) => task.status === "已完成" && (task.accountIds || []).includes(account.id));
     const added = generated.reduce((sum, task) => sum + (task.workCount || 0), 0);
     return (account.published || 0) + added;
   }
+
+  function v13PublishResults() {
+    const durationSeconds = (duration) => {
+      const parts = String(duration || "00:00").split(":").map(Number);
+      return parts.length === 2 ? parts[0] * 60 + parts[1] : 0;
+    };
+    const normalizePublishedAt = (value) => {
+      const text = String(value || "").replace("T", " ");
+      if (/^\d{4}-\d{2}-\d{2} \d{2}:\d{2}/.test(text)) return text.slice(0, 16);
+      if (/^\d{2}-\d{2} \d{2}:\d{2}/.test(text)) return `2026-${text}`;
+      return "2026-08-27 10:00";
+    };
+    const rows = [];
+    V13_ACCOUNTS.forEach((account, accountIndex) => {
+      v13AccountWorks(account.id, accountIndex).forEach((work, workIndex) => {
+        if (v13AccountWorkStatus(account.id, work, workIndex) !== "发布完成") return;
+        const publishedAt = normalizePublishedAt(work.publishedAt);
+        const douyinWorkId = work.douyinWorkId || `740123456789${String(accountIndex).padStart(2, "0")}${String(workIndex).padStart(2, "0")}`;
+        rows.push({
+          publishResultId: `result-${work.id}`,
+          taskId: work.taskId || `task-history-${accountIndex + 1}`,
+          materialId: work.materialId || work.id,
+          materialTitle: work.materialTitle || work.title,
+          publishedTitle: work.publishedTitle || work.title,
+          coverUrl: work.cover,
+          durationSeconds: durationSeconds(work.duration),
+          duration: work.duration,
+          accountId: account.id,
+          accountName: account.name,
+          accountAvatarUrl: v13Cover(accountIndex + 4),
+          douyinAccountId: account.id,
+          douyinWorkId,
+          douyinWorkUrl: work.link || `https://www.douyin.com/video/${douyinWorkId}`,
+          publishedAt,
+          views: work.plays,
+          likes: work.likes,
+          comments: work.comments,
+          favorites: work.favorites,
+          shares: work.shares,
+          metricsUpdatedAt: "2026-08-27 10:05"
+        });
+      });
+    });
+    return rows.sort((a, b) => b.publishedAt.localeCompare(a.publishedAt));
+  }
+  window.aiVideoPublishResults = v13PublishResults;
   function v13Pending(account) {
     return Number.isFinite(Number(account?.pending)) ? Number(account.pending) : 0;
   }
@@ -2768,7 +2846,7 @@
     const statusMarkup = (status) => `<span class="wjv-modal-status is-${v13AccountWorkStatusTone(status)}"><i></i>${escapeHtml(status)}</span>`;
     return `<div class="wjv-modal-backdrop" data-wjv-modal-close></div><section class="wjv-modal" role="dialog" aria-modal="true" aria-labelledby="wjv-modal-title">
       <header><div><span>发布作品</span><h3 id="wjv-modal-title">${escapeHtml(account.name)}</h3><p>共 ${allRows.length} 条作品 · ${completedCount} 条发布完成 · ${escapeHtml(account.city)}</p></div><button type="button" data-wjv-modal-close aria-label="关闭">×</button></header>
-      <div class="wjv-modal-body"><nav class="wjv-modal-status-tabs" role="tablist" aria-label="作品发布状态筛选">${statusTabs.map(([key, label]) => `<button type="button" role="tab" class="${statusFilter === key ? "is-active" : ""}" aria-selected="${statusFilter === key ? "true" : "false"}" data-wjv-account-work-filter="${escapeHtml(key)}">${escapeHtml(label)}<em>${key === "all" ? allRows.length : statusCounts[key] || 0}</em></button>`).join("")}</nav><div class="ai-matrix-table"><table><thead><tr><th>封面</th><th>作品标题</th><th>发布状态</th><th>时长</th><th>发布时间</th><th>播放</th><th>点赞</th><th>评论</th><th>收藏</th><th>分享</th><th>操作</th></tr></thead><tbody>${rows.length ? rows.map((w) => `<tr><td><img class="wjv-modal-cover" src="${escapeHtml(w.cover)}" alt="${escapeHtml(w.title)}"></td><td><strong>${escapeHtml(w.title)}</strong></td><td>${statusMarkup(w.status)}</td><td>${escapeHtml(w.duration)}</td><td>${escapeHtml(statusTime(w))}</td><td>${w.plays.toLocaleString()}</td><td>${w.likes.toLocaleString()}</td><td>${w.comments.toLocaleString()}</td><td>${w.favorites.toLocaleString()}</td><td>${w.shares.toLocaleString()}</td><td>${w.status === "发布失败" ? `<button type="button" class="wjv-link is-retry" data-wjv-retry-account-work="${escapeHtml(account.id)}" data-wjv-account-work-id="${escapeHtml(w.id)}">重试发布</button>` : w.link ? `<a class="wjv-link" href="${escapeHtml(w.link)}" target="_blank" rel="noreferrer">打开抖音</a>` : `<span class="wjv-link is-muted">链接不可用</span>`}</td></tr>`).join("") : `<tr><td colspan="11"><div class="wjv-modal-empty">暂无${statusFilter === "all" ? "符合条件" : escapeHtml(statusFilter)}作品</div></td></tr>`}</tbody></table></div></div>
+      <div class="wjv-modal-body"><nav class="wjv-modal-status-tabs" role="tablist" aria-label="作品发布状态筛选">${statusTabs.map(([key, label]) => `<button type="button" role="tab" class="${statusFilter === key ? "is-active" : ""}" aria-selected="${statusFilter === key ? "true" : "false"}" data-wjv-account-work-filter="${escapeHtml(key)}">${escapeHtml(label)}<em>${key === "all" ? allRows.length : statusCounts[key] || 0}</em></button>`).join("")}</nav><div class="ai-matrix-table"><table><thead><tr><th>封面</th><th>作品标题</th><th>发布状态</th><th>时长</th><th>发布时间</th><th>播放</th><th>点赞</th><th>评论</th><th>收藏</th><th>分享</th><th>操作</th></tr></thead><tbody>${rows.length ? rows.map((w) => `<tr><td>${w.link ? `<a href="${escapeHtml(w.link)}" target="_blank" rel="noopener noreferrer"><img class="wjv-modal-cover" src="${escapeHtml(w.cover)}" alt="${escapeHtml(w.title)}"></a>` : `<img class="wjv-modal-cover" src="${escapeHtml(w.cover)}" alt="${escapeHtml(w.title)}">`}</td><td><strong>${escapeHtml(w.title)}</strong></td><td>${statusMarkup(w.status)}</td><td>${escapeHtml(w.duration)}</td><td>${escapeHtml(statusTime(w))}</td><td>${w.plays.toLocaleString()}</td><td>${w.likes.toLocaleString()}</td><td>${w.comments.toLocaleString()}</td><td>${w.favorites.toLocaleString()}</td><td>${w.shares.toLocaleString()}</td><td>${w.status === "发布失败" ? `<button type="button" class="wjv-link is-retry" data-wjv-retry-account-work="${escapeHtml(account.id)}" data-wjv-account-work-id="${escapeHtml(w.id)}">重试发布</button>` : w.link ? `<a class="wjv-link" href="${escapeHtml(w.link)}" target="_blank" rel="noopener noreferrer">打开抖音</a>` : `<span class="wjv-link is-muted">链接同步中</span>`}</td></tr>`).join("") : `<tr><td colspan="11"><div class="wjv-modal-empty">暂无${statusFilter === "all" ? "符合条件" : escapeHtml(statusFilter)}作品</div></td></tr>`}</tbody></table></div></div>
       </section>`;
   }
 
@@ -3558,8 +3636,10 @@
       const titleLabel = titleMode === "fixed" ? `固定文案` : titleMode === "ai-expand" ? `AI 拓展（${works.length} 条）` : "无标题";
       const task = {
         id: `task-${Date.now()}`,
+        status: "执行中",
         accountIds: validAccounts.map((a) => a.id),
         distribution: dist.map((row) => ({ accountId: row.account.id, accountName: row.account.name, workIds: row.works.map((w) => w.id) })),
+        workIds: works.map((w) => w.id),
         workTitles: works.map((w) => w.title),
         workCount: works.length,
         titleMode,
@@ -4883,10 +4963,16 @@
     leadCategory: "sales",
     leadChartMode: "contact",
     leadQuery: "",
+    contentAccount: "all",
+    contentQuery: "",
+    contentStart: "2026-07-29",
+    contentEnd: "2026-08-27",
+    contentPage: 1,
     datePreset: "today",
     rendering: false
   };
   let observer;
+  let contentQueryTimer;
 
   const leadCategoryLabels = {
     sales: "销售",
@@ -5013,33 +5099,14 @@
       && (!includeCategory || state.leadCategory === "all" || item.leadCategory === state.leadCategory);
   }
   function contentRows() {
-    const titles = ["周末试驾权益解读", "X70L 空间实测", "新能源用车成本对比", "门店现车直播切片", "家庭 SUV 选购指南", "本地到店优惠说明", "车型配置一分钟看懂", "新手购车避坑清单"];
-    return titles.map(function (title, index) {
-      const account = ["抖音账号 A", "抖音账号 B", "快手账号 C"][index % 3];
-      const date = index % 2 ? "2026-07-29" : sampleDate;
-      return {
-        id: "content-" + index,
-        title,
-        roleId: "content",
-        role: roles[3].name,
-        account,
-        platform: index % 3 === 2 ? "快手" : "抖音",
-        authStatus: statusFor(index),
-        date,
-        publishTime: date + " " + String(9 + index).padStart(2, "0") + ":20",
-        status: index === 2 ? "发布失败" : index === 5 ? "审核中" : "已发布",
-        views: 21800 + index * 3140,
-        likes: 860 + index * 104,
-        comments: 62 + index * 9,
-        saves: 116 + index * 12,
-        shares: 48 + index * 7,
-        format: index % 2 ? "车型口播" : "门店短视频"
-      };
-    }).filter(function (item) {
-      return inRange(item.date)
-        && (state.role === "all" || state.role === "content")
-        && (state.account === "all" || state.account === item.account)
-        && (state.platform === "all" || state.platform === item.platform);
+    const query = String(state.contentQuery || "").trim().toLowerCase();
+    const rows = typeof window.aiVideoPublishResults === "function" ? window.aiVideoPublishResults() : [];
+    return rows.filter(function (item) {
+      const date = dateOf(item.publishedAt);
+      const titleMatch = !query || [item.materialTitle, item.publishedTitle].some(function (value) { return String(value || "").toLowerCase().includes(query); });
+      const start = state.contentStart <= state.contentEnd ? state.contentStart : state.contentEnd;
+      const end = state.contentStart <= state.contentEnd ? state.contentEnd : state.contentStart;
+      return date >= start && date <= end && (state.contentAccount === "all" || state.contentAccount === item.accountId) && titleMatch;
     });
   }
 
@@ -5106,6 +5173,16 @@
         + '<div class="results-lead-range-group" role="group" aria-label="快捷日期范围">' + rangeButtons + '</div>'
         + '<label class="results-lead-account"><span class="sr-only">账号</span><select data-results-lead-account aria-label="全部账号">' + accountOptions + '</select></label>'
         + '</div></header>';
+    }
+    if (state.tab === "content") {
+      const rows = contentRows();
+      const accounts = Array.from(new Map((typeof window.aiVideoPublishResults === "function" ? window.aiVideoPublishResults() : []).map(function (item) { return [item.accountId, item]; })).values());
+      const updatedAt = rows.reduce(function (latest, item) { return String(item.metricsUpdatedAt || "") > latest ? String(item.metricsUpdatedAt) : latest; }, "") || "等待首次同步";
+      return '<header class="results-content-heading"><div class="results-content-heading__title"><h2>内容效果记录</h2><span>数据更新于 ' + esc(updatedAt) + ' · 当前 ' + rows.length + ' 条</span></div>'
+        + '<div class="results-content-heading__controls"><label class="results-content-date-range"><span class="sr-only">开始日期</span><input type="date" data-results-content-filter="start" value="' + state.contentStart + '"><b aria-hidden="true">至</b><span class="sr-only">结束日期</span><input type="date" data-results-content-filter="end" value="' + state.contentEnd + '"></label>'
+        + '<label class="results-content-account"><span class="sr-only">发布账号</span><select data-results-content-account aria-label="发布账号"><option value="all" ' + (state.contentAccount === "all" ? "selected" : "") + '>全部账号</option>' + accounts.map(function (item) { return '<option value="' + esc(item.accountId) + '" ' + (state.contentAccount === item.accountId ? "selected" : "") + '>' + esc(item.accountName) + '</option>'; }).join("") + '</select></label>'
+        + '<label class="results-content-query"><span class="sr-only">作品名称</span><input type="search" data-results-content-query value="' + esc(state.contentQuery) + '" placeholder="搜索作品名称" aria-label="搜索作品名称"></label>'
+        + '<button type="button" class="results-content-reset" data-results-content-reset>重置</button><button type="button" data-results-export ' + (!rows.length ? "disabled" : "") + '>⇩ 导出</button></div></header>';
     }
     const exportAction = state.tab === "leads"
       ? '<div class="results-lead-download-wrap"><button type="button" data-results-lead-download aria-haspopup="menu" aria-controls="results-lead-download-menu" aria-expanded="false">⇩ 下载</button><div class="results-lead-download-menu" id="results-lead-download-menu" data-results-lead-download-menu role="menu" hidden><button type="button" role="menuitem" data-results-lead-export="result">线索结果明细</button><button type="button" role="menuitem" data-results-lead-export="detail">线索明细</button></div></div>'
@@ -5321,21 +5398,29 @@
   }
 
   function renderContent() {
-    const rows = contentRows();
-    return '<section class="results-v12-panel"><header><div><h3>内容效果记录</h3><p>所有账号作品的发布状态和平台效果，独立于线索漏斗 · 当前 ' + rows.length + ' 条</p></div><button type="button" data-results-export>⇩ 导出 Excel</button></header>'
-      + '<div class="results-v12-table-wrap"><table class="results-v12-table"><thead><tr><th>内容</th><th>发布岗位</th><th>发布账号</th><th>发布时间</th><th>状态</th><th>播放</th><th>点赞</th><th>评论</th><th>收藏</th><th>分享</th></tr></thead><tbody>'
-      + rows.map(function (item) {
-        return '<tr><td><strong>' + esc(item.title) + '</strong><small>' + esc(item.format) + '</small></td><td>' + esc(item.role)
-          + '</td><td>' + esc(item.account) + '<small>' + esc(item.platform) + ' · ' + esc(item.authStatus) + '</small></td><td>' + esc(item.publishTime)
-          + '</td><td>' + esc(item.status) + '</td><td>' + num(item.views) + '</td><td>' + num(item.likes) + '</td><td>' + num(item.comments)
-          + '</td><td>' + num(item.saves) + '</td><td>' + num(item.shares) + '</td></tr>';
-      }).join("") + '</tbody></table></div></section>';
+    const filteredRows = contentRows();
+    const pageSize = 20;
+    const pageCount = Math.max(1, Math.ceil(filteredRows.length / pageSize));
+    state.contentPage = Math.min(pageCount, Math.max(1, Number(state.contentPage) || 1));
+    const rows = filteredRows.slice((state.contentPage - 1) * pageSize, state.contentPage * pageSize);
+    const allRows = typeof window.aiVideoPublishResults === "function" ? window.aiVideoPublishResults() : [];
+    const metric = function (value) { return value == null || value === "" ? "—" : num(value); };
+    const body = rows.length ? rows.map(function (item) {
+      const title = item.publishedTitle || item.materialTitle;
+      const href = item.douyinWorkUrl;
+      return '<tr><td><a class="results-content-work" href="' + esc(href) + '" target="_blank" rel="noopener noreferrer" title="打开抖音作品：' + esc(title) + '"><span class="results-content-cover"><img src="' + esc(item.coverUrl) + '" alt="' + esc(title) + '"><i>' + esc(item.duration || "00:00") + '</i></span><strong>' + esc(title) + '</strong></a></td>'
+        + '<td>' + esc(item.publishedAt) + '</td><td><span class="results-content-account-cell"><img src="' + esc(item.accountAvatarUrl || "assets/portraits/ai-video.jpg") + '" alt=""><strong>' + esc(item.accountName) + '</strong></span></td>'
+        + '<td><a class="results-content-link" href="' + esc(href) + '" target="_blank" rel="noopener noreferrer" aria-label="在抖音打开作品：' + esc(title) + '">查看作品 ↗</a></td><td>' + metric(item.views) + '</td><td>' + metric(item.likes) + '</td><td>' + metric(item.comments) + '</td><td>' + metric(item.favorites) + '</td><td>' + metric(item.shares) + '</td></tr>';
+    }).join("") : '<tr><td colspan="9" class="results-content-empty"><strong>' + (allRows.length ? "当前筛选条件下暂无内容效果记录" : "暂无内容效果记录") + '</strong><small>' + (allRows.length ? "调整时间、账号或作品名称后查看结果" : "发布完成的作品将在这里展示") + '</small><button type="button" data-results-content-reset>重置筛选</button></td></tr>';
+    const pagination = pageCount > 1 ? '<footer class="results-content-pagination"><span>共 ' + filteredRows.length + ' 条</span><div><button type="button" data-results-content-page="' + (state.contentPage - 1) + '" ' + (state.contentPage === 1 ? "disabled" : "") + '>上一页</button><b>' + state.contentPage + ' / ' + pageCount + '</b><button type="button" data-results-content-page="' + (state.contentPage + 1) + '" ' + (state.contentPage === pageCount ? "disabled" : "") + '>下一页</button></div></footer>' : "";
+    return '<section class="results-v12-panel results-content-panel"><div class="results-v12-table-wrap"><table class="results-v12-table results-content-table"><thead><tr><th>作品</th><th>发布时间</th><th>发布账号</th><th>抖音发布链接</th><th>播放数</th><th>点赞数</th><th>评论数</th><th>收藏数</th><th>分享数</th></tr></thead><tbody>' + body + '</tbody></table></div>' + pagination + '</section>';
   }
 
   function render() {
     const view = document.querySelector(viewSelector);
     if (!view || location.hash.slice(1) !== "results") return;
     document.body.classList.toggle("is-results-leads", state.tab === "leads");
+    document.body.classList.toggle("is-results-content", state.tab === "content");
     hideAdPlanTooltip();
     state.rendering = true;
     const content = state.tab === "leads" ? renderLeads() : state.tab === "content" ? renderContent() : renderProspects();
@@ -5381,15 +5466,23 @@
       exportLeadDetail("result");
       return;
     } else {
-      header = ["内容", "发布岗位", "发布账号", "发布时间", "状态", "播放", "点赞", "评论", "收藏", "分享"];
+      header = ["作品标题", "素材原始名称", "封面链接", "视频时长", "发布时间", "发布账号名称", "抖音发布链接", "播放数", "点赞数", "评论数", "收藏数", "分享数", "指标更新时间"];
       rows = contentRows().map(function (item) {
-        return [item.title, item.role, item.account, item.publishTime, item.status, item.views, item.likes, item.comments, item.saves, item.shares];
+        let coverUrl = item.coverUrl;
+        try { coverUrl = new URL(item.coverUrl, document.baseURI).href; } catch (error) { /* Keep the source value. */ }
+        return [item.publishedTitle || item.materialTitle, item.materialTitle, coverUrl, item.duration, item.publishedAt, item.accountName, item.douyinWorkUrl, item.views, item.likes, item.comments, item.favorites, item.shares, item.metricsUpdatedAt];
       });
     }
-    downloadTable("成果中心-" + state.tab + "-" + state.start + "-" + state.end + ".xls", header, rows);
+    const selectedContentAccount = (typeof window.aiVideoPublishResults === "function" ? window.aiVideoPublishResults() : []).find(function (item) { return item.accountId === state.contentAccount; });
+    const contentAccountLabel = state.contentAccount === "all" ? "全部账号" : selectedContentAccount ? selectedContentAccount.accountName : "指定账号";
+    downloadTable(state.tab === "content" ? "内容效果记录_" + state.contentStart.replace(/-/g, "") + "-" + state.contentEnd.replace(/-/g, "") + "_" + contentAccountLabel.replace(/[\\/:*?"<>|]/g, "-") + ".xlsx" : "成果中心-" + state.tab + "-" + state.start + "-" + state.end + ".xls", header, rows);
   }
 
   function downloadTable(filename, header, rows) {
+    if (/\.xlsx$/i.test(filename)) {
+      downloadXlsx(filename, header, rows);
+      return;
+    }
     const table = '<table><tr>' + header.map(function (item) { return "<th>" + esc(item) + "</th>"; }).join("") + "</tr>"
       + rows.map(function (row) { return "<tr>" + row.map(function (item) { return "<td>" + esc(item) + "</td>"; }).join("") + "</tr>"; }).join("") + "</table>";
     const url = URL.createObjectURL(new Blob(["\ufeff<html><meta charset=\"utf-8\"><style>table{border-collapse:collapse}th,td{border:1px solid #ccd6e2;padding:6px 10px}</style>" + table + "</html>"], { type: "application/vnd.ms-excel" }));
@@ -5398,6 +5491,93 @@
     link.download = filename;
     link.click();
     URL.revokeObjectURL(url);
+  }
+
+  function downloadXlsx(filename, header, rows) {
+    const encoder = new TextEncoder();
+    const xml = function (value) {
+      return String(value == null ? "" : value).replace(/[&<>"']/g, function (char) {
+        return { "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&apos;" }[char];
+      });
+    };
+    const columnName = function (index) {
+      let value = index + 1;
+      let label = "";
+      while (value > 0) {
+        const remainder = (value - 1) % 26;
+        label = String.fromCharCode(65 + remainder) + label;
+        value = Math.floor((value - 1) / 26);
+      }
+      return label;
+    };
+    const links = [];
+    const allRows = [header].concat(rows);
+    const sheetRows = allRows.map(function (row, rowIndex) {
+      const cells = row.map(function (value, columnIndex) {
+        const ref = columnName(columnIndex) + (rowIndex + 1);
+        const isLink = rowIndex > 0 && /^https?:\/\//i.test(String(value || ""));
+        if (isLink) links.push({ ref, target: String(value) });
+        if (typeof value === "number" && Number.isFinite(value)) return '<c r="' + ref + '"' + (rowIndex === 0 ? ' s="1"' : '') + ' t="n"><v>' + value + '</v></c>';
+        return '<c r="' + ref + '"' + (rowIndex === 0 ? ' s="1"' : isLink ? ' s="2"' : '') + ' t="inlineStr"><is><t xml:space="preserve">' + xml(value) + '</t></is></c>';
+      }).join("");
+      return '<row r="' + (rowIndex + 1) + '">' + cells + '</row>';
+    }).join("");
+    const hyperlinkMarkup = links.length ? '<hyperlinks>' + links.map(function (item, index) { return '<hyperlink ref="' + item.ref + '" r:id="rId' + (index + 1) + '"/>'; }).join("") + '</hyperlinks>' : "";
+    const sheetRels = links.length ? '<?xml version="1.0" encoding="UTF-8" standalone="yes"?><Relationships xmlns="http://schemas.openxmlformats.org/package/2006/relationships">' + links.map(function (item, index) { return '<Relationship Id="rId' + (index + 1) + '" Type="http://schemas.openxmlformats.org/officeDocument/2006/relationships/hyperlink" Target="' + xml(item.target) + '" TargetMode="External"/>'; }).join("") + '</Relationships>' : "";
+    const files = {
+      "[Content_Types].xml": '<?xml version="1.0" encoding="UTF-8" standalone="yes"?><Types xmlns="http://schemas.openxmlformats.org/package/2006/content-types"><Default Extension="rels" ContentType="application/vnd.openxmlformats-package.relationships+xml"/><Default Extension="xml" ContentType="application/xml"/><Override PartName="/xl/workbook.xml" ContentType="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet.main+xml"/><Override PartName="/xl/worksheets/sheet1.xml" ContentType="application/vnd.openxmlformats-officedocument.spreadsheetml.worksheet+xml"/><Override PartName="/xl/styles.xml" ContentType="application/vnd.openxmlformats-officedocument.spreadsheetml.styles+xml"/></Types>',
+      "_rels/.rels": '<?xml version="1.0" encoding="UTF-8" standalone="yes"?><Relationships xmlns="http://schemas.openxmlformats.org/package/2006/relationships"><Relationship Id="rId1" Type="http://schemas.openxmlformats.org/officeDocument/2006/relationships/officeDocument" Target="xl/workbook.xml"/></Relationships>',
+      "xl/workbook.xml": '<?xml version="1.0" encoding="UTF-8" standalone="yes"?><workbook xmlns="http://schemas.openxmlformats.org/spreadsheetml/2006/main" xmlns:r="http://schemas.openxmlformats.org/officeDocument/2006/relationships"><sheets><sheet name="内容效果记录" sheetId="1" r:id="rId1"/></sheets></workbook>',
+      "xl/_rels/workbook.xml.rels": '<?xml version="1.0" encoding="UTF-8" standalone="yes"?><Relationships xmlns="http://schemas.openxmlformats.org/package/2006/relationships"><Relationship Id="rId1" Type="http://schemas.openxmlformats.org/officeDocument/2006/relationships/worksheet" Target="worksheets/sheet1.xml"/><Relationship Id="rId2" Type="http://schemas.openxmlformats.org/officeDocument/2006/relationships/styles" Target="styles.xml"/></Relationships>',
+      "xl/styles.xml": '<?xml version="1.0" encoding="UTF-8" standalone="yes"?><styleSheet xmlns="http://schemas.openxmlformats.org/spreadsheetml/2006/main"><fonts count="3"><font><sz val="11"/><name val="Arial"/></font><font><b/><sz val="11"/><color rgb="FF172536"/><name val="Arial"/></font><font><u/><sz val="11"/><color rgb="FF2878D4"/><name val="Arial"/></font></fonts><fills count="3"><fill><patternFill patternType="none"/></fill><fill><patternFill patternType="gray125"/></fill><fill><patternFill patternType="solid"><fgColor rgb="FFF2F5F8"/><bgColor indexed="64"/></patternFill></fill></fills><borders count="1"><border><left/><right/><top/><bottom/><diagonal/></border></borders><cellStyleXfs count="1"><xf numFmtId="0" fontId="0" fillId="0" borderId="0"/></cellStyleXfs><cellXfs count="3"><xf numFmtId="0" fontId="0" fillId="0" borderId="0" xfId="0"/><xf numFmtId="0" fontId="1" fillId="2" borderId="0" xfId="0" applyFont="1" applyFill="1"/><xf numFmtId="0" fontId="2" fillId="0" borderId="0" xfId="0" applyFont="1"/></cellXfs><cellStyles count="1"><cellStyle name="Normal" xfId="0" builtinId="0"/></cellStyles></styleSheet>',
+      "xl/worksheets/sheet1.xml": '<?xml version="1.0" encoding="UTF-8" standalone="yes"?><worksheet xmlns="http://schemas.openxmlformats.org/spreadsheetml/2006/main" xmlns:r="http://schemas.openxmlformats.org/officeDocument/2006/relationships"><sheetViews><sheetView workbookViewId="0"><pane ySplit="1" topLeftCell="A2" activePane="bottomLeft" state="frozen"/></sheetView></sheetViews><sheetFormatPr defaultRowHeight="20"/><cols><col min="1" max="2" width="28" customWidth="1"/><col min="3" max="3" width="42" customWidth="1"/><col min="4" max="6" width="20" customWidth="1"/><col min="7" max="7" width="44" customWidth="1"/><col min="8" max="13" width="15" customWidth="1"/></cols><sheetData>' + sheetRows + '</sheetData><autoFilter ref="A1:' + columnName(header.length - 1) + Math.max(1, allRows.length) + '"/>' + hyperlinkMarkup + '</worksheet>'
+    };
+    if (sheetRels) files["xl/worksheets/_rels/sheet1.xml.rels"] = sheetRels;
+
+    const crcTable = Array.from({ length: 256 }, function (_, index) {
+      let value = index;
+      for (let bit = 0; bit < 8; bit += 1) value = value & 1 ? 0xedb88320 ^ (value >>> 1) : value >>> 1;
+      return value >>> 0;
+    });
+    const crc32 = function (bytes) {
+      let crc = 0xffffffff;
+      bytes.forEach(function (byte) { crc = crcTable[(crc ^ byte) & 0xff] ^ (crc >>> 8); });
+      return (crc ^ 0xffffffff) >>> 0;
+    };
+    const uint16 = function (value) { return Uint8Array.of(value & 0xff, (value >>> 8) & 0xff); };
+    const uint32 = function (value) { return Uint8Array.of(value & 0xff, (value >>> 8) & 0xff, (value >>> 16) & 0xff, (value >>> 24) & 0xff); };
+    const concat = function (parts) {
+      const size = parts.reduce(function (sum, part) { return sum + part.length; }, 0);
+      const merged = new Uint8Array(size);
+      let offset = 0;
+      parts.forEach(function (part) { merged.set(part, offset); offset += part.length; });
+      return merged;
+    };
+    const now = new Date();
+    const dosTime = (now.getHours() << 11) | (now.getMinutes() << 5) | Math.floor(now.getSeconds() / 2);
+    const dosDate = ((now.getFullYear() - 1980) << 9) | ((now.getMonth() + 1) << 5) | now.getDate();
+    const locals = [];
+    const centrals = [];
+    let offset = 0;
+    Object.keys(files).forEach(function (name) {
+      const nameBytes = encoder.encode(name);
+      const data = encoder.encode(files[name]);
+      const crc = crc32(data);
+      const local = concat([uint32(0x04034b50), uint16(20), uint16(0x0800), uint16(0), uint16(dosTime), uint16(dosDate), uint32(crc), uint32(data.length), uint32(data.length), uint16(nameBytes.length), uint16(0), nameBytes, data]);
+      const central = concat([uint32(0x02014b50), uint16(20), uint16(20), uint16(0x0800), uint16(0), uint16(dosTime), uint16(dosDate), uint32(crc), uint32(data.length), uint32(data.length), uint16(nameBytes.length), uint16(0), uint16(0), uint16(0), uint16(0), uint32(0), uint32(offset), nameBytes]);
+      locals.push(local);
+      centrals.push(central);
+      offset += local.length;
+    });
+    const centralBytes = concat(centrals);
+    const end = concat([uint32(0x06054b50), uint16(0), uint16(0), uint16(centrals.length), uint16(centrals.length), uint32(centralBytes.length), uint32(offset), uint16(0)]);
+    const blob = new Blob([concat(locals.concat([centralBytes, end]))], { type: "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet" });
+    const url = URL.createObjectURL(blob);
+    const link = document.createElement("a");
+    link.href = url;
+    link.download = filename;
+    link.click();
+    window.setTimeout(function () { URL.revokeObjectURL(url); }, 0);
   }
 
   function exportLeadDetail(kind) {
@@ -5423,6 +5603,16 @@
   }
 
   function handleKeydown(event) {
+    if (event.key === "Enter" && event.target.closest("[data-results-content-query]")) {
+      event.preventDefault();
+      window.clearTimeout(contentQueryTimer);
+      state.contentQuery = event.target.value;
+      state.contentPage = 1;
+      render();
+      const input = document.querySelector("[data-results-content-query]");
+      if (input) input.focus();
+      return;
+    }
     if (event.key === "Escape") toggleLeadDownloadMenu(false);
   }
 
@@ -5481,6 +5671,21 @@
       render();
       return;
     }
+    if (event.target.closest("[data-results-content-reset]")) {
+      state.contentStart = "2026-07-29";
+      state.contentEnd = "2026-08-27";
+      state.contentAccount = "all";
+      state.contentQuery = "";
+      state.contentPage = 1;
+      render();
+      return;
+    }
+    const contentPage = event.target.closest("[data-results-content-page]");
+    if (contentPage) {
+      state.contentPage = Math.max(1, Number(contentPage.dataset.resultsContentPage) || 1);
+      render();
+      return;
+    }
     const leadCategory = event.target.closest("[data-results-lead-category]");
     if (leadCategory) {
       state.leadCategory = leadCategory.dataset.resultsLeadCategory || "sales";
@@ -5509,12 +5714,37 @@
       render();
       return;
     }
-    if (event.target.closest("[data-results-export]")) {
-      exportExcel();
+    const exportTrigger = event.target.closest("[data-results-export]");
+    if (exportTrigger) {
+      if (state.tab === "content") {
+        exportTrigger.disabled = true;
+        exportTrigger.textContent = "正在导出…";
+        window.setTimeout(function () {
+          exportExcel();
+          render();
+          if (typeof showToast === "function") showToast("内容效果记录已导出", "已按当前时间、账号和作品名称筛选条件生成文件");
+        }, 180);
+      } else {
+        exportExcel();
+      }
     }
   }
 
   function handleChange(event) {
+    const contentDate = event.target.closest("[data-results-content-filter]");
+    if (contentDate) {
+      state[contentDate.dataset.resultsContentFilter === "start" ? "contentStart" : "contentEnd"] = contentDate.value;
+      state.contentPage = 1;
+      render();
+      return;
+    }
+    const contentAccount = event.target.closest("[data-results-content-account]");
+    if (contentAccount) {
+      state.contentAccount = contentAccount.value || "all";
+      state.contentPage = 1;
+      render();
+      return;
+    }
     const modeNode = event.target.closest("[data-results-filter-mode]");
     if (modeNode) {
       state.filterMode = modeNode.value;
@@ -5567,6 +5797,21 @@
   }
 
   function handleInput(event) {
+    const contentQuery = event.target.closest("[data-results-content-query]");
+    if (contentQuery && location.hash.slice(1) === "results") {
+      state.contentQuery = contentQuery.value;
+      state.contentPage = 1;
+      window.clearTimeout(contentQueryTimer);
+      contentQueryTimer = window.setTimeout(function () {
+        render();
+        const input = document.querySelector("[data-results-content-query]");
+        if (input) {
+          input.focus();
+          input.setSelectionRange(input.value.length, input.value.length);
+        }
+      }, 300);
+      return;
+    }
     const query = event.target.closest("[data-results-lead-query]");
     if (!query || location.hash.slice(1) !== "results") return;
     state.leadQuery = query.value;
@@ -5604,6 +5849,7 @@
     window.addEventListener("hashchange", function () {
       syncNav();
       document.body.classList.toggle("is-results-leads", location.hash.slice(1) === "results" && state.tab === "leads");
+      document.body.classList.toggle("is-results-content", location.hash.slice(1) === "results" && state.tab === "content");
       if (location.hash.slice(1) === "results") window.setTimeout(render, 30);
     });
     observer = new MutationObserver(function () {
