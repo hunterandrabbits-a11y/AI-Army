@@ -317,8 +317,8 @@
       livePublishExpanded: false, livePublishAccountId: "",
       matrixDataTab: "accounts", matrixTimeRange: "week", matrixAccountId: "",
       libraryTab: "pending", libraryReviewDeleted: [], libraryReviewApproved: [],
-      publishTaskView: "list", publishTaskStep: 1, publishTaskSource: "library", publishTaskAccountGroup: "all", publishTaskAccountIds: [], publishTaskWorkIds: [], publishTaskScript: "", publishTaskScriptsReady: false, publishTaskScriptsConfirmed: false, publishTaskGenerated: false, publishTaskUploaded: false, publishTaskUploadItem: null, publishTaskRemixGenerated: false, publishTaskTiming: "now", publishTaskScheduleAt: "2026-08-25T18:30", publishTaskReview: "review", publishTaskMessages: [], publishTaskHistoryId: "", publishTasks: [], publishTaskHistory: [], publishTaskResult: null,
-      v13: { section: "overview", publishView: "results", taskStep: 1, taskAccounts: [], taskWorks: [], taskTiming: "now", taskScheduleAt: "2026-08-26T18:30", taskTitleMode: "none", taskTitleCopy: "", libTab: "works", workFilter: "all", accountWorksOpen: "", accountWorksFilter: "all", accountWorkStatuses: {}, generatedTasks: [], worksPoolUploads: [] },
+      publishTaskView: "list", publishTaskStep: 1, publishTaskSource: "library", publishTaskAccountIds: [], publishTaskWorkIds: [], publishTaskScript: "", publishTaskScriptsReady: false, publishTaskScriptsConfirmed: false, publishTaskGenerated: false, publishTaskUploaded: false, publishTaskUploadItem: null, publishTaskRemixGenerated: false, publishTaskTiming: "now", publishTaskScheduleAt: "2026-08-25T18:30", publishTaskReview: "review", publishTaskMessages: [], publishTaskHistoryId: "", publishTasks: [], publishTaskHistory: [], publishTaskResult: null,
+      v13: { section: "overview", publishView: "results", taskStep: 1, taskAccounts: [], taskWorks: [], taskTiming: "now", taskScheduleAt: "2026-08-26T18:30", taskTitleMode: "none", taskTitleCopy: "", libTab: "works", workFilter: "all", accountWorksOpen: "", accountWorksFilter: "all", accountWorkStatuses: {}, generatedTasks: [], worksPoolUploads: [], monitorAddOpen: false, monitorDraftHandle: "", monitors: [] },
       ...loadJson(WUJIAN_KEY, {}),
     },
   };
@@ -335,9 +335,8 @@
   }
   if (!["list", "agent", "history"].includes(state.wuJian.publishTaskView)) state.wuJian.publishTaskView = "list";
   if (!["library", "remix", "ai"].includes(state.wuJian.publishTaskSource)) state.wuJian.publishTaskSource = "library";
-  if (!["all", "flagship", "city", "franchise"].includes(state.wuJian.publishTaskAccountGroup)) state.wuJian.publishTaskAccountGroup = "all";
   // v13 安全重置：如果处于发布流程中途但账号为空，退回第一步；同时补全新字段默认值
-  { const v13 = state.wuJian.v13 || {}; if (v13.publishView === "create" && (v13.taskStep || 1) > 1 && !(v13.taskAccounts || []).length) { v13.taskStep = 1; state.wuJian.v13 = v13; } if (!v13.taskTitleMode) { v13.taskTitleMode = "none"; } if (v13.taskTitleCopy === undefined) { v13.taskTitleCopy = ""; } if (!["all", "待发布", "发布中", "发布完成", "发布失败"].includes(v13.accountWorksFilter)) { v13.accountWorksFilter = "all"; } if (!v13.accountWorkStatuses || typeof v13.accountWorkStatuses !== "object" || Array.isArray(v13.accountWorkStatuses)) { v13.accountWorkStatuses = {}; } state.wuJian.v13 = v13; }
+  { const v13 = state.wuJian.v13 || {}; if (v13.publishView === "create" && (v13.taskStep || 1) > 1 && !(v13.taskAccounts || []).length) { v13.taskStep = 1; state.wuJian.v13 = v13; } if (!v13.taskTitleMode) { v13.taskTitleMode = "none"; } if (v13.taskTitleCopy === undefined) { v13.taskTitleCopy = ""; } if (!["all", "待发布", "发布中", "发布完成", "发布失败", "取消发布"].includes(v13.accountWorksFilter)) { v13.accountWorksFilter = "all"; } const validWorkFilters = ["all", "待发布", "发布中", "发布完成", "发布失败", "取消发布"]; if (!Array.isArray(v13.accountWorksFilters)) { v13.accountWorksFilters = v13.accountWorksFilter === "all" ? ["all"] : [v13.accountWorksFilter]; } v13.accountWorksFilters = v13.accountWorksFilters.filter((filter) => validWorkFilters.includes(filter)); if (!v13.accountWorksFilters.length) { v13.accountWorksFilters = ["all"]; } if (!v13.accountWorkStatuses || typeof v13.accountWorkStatuses !== "object" || Array.isArray(v13.accountWorkStatuses)) { v13.accountWorkStatuses = {}; } if (!Array.isArray(v13.monitors)) { v13.monitors = []; } if (typeof v13.monitorAddOpen !== "boolean") { v13.monitorAddOpen = false; } if (typeof v13.monitorDraftHandle !== "string") { v13.monitorDraftHandle = ""; } state.wuJian.v13 = v13; }
   syncWuJianPublishState();
 
   if (Array.isArray(state.wuJian.worksCreated)) {
@@ -861,14 +860,14 @@
     const focusTime = focusStatus === "已发布" ? v13WallTime(focusAccount) : "";
     const focusMedia = focusStatus === "正在发布" || focusStatus === "已发布"
       ? `<video class="ai-wujian-side-media" src="${v13Video(focusIndex)}" poster="${v13Cover(focusIndex)}" autoplay muted loop playsinline preload="metadata" aria-label="${escapeHtml(focusAccount.name)}账号发布过程视频"></video>`
-      : `<div class="ai-wujian-side-empty is-${focusStatus === "排队中" ? "queue" : "error"}"><strong>${escapeHtml(focusStatus === "排队中" ? "排队中" : focusError)}</strong><small>${escapeHtml(focusStatus === "排队中" ? "待发布，暂时没有可展示视频" : focusAccount.error || "发布失败，请稍后重试")}</small></div>`;
+      : `<div class="ai-wujian-side-empty is-${focusStatus === "排队中" ? "queue" : "error"}"><strong>${escapeHtml(focusStatus === "排队中" ? "排队中" : focusError)}</strong><small>${escapeHtml(focusStatus === "排队中" ? "待发布，暂时没有可展示视频" : focusAccount.error || "发布失败，请点击重新发布")}</small></div>`;
     const focusAction = focusStatus === "发布异常" && focusAccount.failureType === "marketing"
       ? `<button type="button" data-wjv-account-todo="${escapeHtml(focusAccount.id)}" data-wjv-account-name="${escapeHtml(focusAccount.name)}">去处理</button>`
       : focusStatus === "发布异常"
-        ? `<span class="ai-wujian-side-note">请稍后重试</span>`
+        ? `<button type="button" class="ai-wujian-side-republish" data-wjv-republish-account="${escapeHtml(focusAccount.id)}">重新发布</button>`
         : `<button type="button" data-open-workspace="overview">查看实时工作</button>`;
     const greeting = `<section class="ai-side-greeting ai-side-greeting--bottom ai-lead-greeting" data-employee-greeting="${id}"><header><span>${employee.name}主动汇报</span><em>刚刚</em></header>${dialogueMessage(id, "agent", "", "刚刚", wuJianReportMarkup(status))}</section>`;
-    return `<header class="ai-side-head"><img src="${escapeHtml(employeeImage(id))}" alt="${escapeHtml(employee.name)}"><div class="ai-side-head__identity"><strong>${escapeHtml(digitalEmployeeLabel(employee))}</strong><small><i></i>${escapeHtml(statusMeta[status].label)} · 抖音 ${accounts.length} 个账号</small></div><div class="ai-side-head__actions"><button class="ai-side-icon" type="button" data-open-workspace="overview" title="进入实时工作" aria-label="进入短视频运营专员实时工作"><span aria-hidden="true">⛶</span></button><button class="ai-side-icon" type="button" data-open-workspace="settings" title="Agent 设置" aria-label="短视频运营专员 Agent 设置"><span aria-hidden="true">⚙︎</span></button></div></header><div class="ai-side-scroll ai-lead-panel"><section class="ai-lead-section ai-lead-cloud" aria-label="工作界面"><header class="ai-lead-section__head"><div><span>工作界面</span><strong>${escapeHtml(focusAccount.name)}</strong></div><em class="ai-wujian-side-status is-${focusStatus === "正在发布" ? "live" : focusStatus === "已发布" ? "done" : focusStatus === "排队中" ? "queue" : "error"}">${escapeHtml(focusStatus === "正在发布" ? "正在发布" : focusStatus === "发布异常" ? "发布异常" : focusStatus)}</em></header><div class="ai-lead-workspace"><div class="ai-lead-cloud__screen is-wujian-status-${focusStatus === "正在发布" ? "live" : focusStatus === "已发布" ? "done" : focusStatus === "排队中" ? "queue" : "error"}">${focusMedia}${focusTime ? `<time class="ai-wujian-side-time">${escapeHtml(focusTime)}</time>` : ""}<span><i></i>${escapeHtml(focusStatus === "正在发布" ? "正在发布" : focusStatus === "发布异常" ? focusError : focusStatus)}</span></div><div class="ai-lead-cloud__copy"><span>${escapeHtml(focusStatus === "排队中" ? "待发布，暂时没有可展示视频" : focusStatus === "发布异常" ? (focusAccount.error || "发布失败，请稍后重试") : focusStatus === "已发布" ? "最近一次发布视频 · 动态回放" : "正在发布 · 动态视频")}</span>${focusAction}</div></div></section>${pendingMemoryMarkup(id)}${messageMarkup(id)}</div>${greeting}${sideChatForm(id)}`;
+    return `<header class="ai-side-head"><img src="${escapeHtml(employeeImage(id))}" alt="${escapeHtml(employee.name)}"><div class="ai-side-head__identity"><strong>${escapeHtml(digitalEmployeeLabel(employee))}</strong><small><i></i>${escapeHtml(statusMeta[status].label)} · 抖音 ${accounts.length} 个账号</small></div><div class="ai-side-head__actions"><button class="ai-side-icon" type="button" data-open-workspace="overview" title="进入实时工作" aria-label="进入短视频运营专员实时工作"><span aria-hidden="true">⛶</span></button><button class="ai-side-icon" type="button" data-open-workspace="settings" title="Agent 设置" aria-label="短视频运营专员 Agent 设置"><span aria-hidden="true">⚙︎</span></button></div></header><div class="ai-side-scroll ai-lead-panel"><section class="ai-lead-section ai-lead-cloud" aria-label="工作界面"><header class="ai-lead-section__head"><div><span>工作界面</span><strong>${escapeHtml(focusAccount.name)}</strong></div><em class="ai-wujian-side-status is-${focusStatus === "正在发布" ? "live" : focusStatus === "已发布" ? "done" : focusStatus === "排队中" ? "queue" : "error"}">${escapeHtml(focusStatus === "正在发布" ? "正在发布" : focusStatus === "发布异常" ? "发布异常" : focusStatus)}</em></header><div class="ai-lead-workspace"><div class="ai-lead-cloud__screen is-wujian-status-${focusStatus === "正在发布" ? "live" : focusStatus === "已发布" ? "done" : focusStatus === "排队中" ? "queue" : "error"}">${focusMedia}${focusTime ? `<time class="ai-wujian-side-time">${escapeHtml(focusTime)}</time>` : ""}<span><i></i>${escapeHtml(focusStatus === "正在发布" ? "正在发布" : focusStatus === "发布异常" ? focusError : focusStatus)}</span></div><div class="ai-lead-cloud__copy"><span>${escapeHtml(focusStatus === "排队中" ? "待发布，暂时没有可展示视频" : focusStatus === "发布异常" ? (focusAccount.error || "发布失败，请点击重新发布") : focusStatus === "已发布" ? "最近一次发布视频 · 动态回放" : "正在发布 · 动态视频")}</span>${focusAction}</div></div></section>${pendingMemoryMarkup(id)}${messageMarkup(id)}</div>${greeting}${sideChatForm(id)}`;
   }
 
   function wuJianPublishStrategyHistory() {
@@ -1987,11 +1986,9 @@
   }
   function wuJianPublishTaskAccountsMarkup() {
     const accounts = wuJianPublishTaskAccounts();
-    const group = state.wuJian.publishTaskAccountGroup || "all";
     const selected = new Set(state.wuJian.publishTaskAccountIds || []);
-    const groups = [["all", "全部账号", accounts.length], ["flagship", "旗舰店", accounts.filter((row) => row.group === "旗舰店").length], ["city", "城市店", accounts.filter((row) => row.group === "城市店").length], ["franchise", "专营店", accounts.filter((row) => row.group === "专营店").length]];
-    const visible = accounts.filter((row) => group === "all" || (group === "flagship" ? row.group === "旗舰店" : group === "city" ? row.group === "城市店" : row.group === "专营店"));
-    return `<div class="ai-publish-task-account-picker"><div class="ai-publish-task-filter-row"><div class="ai-publish-task-segmented">${groups.map(([key, label, count]) => `<button type="button" class="${group === key ? "is-active" : ""}" data-wujian-publish-account-group="${key}">${label}<em>${count}</em></button>`).join("")}</div><button type="button" class="is-quiet" data-wujian-publish-account-all>全选当前范围</button></div><div class="ai-publish-task-account-summary"><strong>已选 ${selected.size} 个账号</strong><span>${group === "all" ? "全部账号" : groups.find((item) => item[0] === group)?.[1]} · 点击下方账号可微调范围</span></div><div class="ai-publish-task-account-grid">${visible.slice(0, 12).map((row) => `<label class="ai-publish-task-account-option"><input type="checkbox" data-wujian-publish-account-id="${escapeHtml(row.id)}" ${selected.has(row.id) ? "checked" : ""}><span><strong>${escapeHtml(row.name)}</strong><small>${escapeHtml(row.group)} · ${escapeHtml(row.city)}</small></span><i></i></label>`).join("")}</div>${visible.length > 12 ? `<small class="ai-publish-task-muted">当前范围共 ${visible.length} 个账号，已展示前 12 个，可直接全选范围。</small>` : ""}<footer class="ai-publish-chat-attachment-actions"><button type="button" class="is-primary" data-wujian-publish-task-step-next>确认账号范围</button></footer></div>`;
+    const allChecked = accounts.length > 0 && accounts.every((row) => selected.has(row.id));
+    return `<div class="ai-publish-task-account-picker"><div class="ai-publish-task-filter-row"><button type="button" class="is-quiet" data-wujian-publish-account-all>${allChecked ? "取消全选" : "全选账号"}</button></div><div class="ai-publish-task-account-summary"><strong>已选 ${selected.size} 个账号</strong><span>全部账号 · 点击下方账号可微调范围</span></div><div class="ai-publish-task-account-grid">${accounts.slice(0, 12).map((row) => `<label class="ai-publish-task-account-option"><input type="checkbox" data-wujian-publish-account-id="${escapeHtml(row.id)}" ${selected.has(row.id) ? "checked" : ""}><span><strong>${escapeHtml(row.name)}</strong></span><i></i></label>`).join("")}</div>${accounts.length > 12 ? `<small class="ai-publish-task-muted">共 ${accounts.length} 个账号，已展示前 12 个，可直接全选账号。</small>` : ""}<footer class="ai-publish-chat-attachment-actions"><button type="button" class="is-primary" data-wujian-publish-task-step-next>确认账号范围</button></footer></div>`;
   }
   function wuJianPublishTaskSourceMarkup() {
     const source = state.wuJian.publishTaskSource || "library";
@@ -2070,7 +2067,6 @@
     state.wuJian.publishTaskView = "agent";
     state.wuJian.publishTaskStep = 1;
     state.wuJian.publishTaskSource = "library";
-    state.wuJian.publishTaskAccountGroup = "all";
     state.wuJian.publishTaskAccountIds = [];
     state.wuJian.publishTaskWorkIds = [];
     state.wuJian.publishTaskScript = "";
@@ -2449,7 +2445,6 @@
     "assets/wujian/cases/car-case-02.mp4",
     "assets/wujian/cases/car-case-03.mp4",
   ];
-  const V13_GROUPS = ["旗舰店", "城市店", "专营店"];
   const V13_ACCOUNTS = [
     { id: "acc-001", name: "鸿途汽车·上海旗舰店", group: "旗舰店", city: "上海", enabled: true, status: "正在发布", progress: 82, time: "预计 08:42 完成", pending: 5, published: 46 },
     { id: "acc-002", name: "鸿途汽车·上海城市店", group: "城市店", city: "上海", enabled: true, status: "排队中", progress: 18, time: "预计 09:10 发布", pending: 8, published: 38 },
@@ -2464,7 +2459,7 @@
     { id: "acc-011", name: "鸿途汽车·苏州新区店", group: "城市店", city: "苏州", enabled: true, status: "已发布", progress: 100, time: "08:05 已发布", publishedAt: "2026-08-26T08:05:00+08:00", pending: 4, published: 39 },
     { id: "acc-012", name: "鸿途汽车·西安雁塔店", group: "城市店", city: "西安", enabled: true, status: "正在发布", progress: 47, time: "预计 08:51 完成", pending: 5, published: 31 },
     { id: "acc-013", name: "鸿途汽车·南京栖霞店", group: "城市店", city: "南京", enabled: true, status: "已发布", progress: 100, time: "08:28 已发布", publishedAt: "2026-08-27T08:28:00+08:00", pending: 3, published: 36 },
-    { id: "acc-014", name: "鸿途汽车·长沙芙蓉店", group: "城市店", city: "长沙", enabled: true, status: "发布异常", progress: 0, time: "发布失败", pending: 2, published: 24, failureType: "rpa", error: "发布失败，请稍后重试" },
+    { id: "acc-014", name: "鸿途汽车·长沙芙蓉店", group: "城市店", city: "长沙", enabled: true, status: "发布异常", progress: 0, time: "发布失败", pending: 2, published: 24, failureType: "rpa", error: "发布失败，请点击重新发布" },
   ];
   const V13_MONITORS = [
     { id: "ma-001", name: "鸿途汽车官方", handle: "hongtu_official", auto: true, lastSync: "今天 09:00", works: 12 },
@@ -2474,6 +2469,41 @@
     { id: "ma-005", name: "家装车对比研究所", handle: "jiazheng_duibi", auto: false, lastSync: "08-11 18:00", works: 3, paused: true },
     { id: "ma-006", name: "星途凌云日常", handle: "xingtu_lingyun_vlog", auto: true, lastSync: "今天 09:00", works: 6 },
   ];
+  function v13Monitors() {
+    const custom = Array.isArray(v13State().monitors) ? v13State().monitors : [];
+    return [...V13_MONITORS, ...custom];
+  }
+  function v13MonitorById(id) {
+    return v13Monitors().find((monitor) => monitor.id === id);
+  }
+  function v13UpdateMonitor(id, patch) {
+    const custom = Array.isArray(v13State().monitors) ? [...v13State().monitors] : [];
+    const customIndex = custom.findIndex((monitor) => monitor.id === id);
+    if (customIndex >= 0) {
+      custom[customIndex] = { ...custom[customIndex], ...patch };
+      v13Patch({ monitors: custom });
+      return custom[customIndex];
+    }
+    const seeded = V13_MONITORS.find((monitor) => monitor.id === id);
+    if (!seeded) return null;
+    Object.assign(seeded, patch);
+    persistWuJian();
+    return seeded;
+  }
+  function v13DeleteMonitor(id) {
+    const custom = Array.isArray(v13State().monitors) ? [...v13State().monitors] : [];
+    const customIndex = custom.findIndex((monitor) => monitor.id === id);
+    if (customIndex >= 0) {
+      custom.splice(customIndex, 1);
+      v13Patch({ monitors: custom });
+      return true;
+    }
+    const seededIndex = V13_MONITORS.findIndex((monitor) => monitor.id === id);
+    if (seededIndex < 0) return false;
+    V13_MONITORS.splice(seededIndex, 1);
+    persistWuJian();
+    return true;
+  }
   const V13_WORKS_SEED = [
     { id: "wp-001", title: "星途 E7 后排空间实测", source: "监控抓取", from: "鸿途汽车官方", duration: "00:30", grabbedAt: "今天 09:05" },
     { id: "wp-002", title: "一次看懂 E7 增程续航", source: "监控抓取", from: "鸿途汽车官方", duration: "00:42", grabbedAt: "今天 09:06" },
@@ -2543,14 +2573,19 @@
     return rows;
   }
   const V13_ACCOUNT_WORK_STATUSES = ["发布完成", "发布中", "发布失败", "待发布"];
+  const V13_ACCOUNT_WORK_FILTERS = ["待发布", "发布中", "发布完成", "发布失败", "取消发布"];
+  function v13AccountWorkFilters() {
+    const selected = Array.isArray(v13State().accountWorksFilters) ? v13State().accountWorksFilters.filter((filter) => ["all", ...V13_ACCOUNT_WORK_FILTERS].includes(filter)) : [];
+    return selected.length ? selected : ["all"];
+  }
   function v13AccountWorkStatus(accountId, work, index) {
     const overrides = v13State().accountWorkStatuses || {};
-    if (["待发布", "发布中", "发布完成", "发布失败"].includes(overrides[work.id])) return overrides[work.id];
-    if (["待发布", "发布中", "发布完成", "发布失败"].includes(work.status)) return work.status;
+    if ([...V13_ACCOUNT_WORK_FILTERS].includes(overrides[work.id])) return overrides[work.id];
+    if ([...V13_ACCOUNT_WORK_FILTERS].includes(work.status)) return work.status;
     return V13_ACCOUNT_WORK_STATUSES[index % V13_ACCOUNT_WORK_STATUSES.length];
   }
   function v13AccountWorkStatusTone(status) {
-    return { "待发布": "pending", "发布中": "publishing", "发布完成": "complete", "发布失败": "failed" }[status] || "pending";
+    return { "待发布": "pending", "发布中": "publishing", "发布完成": "complete", "发布失败": "failed", "取消发布": "canceled" }[status] || "pending";
   }
   function v13Published(account, index) {
     const generated = (v13State().generatedTasks || []).filter((task) => task.status === "已完成" && (task.accountIds || []).includes(account.id));
@@ -2639,16 +2674,16 @@
       ? `<video class="wjv-wall-media" autoplay muted loop playsinline preload="metadata" poster="${v13Cover(index)}" src="${v13Video(index)}" aria-label="${escapeHtml(account.name)}账号发布过程视频"></video>`
       : queued
         ? `<div class="wjv-wall-empty is-queue"><span class="wjv-wall-empty-icon" aria-hidden="true">⋯</span><strong>排队中</strong><small>待发布，暂时没有可展示视频</small></div>`
-        : `<div class="wjv-wall-empty is-error"><span class="wjv-wall-empty-icon" aria-hidden="true">!</span><strong>${errorLabel}</strong><small>${escapeHtml(account.error || "发布失败，请稍后重试")}</small></div>`;
+        : `<div class="wjv-wall-empty is-error"><span class="wjv-wall-empty-icon" aria-hidden="true">!</span><strong>${errorLabel}</strong><small>${escapeHtml(account.error || "发布失败，请点击重新发布")}</small></div>`;
     const stateTag = errored ? `<i class="wjv-wall-state is-error">!</i>` : queued ? `<i class="wjv-wall-state is-queue">⋯</i>` : publishing ? `<i class="wjv-wall-state is-live"></i>` : `<i class="wjv-wall-state is-done">✓</i>`;
     const mediaTime = done ? v13WallTime(account) : account.time;
     const action = errored
-      ? account.failureType === "marketing" ? `<button type="button" class="wjv-wall-link is-primary" data-wjv-account-todo="${escapeHtml(account.id)}" data-wjv-account-name="${escapeHtml(account.name)}">去处理</button>` : `<span class="wjv-wall-error-note">请稍后重试</span>`
+      ? account.failureType === "marketing" ? `<button type="button" class="wjv-wall-link is-primary" data-wjv-account-todo="${escapeHtml(account.id)}" data-wjv-account-name="${escapeHtml(account.name)}">去处理</button>` : `<button type="button" class="wjv-wall-link is-primary" data-wjv-republish-account="${escapeHtml(account.id)}">重新发布</button>`
       : `<button type="button" class="wjv-wall-link" data-wjv-view-account="${escapeHtml(account.id)}">查看作品</button>`;
     return `<article class="wjv-wall-card is-${errored ? "error" : publishing ? "live" : queued ? "queue" : "done"}">
       <div class="wjv-wall-media">${media}${stateTag}${mediaTime ? `<span class="wjv-wall-time">${escapeHtml(mediaTime)}</span>` : ""}</div>
       <div class="wjv-wall-body">
-        <header><div><strong>${escapeHtml(account.name)}</strong><small>${escapeHtml(account.city)}</small></div>${v13Pill(account.status)}</header>
+        <header><div><strong>${escapeHtml(account.name)}</strong></div>${v13Pill(account.status)}</header>
         <div class="wjv-wall-progress"><i><b style="width:${account.progress}%"></b></i></div>
         <footer><span>${escapeHtml(publishing ? "正在发布" : queued ? "排队中" : done ? "已发布" : errorLabel)}</span>${action}</footer>
       </div>
@@ -2680,15 +2715,16 @@
   function v13AccountPicker() {
     const s = v13State();
     const selected = new Set(s.taskAccounts || []);
-    const filter = s.taskGroup || "all";
-    const groups = [["all", "全部账号", V13_ACCOUNTS.length], ...V13_GROUPS.map((g) => [g, g, V13_ACCOUNTS.filter((a) => a.group === g).length])];
-    const visible = V13_ACCOUNTS.filter((a) => filter === "all" || a.group === filter);
-    const allChecked = visible.length > 0 && visible.every((a) => selected.has(a.id));
+    const allChecked = V13_ACCOUNTS.length > 0 && V13_ACCOUNTS.every((a) => selected.has(a.id));
     return `<section class="wjv-step">
       <div class="wjv-step-options">
-        <div class="wjv-filter-row"><div class="wjv-segmented">${groups.map(([key, label, count]) => `<button type="button" class="${filter === key ? "is-active" : ""}" data-wjv-group="${escapeHtml(key)}">${escapeHtml(label)}<em>${count}</em></button>`).join("")}</div><button type="button" class="wjv-quiet" data-wjv-account-all>${allChecked ? "取消全选" : "全选当前范围"}</button></div>
-        <div class="wjv-account-grid">${visible.map((a) => `<label class="wjv-account-option${selected.has(a.id) ? " is-selected" : ""}"><input type="checkbox" data-wjv-account="${escapeHtml(a.id)}" ${selected.has(a.id) ? "checked" : ""}><span><i>${escapeHtml(a.name.slice(-1))}</i><strong>${escapeHtml(a.name)}</strong><small>${escapeHtml(a.group)} · ${escapeHtml(a.city)}</small></span><em>${selected.has(a.id) ? "✓" : ""}</em></label>`).join("")}</div>
-        <p class="wjv-step-count">已选 <b>${selected.size}</b> 个账号</p>
+        <div class="wjv-account-picker-head">
+          <div class="wjv-account-picker-title"><span>发布账号</span><strong>选择要发布的账号</strong><small>可多选，视频将分发到选中的账号</small></div>
+          <div class="wjv-account-selected-count" aria-live="polite"><b>${selected.size}</b><span>/${V13_ACCOUNTS.length} 个账号</span></div>
+        </div>
+        <div class="wjv-account-toolbar"><span>已接入 ${V13_ACCOUNTS.length} 个账号</span><button type="button" class="wjv-quiet" data-wjv-account-all>${allChecked ? "取消全选" : "全选账号"}</button></div>
+        <div class="wjv-account-grid">${V13_ACCOUNTS.map((a) => { const groupClass = a.group === "旗舰店" ? "is-flagship" : a.group === "城市店" ? "is-city" : "is-franchise"; const isSelected = selected.has(a.id); return `<label class="wjv-account-option${isSelected ? " is-selected" : ""}"><input type="checkbox" data-wjv-account="${escapeHtml(a.id)}" aria-label="选择${escapeHtml(a.name)}" ${isSelected ? "checked" : ""}><span class="wjv-account-avatar ${groupClass}" aria-hidden="true">${escapeHtml(a.city.slice(0, 1))}</span><span class="wjv-account-details"><strong>${escapeHtml(a.name)}</strong><small><em>${escapeHtml(a.group)}</em><span>${escapeHtml(a.city)}</span></small></span><span class="wjv-account-check" aria-hidden="true">${isSelected ? "✓" : ""}</span></label>`; }).join("")}</div>
+        <p class="wjv-step-count"><b>${selected.size}</b> 个账号已选</p>
       </div>
       <footer class="wjv-step-actions"><button type="button" class="is-primary" data-wjv-step-next>下一步 · 选择素材 <span aria-hidden="true">→</span></button></footer>
     </section>`;
@@ -2814,7 +2850,7 @@
     return `<tr><td><strong>${escapeHtml(monitor.name)}</strong><small>@${escapeHtml(monitor.handle)}</small></td><td>${monitor.works} 条</td><td>${escapeHtml(monitor.lastSync)}</td><td><button type="button" class="wjv-switch${monitor.auto ? " is-on" : ""}" data-wjv-monitor-auto="${escapeHtml(monitor.id)}" aria-label="切换 ${escapeHtml(monitor.name)} 每日自动抓取" aria-pressed="${monitor.auto ? "true" : "false"}"><i></i></button><span class="wjv-switch-label">${monitor.auto ? "开启" : "关闭"}</span></td><td>${monitor.paused ? `<span class="wjv-paused">已暂停</span>` : `<span class="wjv-live-dot"><i></i>监控中</span>`}</td><td><div class="wjv-row-actions"><button type="button" data-wjv-monitor-sync="${escapeHtml(monitor.id)}">${monitor.paused ? "恢复监控" : "同步"}</button><button type="button" class="is-danger" data-wjv-monitor-delete="${escapeHtml(monitor.id)}">删除</button></div></td></tr>`;
   }
   function v13LibraryMonitor() {
-    const rows = V13_MONITORS;
+    const rows = v13Monitors();
     return `<section class="wjv-lib-panel">
       ${v13SectionHead("作品库", "监控抖音账号", "配置要监控的抖音账号，新发布的作品自动进入待发布作品池。", `<button type="button" class="is-primary" data-wjv-monitor-add>＋ 添加监控账号</button>`)}
       <div class="ai-matrix-table"><table><thead><tr><th>账号</th><th>已获取作品</th><th>最近同步</th><th>每日自动抓取</th><th>状态</th><th>操作</th></tr></thead><tbody>${rows.map(v13MonitorRow).join("")}</tbody></table></div>
@@ -2829,6 +2865,18 @@
     </div>`;
   }
 
+  function wujianV13MonitorAddModal() {
+    if (!v13State().monitorAddOpen) return "";
+    return `<div class="wjv-modal-backdrop" data-wjv-monitor-add-close></div><section class="wjv-modal wjv-monitor-add-modal" role="dialog" aria-modal="true" aria-labelledby="wjv-monitor-add-title">
+      <header><div><span>监控账号</span><h3 id="wjv-monitor-add-title">添加抖音账号</h3><p>输入抖音号后即可开始监控新作品。</p></div><button type="button" data-wjv-monitor-add-close aria-label="关闭">×</button></header>
+      <form class="wjv-monitor-add-form" data-wjv-monitor-add-form>
+        <label><span>抖音号</span><input name="handle" value="${escapeHtml(v13State().monitorDraftHandle || "")}" placeholder="例如：hongtu_official" autocomplete="off" required></label>
+        <small>支持输入抖音号或带 @ 的账号标识。</small>
+        <footer><button type="button" class="is-primary" data-wjv-monitor-add-submit>开始监控</button><button type="button" data-wjv-monitor-add-cancel>取消</button></footer>
+      </form>
+    </section>`;
+  }
+
   /* ---------- 账号作品弹窗 ---------- */
   function wujianV13AccountModal() {
     const openId = v13State().accountWorksOpen;
@@ -2837,16 +2885,23 @@
     const account = V13_ACCOUNTS[index];
     if (!account) return "";
     const allRows = v13AccountWorks(account.id, index).map((work, workIndex) => ({ ...work, status: v13AccountWorkStatus(account.id, work, workIndex) }));
-    const statusFilter = ["all", "待发布", "发布中", "发布完成", "发布失败"].includes(v13State().accountWorksFilter) ? v13State().accountWorksFilter : "all";
-    const rows = statusFilter === "all" ? allRows : allRows.filter((work) => work.status === statusFilter);
-    const statusTabs = [["all", "全部"], ["待发布", "待发布"], ["发布中", "发布中"], ["发布完成", "发布完成"], ["发布失败", "发布失败"]];
+    const selectedFilters = v13AccountWorkFilters();
+    const showAll = selectedFilters.includes("all") || selectedFilters.length === 0;
+    const rows = showAll ? allRows : allRows.filter((work) => selectedFilters.includes(work.status));
+    const statusFilters = [["all", "全部"], ...V13_ACCOUNT_WORK_FILTERS.map((status) => [status, status])];
     const statusCounts = allRows.reduce((counts, work) => { counts[work.status] = (counts[work.status] || 0) + 1; return counts; }, {});
     const completedCount = statusCounts["发布完成"] || 0;
-    const statusTime = (work) => work.status === "发布完成" ? work.publishedAt : work.status === "发布中" ? "正在发布" : work.status === "待发布" ? "待安排" : "发布失败";
+    const statusTime = (work) => work.status === "发布完成" ? work.publishedAt : work.status === "发布中" ? "正在发布" : work.status === "待发布" ? "待安排" : work.status === "取消发布" ? "已取消" : "发布失败";
     const statusMarkup = (status) => `<span class="wjv-modal-status is-${v13AccountWorkStatusTone(status)}"><i></i>${escapeHtml(status)}</span>`;
+    const selectedStatusSet = new Set(selectedFilters);
+    const allChecked = showAll;
+    const filterMarkup = statusFilters.map(([key, label]) => {
+      const checked = key === "all" ? allChecked : allChecked || selectedStatusSet.has(key);
+      return `<label class="${checked ? "is-checked" : ""}"><input type="checkbox" data-wjv-account-work-filter="${escapeHtml(key)}"${checked ? " checked" : ""}><span>${escapeHtml(label)}</span><em>${key === "all" ? allRows.length : statusCounts[key] || 0}</em></label>`;
+    }).join("");
     return `<div class="wjv-modal-backdrop" data-wjv-modal-close></div><section class="wjv-modal" role="dialog" aria-modal="true" aria-labelledby="wjv-modal-title">
       <header><div><span>发布作品</span><h3 id="wjv-modal-title">${escapeHtml(account.name)}</h3><p>共 ${allRows.length} 条作品 · ${completedCount} 条发布完成 · ${escapeHtml(account.city)}</p></div><button type="button" data-wjv-modal-close aria-label="关闭">×</button></header>
-      <div class="wjv-modal-body"><nav class="wjv-modal-status-tabs" role="tablist" aria-label="作品发布状态筛选">${statusTabs.map(([key, label]) => `<button type="button" role="tab" class="${statusFilter === key ? "is-active" : ""}" aria-selected="${statusFilter === key ? "true" : "false"}" data-wjv-account-work-filter="${escapeHtml(key)}">${escapeHtml(label)}<em>${key === "all" ? allRows.length : statusCounts[key] || 0}</em></button>`).join("")}</nav><div class="ai-matrix-table"><table><thead><tr><th>封面</th><th>作品标题</th><th>发布状态</th><th>时长</th><th>发布时间</th><th>播放</th><th>点赞</th><th>评论</th><th>收藏</th><th>分享</th><th>操作</th></tr></thead><tbody>${rows.length ? rows.map((w) => `<tr><td>${w.link ? `<a href="${escapeHtml(w.link)}" target="_blank" rel="noopener noreferrer"><img class="wjv-modal-cover" src="${escapeHtml(w.cover)}" alt="${escapeHtml(w.title)}"></a>` : `<img class="wjv-modal-cover" src="${escapeHtml(w.cover)}" alt="${escapeHtml(w.title)}">`}</td><td><strong>${escapeHtml(w.title)}</strong></td><td>${statusMarkup(w.status)}</td><td>${escapeHtml(w.duration)}</td><td>${escapeHtml(statusTime(w))}</td><td>${w.plays.toLocaleString()}</td><td>${w.likes.toLocaleString()}</td><td>${w.comments.toLocaleString()}</td><td>${w.favorites.toLocaleString()}</td><td>${w.shares.toLocaleString()}</td><td>${w.status === "发布失败" ? `<button type="button" class="wjv-link is-retry" data-wjv-retry-account-work="${escapeHtml(account.id)}" data-wjv-account-work-id="${escapeHtml(w.id)}">重试发布</button>` : w.link ? `<a class="wjv-link" href="${escapeHtml(w.link)}" target="_blank" rel="noopener noreferrer">打开抖音</a>` : `<span class="wjv-link is-muted">链接同步中</span>`}</td></tr>`).join("") : `<tr><td colspan="11"><div class="wjv-modal-empty">暂无${statusFilter === "all" ? "符合条件" : escapeHtml(statusFilter)}作品</div></td></tr>`}</tbody></table></div></div>
+      <div class="wjv-modal-body"><fieldset class="wjv-modal-status-filters"><legend>筛选状态</legend>${filterMarkup}</fieldset><div class="ai-matrix-table"><table><thead><tr><th>封面</th><th>作品标题</th><th>发布状态</th><th>时长</th><th>发布时间</th><th>播放</th><th>点赞</th><th>评论</th><th>收藏</th><th>分享</th><th>操作</th></tr></thead><tbody>${rows.length ? rows.map((w) => { const action = w.status === "待发布" ? `<button type="button" class="wjv-link is-cancel" data-wjv-cancel-account-work="${escapeHtml(account.id)}" data-wjv-account-work-id="${escapeHtml(w.id)}">取消发布</button>` : w.status === "发布失败" ? `<button type="button" class="wjv-link is-retry" data-wjv-retry-account-work="${escapeHtml(account.id)}" data-wjv-account-work-id="${escapeHtml(w.id)}">重试发布</button>` : w.status === "取消发布" ? `<span class="wjv-link is-muted">已取消</span>` : w.link ? `<a class="wjv-link" href="${escapeHtml(w.link)}" target="_blank" rel="noopener noreferrer">打开抖音</a>` : `<span class="wjv-link is-muted">链接同步中</span>`; return `<tr><td>${w.link ? `<a href="${escapeHtml(w.link)}" target="_blank" rel="noopener noreferrer"><img class="wjv-modal-cover" src="${escapeHtml(w.cover)}" alt="${escapeHtml(w.title)}"></a>` : `<img class="wjv-modal-cover" src="${escapeHtml(w.cover)}" alt="${escapeHtml(w.title)}">`}</td><td><strong>${escapeHtml(w.title)}</strong></td><td>${statusMarkup(w.status)}</td><td>${escapeHtml(w.duration)}</td><td>${escapeHtml(statusTime(w))}</td><td>${w.plays.toLocaleString()}</td><td>${w.likes.toLocaleString()}</td><td>${w.comments.toLocaleString()}</td><td>${w.favorites.toLocaleString()}</td><td>${w.shares.toLocaleString()}</td><td>${action}</td></tr>`; }).join("") : `<tr><td colspan="11"><div class="wjv-modal-empty">暂无${showAll ? "符合条件" : escapeHtml(selectedFilters.join("、"))}作品</div></td></tr>`}</tbody></table></div></div>
       </section>`;
   }
 
@@ -2855,6 +2910,8 @@
     if (!root) return;
     clearWuJianAssetPickerPortal();
     state.selected = "ai-video";
+    const activeView = root.closest(".app-view");
+    if (activeView) activeView.classList.toggle("wjv-modal-view", Boolean(v13State().accountWorksOpen || v13State().monitorAddOpen));
     const section = ["overview", "publish", "library"].includes(v13State().section) ? v13State().section : "overview";
     v13Patch({ section });
     const tabs = [["publish", "发布任务"], ["overview", "总览"], ["library", "作品库"]];
@@ -2862,7 +2919,7 @@
     const workspace = root.querySelector("#demo-live-workspace") || root;
     workspace.innerHTML = `<div class="demo-wujian-live-workspace demo-wujian-matrix-workspace wjv-workspace">
       <nav class="demo-wujian-live-nav" aria-label="短视频运营专员工作区导航"><div><span>短视频运营专员</span><strong>矩阵搬运发布</strong></div><div class="demo-wujian-live-nav-tabs">${tabs.map(([key, label]) => `<button type="button" class="${section === key ? "is-active" : ""}" data-wjv-section="${key}">${escapeHtml(label)}</button>`).join("")}</div></nav>
-      <main class="demo-wujian-live-main demo-wujian-matrix-main" data-wjv-content="${escapeHtml(section)}">${content}${wujianV13AccountModal()}</main>
+      <main class="demo-wujian-live-main demo-wujian-matrix-main" data-wjv-content="${escapeHtml(section)}">${content}${wujianV13AccountModal()}${wujianV13MonitorAddModal()}</main>
     </div>`;
     portalWuJianAssetPicker(workspace);
   }
@@ -3536,7 +3593,7 @@
     }
     const wjvNewTask = event.target.closest("[data-wjv-new-task]");
     if (wjvNewTask) {
-      v13Patch({ publishView: "create", taskStep: 1, taskAccounts: [], taskWorks: [], taskTiming: "now", taskScheduleAt: "2026-08-26T18:30", taskTitleMode: "none", taskTitleCopy: "", taskGroup: "all", workFilter: "all" });
+      v13Patch({ publishView: "create", taskStep: 1, taskAccounts: [], taskWorks: [], taskTiming: "now", taskScheduleAt: "2026-08-26T18:30", taskTitleMode: "none", taskTitleCopy: "", workFilter: "all" });
       refreshWuJianLiveWorkspace();
       return;
     }
@@ -3564,19 +3621,11 @@
       refreshWuJianLiveWorkspace();
       return;
     }
-    const wjvGroup = event.target.closest("[data-wjv-group]");
-    if (wjvGroup) {
-      v13Patch({ taskGroup: wjvGroup.dataset.wjvGroup || "all" });
-      refreshWuJianLiveWorkspace();
-      return;
-    }
     const wjvAccountAll = event.target.closest("[data-wjv-account-all]");
     if (wjvAccountAll) {
-      const filter = v13State().taskGroup || "all";
-      const visible = V13_ACCOUNTS.filter((a) => filter === "all" || a.group === filter);
       const selected = new Set(v13State().taskAccounts || []);
-      const allChecked = visible.length > 0 && visible.every((a) => selected.has(a.id));
-      visible.forEach((a) => { if (allChecked) selected.delete(a.id); else selected.add(a.id); });
+      const allChecked = V13_ACCOUNTS.length > 0 && V13_ACCOUNTS.every((a) => selected.has(a.id));
+      V13_ACCOUNTS.forEach((a) => { if (allChecked) selected.delete(a.id); else selected.add(a.id); });
       v13Patch({ taskAccounts: Array.from(selected) });
       refreshWuJianLiveWorkspace();
       return;
@@ -3656,14 +3705,18 @@
     }
     const wjvViewAccount = event.target.closest("[data-wjv-view-account]");
     if (wjvViewAccount) {
-      v13Patch({ accountWorksOpen: wjvViewAccount.dataset.wjvViewAccount || "", accountWorksFilter: "all" });
+      v13Patch({ accountWorksOpen: wjvViewAccount.dataset.wjvViewAccount || "", accountWorksFilters: ["all"], accountWorksFilter: "all" });
       refreshWuJianLiveWorkspace();
       return;
     }
-    const wjvAccountWorkFilter = event.target.closest("[data-wjv-account-work-filter]");
-    if (wjvAccountWorkFilter) {
-      v13Patch({ accountWorksFilter: wjvAccountWorkFilter.dataset.wjvAccountWorkFilter || "all" });
+    const wjvCancelAccountWork = event.target.closest("[data-wjv-cancel-account-work]");
+    if (wjvCancelAccountWork) {
+      const workId = wjvCancelAccountWork.dataset.wjvAccountWorkId || "";
+      const statuses = { ...(v13State().accountWorkStatuses || {}) };
+      statuses[workId] = "取消发布";
+      v13Patch({ accountWorkStatuses: statuses, accountWorksFilters: ["取消发布"], accountWorksFilter: "取消发布" });
       refreshWuJianLiveWorkspace();
+      if (typeof showToast === "function") showToast("已取消发布", "该作品已从发布队列中取消");
       return;
     }
     const wjvRetryAccountWork = event.target.closest("[data-wjv-retry-account-work]");
@@ -3671,7 +3724,7 @@
       const workId = wjvRetryAccountWork.dataset.wjvAccountWorkId || "";
       const statuses = { ...(v13State().accountWorkStatuses || {}) };
       statuses[workId] = "待发布";
-      v13Patch({ accountWorkStatuses: statuses, accountWorksFilter: "待发布" });
+      v13Patch({ accountWorkStatuses: statuses, accountWorksFilters: ["待发布"], accountWorksFilter: "待发布" });
       refreshWuJianLiveWorkspace();
       if (typeof showToast === "function") showToast("已重新加入待发布", "该作品状态已更新为待发布，可继续安排发布");
       return;
@@ -3706,33 +3759,72 @@
       }
       return;
     }
+    const wjvRepublishAccount = event.target.closest("[data-wjv-republish-account]");
+    if (wjvRepublishAccount) {
+      const account = V13_ACCOUNTS.find((item) => item.id === wjvRepublishAccount.dataset.wjvRepublishAccount);
+      if (account && account.status === "发布异常" && account.failureType !== "marketing") {
+        account.status = "排队中";
+        account.progress = 0;
+        account.time = "等待发布";
+        account.error = "";
+        account.failureType = "";
+        renderSidePanel();
+        refreshWuJianLiveWorkspace();
+        if (typeof showToast === "function") showToast("已重新发布", `${account.name} 已重新加入发布队列`);
+      }
+      return;
+    }
     const wjvMonitorAdd = event.target.closest("[data-wjv-monitor-add]");
     if (wjvMonitorAdd) {
-      V13_MONITORS.unshift({ id: `ma-${Date.now()}`, name: "鸿途汽车·新店账号", handle: "hongtu_new_store", auto: true, lastSync: "刚刚", works: 0 });
+      v13Patch({ monitorAddOpen: true, monitorDraftHandle: "" });
       refreshWuJianLiveWorkspace();
-      if (typeof showToast === "function") showToast("已添加监控账号", "开始自动抓取该账号的新作品");
+      window.setTimeout(() => document.querySelector('.wjv-monitor-add-modal input[name="handle"]')?.focus(), 0);
+      return;
+    }
+    const wjvMonitorAddClose = event.target.closest("[data-wjv-monitor-add-close], [data-wjv-monitor-add-cancel]");
+    if (wjvMonitorAddClose) {
+      v13Patch({ monitorAddOpen: false, monitorDraftHandle: "" });
+      refreshWuJianLiveWorkspace();
+      return;
+    }
+    const wjvMonitorAddSubmit = event.target.closest("[data-wjv-monitor-add-submit]");
+    if (wjvMonitorAddSubmit) {
+      const form = wjvMonitorAddSubmit.closest("[data-wjv-monitor-add-form]");
+      const rawHandle = String(new FormData(form || undefined).get("handle") || "").trim();
+      const handle = rawHandle.replace(/^@+/, "").replace(/\s+/g, "");
+      if (!handle) {
+        if (typeof showToast === "function") showToast("请输入抖音号", "输入抖音号后才能开始监控");
+        return;
+      }
+      if (v13Monitors().some((monitor) => String(monitor.handle).toLowerCase() === handle.toLowerCase())) {
+        if (typeof showToast === "function") showToast("账号已存在", `@${handle} 已在监控列表中`);
+        return;
+      }
+      const custom = Array.isArray(v13State().monitors) ? [...v13State().monitors] : [];
+      custom.unshift({ id: `ma-${Date.now()}`, name: handle, handle, auto: true, lastSync: "尚未同步", works: 0 });
+      v13Patch({ monitors: custom, monitorAddOpen: false, monitorDraftHandle: "" });
+      refreshWuJianLiveWorkspace();
+      if (typeof showToast === "function") showToast("已开始监控", `正在监控 @${handle}`);
       return;
     }
     const wjvMonitorAuto = event.target.closest("[data-wjv-monitor-auto]");
     if (wjvMonitorAuto) {
-      const row = V13_MONITORS.find((m) => m.id === wjvMonitorAuto.dataset.wjvMonitorAuto);
-      if (row) row.auto = !row.auto;
+      const row = v13MonitorById(wjvMonitorAuto.dataset.wjvMonitorAuto);
+      if (row) v13UpdateMonitor(row.id, { auto: !row.auto });
       refreshWuJianLiveWorkspace();
       return;
     }
     const wjvMonitorSync = event.target.closest("[data-wjv-monitor-sync]");
     if (wjvMonitorSync) {
-      const row = V13_MONITORS.find((m) => m.id === wjvMonitorSync.dataset.wjvMonitorSync);
-      if (row) { row.lastSync = "刚刚"; row.paused = false; row.works += 1; }
+      const row = v13MonitorById(wjvMonitorSync.dataset.wjvMonitorSync);
+      if (row) v13UpdateMonitor(row.id, { lastSync: "刚刚", paused: false, works: Number(row.works || 0) + 1 });
       refreshWuJianLiveWorkspace();
       if (typeof showToast === "function") showToast("同步完成", "最新作品已落入待发布作品池");
       return;
     }
     const wjvMonitorDelete = event.target.closest("[data-wjv-monitor-delete]");
     if (wjvMonitorDelete) {
-      const id = wjvMonitorDelete.dataset.wjvMonitorDelete;
-      const index = V13_MONITORS.findIndex((m) => m.id === id);
-      if (index >= 0) V13_MONITORS.splice(index, 1);
+      v13DeleteMonitor(wjvMonitorDelete.dataset.wjvMonitorDelete);
       refreshWuJianLiveWorkspace();
       return;
     }
@@ -3937,21 +4029,12 @@
       refreshWuJianLiveWorkspace();
       return;
     }
-    const publishTaskAccountGroup = event.target.closest("[data-wujian-publish-account-group]");
-    if (publishTaskAccountGroup) {
-      const group = publishTaskAccountGroup.dataset.wujianPublishAccountGroup || "all";
-      const accounts = wuJianPublishTaskAccounts().filter((row) => group === "all" || (group === "flagship" ? row.group === "旗舰店" : group === "city" ? row.group === "城市店" : row.group === "专营店"));
-      state.wuJian.publishTaskAccountGroup = group;
-      state.wuJian.publishTaskAccountIds = accounts.map((row) => row.id);
-      persistWuJian();
-      refreshWuJianLiveWorkspace();
-      return;
-    }
     const publishTaskAccountAll = event.target.closest("[data-wujian-publish-account-all]");
     if (publishTaskAccountAll) {
-      const group = state.wuJian.publishTaskAccountGroup || "all";
-      const accounts = wuJianPublishTaskAccounts().filter((row) => group === "all" || (group === "flagship" ? row.group === "旗舰店" : group === "city" ? row.group === "城市店" : row.group === "专营店"));
-      state.wuJian.publishTaskAccountIds = accounts.map((row) => row.id);
+      const accounts = wuJianPublishTaskAccounts();
+      const selected = new Set(state.wuJian.publishTaskAccountIds || []);
+      const allChecked = accounts.length > 0 && accounts.every((row) => selected.has(row.id));
+      state.wuJian.publishTaskAccountIds = allChecked ? [] : accounts.map((row) => row.id);
       persistWuJian();
       refreshWuJianLiveWorkspace();
       return;
@@ -4026,11 +4109,11 @@
       const messages = Array.isArray(state.wuJian.publishTaskMessages) ? state.wuJian.publishTaskMessages : [];
       state.wuJian.publishTaskMessages = [...messages, { role: "user", text }].slice(-8);
       if (step === 1) {
-        const group = text.includes("旗舰") ? "flagship" : text.includes("城市") ? "city" : text.includes("专营") ? "franchise" : text.includes("全部") ? "all" : "";
-        if (group) {
-          const accounts = wuJianPublishTaskAccounts().filter((row) => group === "all" || (group === "flagship" ? row.group === "旗舰店" : group === "city" ? row.group === "城市店" : row.group === "专营店"));
-          state.wuJian.publishTaskAccountGroup = group;
-          state.wuJian.publishTaskAccountIds = accounts.map((row) => row.id);
+        const accounts = wuJianPublishTaskAccounts();
+        const requested = accounts.filter((row) => text.includes(row.name) || text.includes(row.id));
+        const selected = text.includes("全部") ? accounts : requested;
+        if (selected.length) {
+          state.wuJian.publishTaskAccountIds = selected.map((row) => row.id);
           state.wuJian.publishTaskStep = 2;
         }
       } else if (step === 2) {
@@ -4522,6 +4605,11 @@
   }
 
   function handleSubmit(event) {
+    if (event.target.matches("[data-wjv-monitor-add-form]")) {
+      event.preventDefault();
+      event.target.querySelector("[data-wjv-monitor-add-submit]")?.click();
+      return;
+    }
     if (event.target.matches("[data-side-chat]")) { event.preventDefault(); handleChatSubmit(event.target); return; }
     if (event.target.id === "ai-wujian-chat-form") { event.preventDefault(); handleWuJianChatSubmit(event.target); return; }
     if (event.target.id === "ai-wujian-create-form") { event.preventDefault(); startWuJianGeneration(event.target); return; }
@@ -4618,6 +4706,26 @@
   }
 
   function handleChange(event) {
+    const wjvAccountWorkFilter = event.target.closest("[data-wjv-account-work-filter]");
+    if (wjvAccountWorkFilter) {
+      const key = wjvAccountWorkFilter.dataset.wjvAccountWorkFilter || "all";
+      const current = v13AccountWorkFilters();
+      let next;
+      if (key === "all") {
+        next = wjvAccountWorkFilter.checked ? ["all"] : [...V13_ACCOUNT_WORK_FILTERS];
+      } else if (current.includes("all")) {
+        next = wjvAccountWorkFilter.checked ? [key] : V13_ACCOUNT_WORK_FILTERS.filter((filter) => filter !== key);
+      } else {
+        const selected = new Set(current.filter((filter) => filter !== "all"));
+        if (wjvAccountWorkFilter.checked) selected.add(key); else selected.delete(key);
+        next = Array.from(selected);
+      }
+      if (!next.length) next = ["all"];
+      const legacyFilter = next.includes("all") ? "all" : next[0];
+      v13Patch({ accountWorksFilters: next, accountWorksFilter: legacyFilter });
+      refreshWuJianLiveWorkspace();
+      return;
+    }
     const wjvAccount = event.target.closest("[data-wjv-account]");
     if (wjvAccount) {
       const selected = new Set(v13State().taskAccounts || []);
