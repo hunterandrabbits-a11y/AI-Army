@@ -4509,6 +4509,9 @@ html[data-theme="dark"] .demo-live-view .xudou-barrage-feed article.is-high-inte
 .ai-works-library-card__action:hover { border-color: var(--ai-green); background: var(--ai-green-soft); }
 .ai-works-library-card__action.is-primary { border-color: var(--ai-green); color: #fff; background: var(--ai-green); }
 .ai-works-library-card__action.is-primary:hover { background: #0f7469; }
+.ai-works-library-card__actions { display: flex; align-items: center; gap: 6px; }
+.ai-works-library-card__actions .ai-works-library-card__action { width: auto; min-width: 88px; white-space: nowrap; }
+.ai-works-library-card__actions .ai-works-library-card__action.is-primary { flex: 1; min-width: 0; }
 .ai-works-library-review-actions { margin-top: 11px; display: grid; grid-template-columns: 1.15fr 1fr .72fr; gap: 6px; }
 .ai-works-library-card--review footer { margin-top: 0; }
 .ai-works-library-review-actions button { min-height: 30px; padding: 0 7px; border: 1px solid var(--ai-line); border-radius: 7px; color: var(--ai-green); background: var(--ai-paper); font-size: 11px; font-weight: 750; cursor: pointer; white-space: nowrap; }
@@ -4678,6 +4681,9 @@ html[data-theme="dark"] .demo-live-view .xudou-barrage-feed article.is-high-inte
 .ai-publish-task-source-item strong { overflow: hidden; color: var(--ai-ink); font-size: 11px; text-overflow: ellipsis; white-space: nowrap; }
 .ai-publish-task-source-item small { margin-top: 3px; color: var(--ai-muted); font-size: 10px; }
 .ai-publish-task-source-item em { color: var(--ai-muted); font-size: 10px; font-style: normal; white-space: nowrap; }
+.ai-publish-task-source-item:has(.ai-publish-task-source-download) { grid-template-columns: 42px minmax(0, 1fr) auto auto; }
+.ai-publish-task-source-download { min-height: 24px; padding: 0 7px; display: inline-flex; align-items: center; gap: 3px; border: 1px solid var(--ai-line); border-radius: 6px; color: var(--ai-green); background: var(--ai-paper); font-size: 10px; font-weight: 750; text-decoration: none; white-space: nowrap; cursor: pointer; }
+.ai-publish-task-source-download:hover { border-color: var(--ai-green); background: var(--ai-green-soft); }
 .ai-publish-task-uploaded { display: block; margin-top: 8px; color: var(--ai-green); font-size: 11px; }
 .ai-publish-task-remix-status { margin-top: 9px; padding: 9px 10px; display: grid; grid-template-columns: minmax(0, 1fr) auto; align-items: center; gap: 8px; border-radius: 8px; background: var(--ai-green-soft); }
 .ai-publish-task-remix-status strong, .ai-publish-task-remix-status small { display: block; }
@@ -5374,7 +5380,9 @@ html[data-theme="dark"] .results-prospect-panel .results-v12-legacy-table tbody 
 .wjv-work-body { padding: 9px 10px 10px; }
 .wjv-work-body h3 { margin: 0; font-size: 12px; line-height: 1.45; }
 .wjv-work-body p { margin: 4px 0 8px; color: var(--wjv-muted); font-size: 11px; }
-.wjv-work-body footer { text-align: right; }
+.wjv-work-body footer { display: flex; align-items: center; gap: 10px; text-align: right; }
+.wjv-work-body footer > :first-child { margin-left: auto; }
+.wjv-work-body footer a.wjv-link { text-decoration: none; }
 
 /* 监控账号 */
 .wjv-switch { position: relative; width: 32px; height: 18px; border: 0; border-radius: 9px; background: var(--wjv-canvas); cursor: pointer; transition: background .18s; vertical-align: middle; }
@@ -5410,6 +5418,17 @@ html[data-theme="dark"] .results-prospect-panel .results-v12-legacy-table tbody 
 .wjv-monitor-add-form > footer { display: flex; justify-content: flex-end; gap: 8px; margin-top: 20px; }
 .wjv-monitor-add-form > footer button { min-height: 34px; padding: 0 13px; border: 1px solid var(--wjv-line); border-radius: 8px; color: var(--wjv-ink-soft); background: var(--wjv-paper); font-size: 12px; font-weight: 700; cursor: pointer; }
 .wjv-monitor-add-form > footer button.is-primary { border-color: #111; color: #fff; background: #111; }
+.wjv-monitor-add-form > footer button[disabled] { opacity: .7; cursor: default; }
+.wjv-monitor-add-form input:disabled { color: var(--wjv-muted); background: var(--wjv-canvas); }
+.wjv-monitor-add-form > small code { padding: 1px 5px; border-radius: 5px; background: var(--wjv-canvas); font-size: 11px; }
+
+/* 添加监控账号：校验加载态与失败反馈 */
+.wjv-form-status { margin: 12px 0 0; display: flex; align-items: center; gap: 6px; font-size: 12px; line-height: 1.45; }
+.wjv-form-status.is-validating { color: var(--wjv-muted); }
+.wjv-form-status.is-error { color: var(--ai-danger); font-weight: 700; }
+.wjv-spinner { width: 12px; height: 12px; flex: none; display: inline-block; border: 2px solid currentColor; border-top-color: transparent; border-radius: 50%; animation: wjvSpin .7s linear infinite; }
+@keyframes wjvSpin { to { transform: rotate(360deg); } }
+.wjv-lib-note { margin: 12px 0 0; color: var(--wjv-muted); font-size: 12px; line-height: 1.5; }
 .wjv-modal-cover { width: 54px; height: 96px; object-fit: cover; border-radius: 6px; display: block; background: #0c1614; }
 .wjv-modal-status-tabs { margin-bottom: 14px; padding: 4px; display: flex; align-items: center; gap: 3px; overflow-x: auto; border: 1px solid var(--wjv-line); border-radius: 9px; background: var(--wjv-canvas); }
 .wjv-modal-status-tabs button { min-height: 34px; padding: 0 14px; flex: 1 0 auto; border: 0; border-radius: 7px; color: var(--wjv-muted); background: transparent; font-size: 12px; font-weight: 700; white-space: nowrap; cursor: pointer; }

@@ -9715,7 +9715,7 @@ html[data-theme="dark"] .demo-bubble--customer { color: #f2cf93; background: #38
   @media (max-width: 1000px) { .demo-chenfu-workspace { grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); }.demo-chenfu-workspace > .demo-xudou-panel:last-child { grid-column: 1 / -1; min-height: 260px; border-top: 1px solid var(--line); border-left: 0; } }
   @media (max-width: 680px) { .demo-chenfu-workspace { grid-template-columns: 1fr; }.demo-chenfu-workspace > .demo-xudou-panel + .demo-xudou-panel { border-top: 1px solid var(--line); border-left: 0; } }
   </style>
-  <link rel="stylesheet" href="assets/ai-office-enhancement.css?v=20260909-republish-failure-v1" />
+  <link rel="stylesheet" href="assets/ai-office-enhancement.css?v=20260911-monitor-validate-grab-v1" />
   <link rel="stylesheet" href="assets/results-prospect-dashboard.css?v=20260828-prospect-redesign-v2" />
   <link rel="stylesheet" href="assets/ai-office-visual-system.css?v=20260813-warning-v2" />
   <style id="conversation-view-style">
@@ -9898,6 +9898,7 @@ html[data-theme="dark"] .demo-bubble--customer { color: #f2cf93; background: #38
       .consumption-table-wrap { overflow-x: auto; border: 1px solid var(--line); border-radius: 10px; background: var(--paper); }
       .consumption-table { width: 100%; min-width: 1090px; border-collapse: collapse; text-align: left; }
       .consumption-table--compact { min-width: 520px; }
+      .consumption-table--account { min-width: 760px; }
       .consumption-table th { padding: 11px 12px; color: var(--muted); background: #f7f8fa; font-size: 12px; font-weight: 650; white-space: nowrap; }
       .consumption-table td { padding: 13px 12px; border-top: 1px solid var(--line); color: var(--ink-soft); font-size: 12px; white-space: nowrap; }
       .consumption-table tbody tr:hover { background: #fbfcfd; }
@@ -9905,6 +9906,7 @@ html[data-theme="dark"] .demo-bubble--customer { color: #f2cf93; background: #38
       .consumption-table .consumption-power { color: #b15c37; font-weight: 750; }
       .consumption-table .consumption-intent { color: #9b6019; }
       .consumption-table .consumption-intent.is-high { color: #a74742; }
+      .consumption-table .consumption-account { color: var(--ink); }
       .consumption-table .consumption-remark { color: var(--muted); }
       .consumption-pagination { min-height: 48px; padding: 8px 3px 0; display: flex; align-items: center; justify-content: flex-end; gap: 13px; color: var(--muted); font-size: 12px; }
       .consumption-pagination button { min-height: 30px; padding: 0 10px; border: 1px solid var(--line); border-radius: 6px; color: var(--ink-soft); background: var(--paper); font-size: 12px; cursor: pointer; }
@@ -11152,10 +11154,10 @@ const employees = [
     categories: ["content"],
     image: portrait("ai-video"),
     description: "完成抖音平台短视频矩阵账号的快速孵化，按发布任务批量发布短视频并回收效果。",
-    price: "¥199 / 账号 / 月",
-    priceNote: "每个接入账号每月 ¥199，覆盖排期发布与效果回收",
-    billing: "按账号按月托管",
-    billingShort: "按账号/月",
+    price: "¥5 / 账号 / 天",
+    priceNote: "按账号按日计费：当日开启即产生当日费用，次日扣费；关闭当天仍计费，次日起停止",
+    billing: "按账号按日计费",
+    billingShort: "按账号/天",
     status: "矩阵运营中",
     skills: ["矩阵管理", "每周排期", "统一审核", "效果回收"],
     stats: [["14", "接入账号"], ["本周已发布", "168 条"], ["68%", "本周完成率"]],
@@ -11836,15 +11838,15 @@ const consumptionRows = {
     { chargedAt: "2026-08-25 19:18:00", power: 80, remark: "日消耗扣费" },
   ],
   video: [
-    { chargedAt: "2026-08-27 00:05:00", power: 180, remark: "月消耗扣费" },
-    { chargedAt: "2026-08-26 00:05:00", power: 180, remark: "月消耗扣费" },
-    { chargedAt: "2026-08-25 00:05:00", power: 180, remark: "月消耗扣费" },
-    { chargedAt: "2026-08-24 00:05:00", power: 180, remark: "月消耗扣费" },
-    { chargedAt: "2026-08-23 00:05:00", power: 180, remark: "月消耗扣费" },
-    { chargedAt: "2026-08-22 00:05:00", power: 180, remark: "月消耗扣费" },
-    { chargedAt: "2026-08-21 00:05:00", power: 180, remark: "月消耗扣费" },
-    { chargedAt: "2026-08-20 00:05:00", power: 180, remark: "月消耗扣费" },
-    { chargedAt: "2026-08-19 00:05:00", power: 180, remark: "月消耗扣费" },
+    { chargedAt: "2026-08-27 00:05:00", account: "鸿途汽车·上海旗舰店", power: 50, remark: "日消耗扣费" },
+    { chargedAt: "2026-08-27 00:05:20", account: "鸿途汽车·杭州城西店", power: 50, remark: "日消耗扣费" },
+    { chargedAt: "2026-08-27 00:05:40", account: "鸿途汽车·苏州专营店", power: 50, remark: "日消耗扣费" },
+    { chargedAt: "2026-08-26 00:05:00", account: "鸿途汽车·上海旗舰店", power: 50, remark: "日消耗扣费" },
+    { chargedAt: "2026-08-26 00:05:20", account: "鸿途汽车·杭州城西店", power: 50, remark: "日消耗扣费" },
+    { chargedAt: "2026-08-26 00:05:40", account: "鸿途汽车·苏州专营店", power: 50, remark: "日消耗扣费" },
+    { chargedAt: "2026-08-25 00:05:00", account: "鸿途汽车·上海旗舰店", power: 50, remark: "日消耗扣费" },
+    { chargedAt: "2026-08-25 00:05:20", account: "鸿途汽车·杭州城西店", power: 50, remark: "日消耗扣费" },
+    { chargedAt: "2026-08-25 00:05:40", account: "鸿途汽车·苏州专营店", power: 50, remark: "日消耗扣费" },
   ],
 };
 let activeEmployeeId = null;
@@ -13381,15 +13383,19 @@ function renderConsumptionTable() {
   const table = $(".consumption-table");
   if (!head || !body || !table) return;
   const isLead = ["lead-main", "lead-sub"].includes(activeConsumptionRole);
+  const isAccountBilling = activeConsumptionRole === "video";
   ["consumption-contact-filter-wrap", "consumption-intent-filter-wrap"].forEach((id) => {
     const filter = document.getElementById(id);
     if (filter) filter.hidden = !isLead;
   });
   table.classList.toggle("consumption-table--compact", !isLead);
+  table.classList.toggle("consumption-table--account", isAccountBilling);
   const rows = isLead ? consumptionLeadRows(activeConsumptionRole) : (consumptionRows[activeConsumptionRole] || []);
   const headers = isLead
     ? ["客户信息", "联系方式", "留资时间", "留资账号", "城市", "车型", "预算", "客户意向", "电力值", "扣费时间"]
-    : ["扣费时间", "电力值", "扣费备注"];
+    : isAccountBilling
+      ? ["扣费时间", "扣费账号", "电力值", "扣费备注"]
+      : ["扣费时间", "电力值", "扣费备注"];
   head.innerHTML = `<tr>${headers.map((header) => `<th scope="col">${header}</th>`).join("")}</tr>`;
   const totalPages = Math.max(1, Math.ceil(rows.length / consumptionPageSize));
   consumptionPage = Math.min(Math.max(1, consumptionPage), totalPages);
@@ -13398,6 +13404,9 @@ function renderConsumptionTable() {
     if (isLead) {
       const intentClass = row.intent.includes("精准") ? "is-high" : "";
       return `<tr><td>${escapeHTML(row.customer)}</td><td>${escapeHTML(row.contact)}</td><td>${escapeHTML(row.capturedAt)}</td><td>${escapeHTML(row.account)}</td><td>${escapeHTML(row.city)}</td><td>${escapeHTML(row.model)}</td><td>${escapeHTML(row.budget)}</td><td><span class="consumption-intent ${intentClass}">${escapeHTML(row.intent)}</span></td><td class="consumption-power">${consumptionPowerLabel(row.power)}</td><td>${escapeHTML(row.chargedAt)}</td></tr>`;
+    }
+    if (isAccountBilling) {
+      return `<tr><td>${escapeHTML(row.chargedAt)}</td><td class="consumption-account">${escapeHTML(row.account)}</td><td class="consumption-power">${consumptionPowerLabel(row.power)}</td><td class="consumption-remark">${escapeHTML(row.remark)}</td></tr>`;
     }
     return `<tr><td>${escapeHTML(row.chargedAt)}</td><td class="consumption-power">${consumptionPowerLabel(row.power)}</td><td class="consumption-remark">${escapeHTML(row.remark)}</td></tr>`;
   }).join("") : `<tr><td colspan="${headers.length}" class="consumption-empty">暂无符合条件的消费明细</td></tr>`;
@@ -19909,8 +19918,14 @@ window.setInterval(streamDemoQueueSignal, 4200);
 
     /* Account binding */
     const prdAccountKey = "ai-legion-prd-accounts-v1";
+    const prdDouyinExtraAccounts = [
+      { id:"douyin-shanghai", platform:"douyin", nickname:"鸿途汽车上海店", account:"59610782345", type:"企业号", auth:{ platform:true, marketing:true }, service:{ "smart-reply":true, "lead-hunter":true }, lastAuth:"2026-08-02 10:12", expiry:"长期有效" },
+      { id:"douyin-hangzhou", platform:"douyin", nickname:"鸿途汽车杭州城西店", account:"68351209477", type:"企业号", auth:{ platform:true, marketing:true }, service:{ "smart-reply":true, "lead-hunter":true }, lastAuth:"2026-08-04 16:38", expiry:"长期有效" },
+      { id:"douyin-suzhou", platform:"douyin", nickname:"鸿途汽车苏州专营店", account:"74125698031", type:"企业号", auth:{ platform:true, marketing:true }, service:{ "smart-reply":true, "lead-hunter":true }, lastAuth:"2026-08-05 09:24", expiry:"长期有效" },
+      { id:"douyin-content", platform:"douyin", nickname:"鸿途汽车内容号", account:"80567413209", type:"企业号", auth:{ platform:true, marketing:false }, service:{ "smart-reply":true, "lead-hunter":true }, lastAuth:"2026-08-06 14:51", expiry:"长期有效" },
+    ];
     const prdAccountDefaults = {
-      douyin: [{ id:"douyin-demo", platform:"douyin", nickname:"鸿途汽车官方旗舰店", account:"46524370874", type:"企业号", auth:{ platform:true, marketing:true }, service:{ "smart-reply":true, "lead-hunter":true }, lastAuth:"2026-07-27 13:49", expiry:"长期有效" }],
+      douyin: [{ id:"douyin-demo", platform:"douyin", nickname:"鸿途汽车官方旗舰店", account:"46524370874", type:"企业号", auth:{ platform:true, marketing:true }, service:{ "smart-reply":true, "lead-hunter":true }, lastAuth:"2026-07-27 13:49", expiry:"长期有效" }, ...prdDouyinExtraAccounts],
       kuaishou: [{ id:"kuaishou-demo", platform:"kuaishou", nickname:"鸿途汽车快手官方号", account:"HTAUTO88", type:"企业号", auth:{ platform:true }, service:{ "smart-reply":true }, lastAuth:"2026-07-26 10:30", expiry:"7天后" }],
       xiaohongshu: [{ id:"xhs-demo", platform:"xiaohongshu", nickname:"鸿途汽车品牌号", account:"946238815", type:"专业号", auth:{ platform:true, jiguang:false }, service:{ "smart-reply":true }, lastAuth:"2026-07-25 09:16", expiry:"长期有效" }],
     };
@@ -19924,6 +19939,9 @@ window.setInterval(streamDemoQueueSignal, 4200);
     let prdBindPendingCapability = "";
     const prdSaveAccounts = () => { try { localStorage.setItem(prdAccountKey, JSON.stringify(prdAccounts)); } catch {} };
     const prdRecords = () => Object.values(prdAccounts).flat();
+    let prdDouyinSeeded = false;
+    prdDouyinExtraAccounts.forEach((seed) => { const list = Array.isArray(prdAccounts.douyin) ? prdAccounts.douyin : (prdAccounts.douyin = []); if (!list.some((record) => record.id === seed.id)) { list.push(structuredClone(seed)); prdDouyinSeeded = true; } });
+    if (prdDouyinSeeded) prdSaveAccounts();
     let prdLegacyAuthCleaned = false;
     prdRecords().forEach((record) => { if (record.auth && Object.prototype.hasOwnProperty.call(record.auth, "live")) { delete record.auth.live; prdLegacyAuthCleaned = true; } if (record.platform === "douyin" && !["企业号", "员工号"].includes(record.type)) { record.type = "企业号"; prdLegacyAuthCleaned = true; } });
     if (prdLegacyAuthCleaned) prdSaveAccounts();
@@ -20108,7 +20126,7 @@ window.setInterval(streamDemoQueueSignal, 4200);
       "lead-hunter": { persona:"主号获客专家", name:"主号获客专家", description:"从抖音评论、直播弹幕和互动关注信息中，自动找出意向度高的客户并完成发送私信，持续转化。每个账号各自找客、各自跟进，客户从哪里来，就由哪个账号接着聊。", coreLabel:"核心功能 · 独立账号闭环", tags:["评论获客","直播获客","账号分别触达"], platform:"抖音", price:"¥7 / 有效线索", billingShort:"按有效线索计费", priceNote:"仅对判定为有效的线索计费" },
       "lead-hunter-advanced": { persona:"副号获客专家", name:"副号获客专家", description:"从抖音评论、直播弹幕和互动关注信息中，自动找出意向度高的客户并完成发送私信，持续转化。一个账号池专门找客，另一个账号池接力跟进，线索不混淆、每条都有承接。", coreLabel:"核心功能 · 主副号协同", tags:["评论获客","直播获客","主副号触达"], platform:"抖音", price:"¥7 / 有效线索", billingShort:"按有效线索计费", priceNote:"仅对副号获客专家独立判定的有效线索计费" },
       "smart-reply": { persona:"客服专员", name:"客服专员", description:"承接账号私信，第一时间回应客户问题，留住主动咨询并持续守护账号回复率", tags:["AI客服","自定义人设","回复率保障"], platform:"抖音、快手、小红书", price:"¥5 / 天", billingShort:"按自然日计费", priceNote:"按自然日计费，按天结算" },
-      "ai-video": { persona:"短视频运营专员", name:"短视频运营专员", description:"完成抖音平台短视频矩阵账号的快速孵化，按发布任务批量发布短视频并回收效果", tags:["矩阵管理","每周排期","统一审核","效果回收"], platform:"抖音", price:"¥199 / 账号 / 月", billingShort:"按账号按月托管", priceNote:"每个接入账号每月 ¥199，覆盖排期发布与效果回收" },
+      "ai-video": { persona:"短视频运营专员", name:"短视频运营专员", description:"完成抖音平台短视频矩阵账号的快速孵化，按发布任务批量发布短视频并回收效果", tags:["矩阵管理","每周排期","统一审核","效果回收"], platform:"抖音", price:"¥5 / 账号 / 天", billingShort:"按账号按日计费", priceNote:"当日开启即产生当日费用，次日扣费；关闭当天仍计费，次日起停止" },
     };
     function prdTalentData(employee) { return prdTalentCopy[employee.id] || { persona:employee.persona, name:employee.name, description:employee.description, tags:(employee.skills || []).slice(0,4), platform:"抖音、快手、小红书", price:"待上线后公布", billingShort:"预约上线", priceNote:"上线后公布具体收费方式" }; }
     function prdRenderTalentCards(filter = "all", focusId = "") {
@@ -20156,42 +20174,77 @@ window.setInterval(streamDemoQueueSignal, 4200);
       if (focusId) window.setTimeout(() => prd$(`.prd-talent-card[data-employee-id="${focusId}"]`)?.scrollIntoView({ block:"center", behavior:"smooth" }), 150);
     }
     window.renderTalentCards = prdRenderTalentCards;
-    function prdDouyinAuthRosterMarkup(options = {}) {
+    function prdDouyinAuthRows(options = {}) {
+      const selection = Boolean(options.selection);
       const candidates = Array.isArray(options.candidates) ? options.candidates : (Array.isArray(leadHunterAccounts) ? leadHunterAccounts : []);
       const records = Array.isArray(prdAccounts?.douyin) ? prdAccounts.douyin : [];
+      const isReady = (record) => Boolean(selection ? record?.auth?.marketing : (record?.auth?.platform && record?.auth?.marketing));
+      const used = new Set();
+      const rows = candidates.map((candidate, index) => {
+        let record = records.find((item) => item.account === candidate.account || item.nickname === candidate.nickname);
+        if (!record && index === 0 && records[0]) record = records[0];
+        if (record) used.add(record.id);
+        return { key: candidate.id, candidate, record, ready: isReady(record) };
+      });
+      records.filter((record) => !used.has(record.id)).forEach((record) => rows.push({ key: record.id, candidate: null, record, ready: isReady(record) }));
+      return rows;
+    }
+    let prdVideoHireDraftState = null;
+    function prdVideoHireSelection() {
+      const rows = prdDouyinAuthRows({ selection: true, candidates: [] });
+      if (!prdVideoHireDraftState || prdVideoHireDraftState.id !== "ai-video") prdVideoHireDraftState = { id: "ai-video", selected: null, seen: [], closed: [] };
+      const draft = prdVideoHireDraftState;
+      if (!Array.isArray(draft.selected)) draft.selected = [];
+      if (!Array.isArray(draft.seen)) draft.seen = [];
+      if (!Array.isArray(draft.closed)) draft.closed = [];
+      const readyKeys = rows.filter((item) => item.ready).map((item) => item.key);
+      readyKeys.forEach((key) => { if (!draft.seen.includes(key)) { draft.seen.push(key); draft.selected.push(key); } });
+      draft.selected = draft.selected.filter((key) => readyKeys.includes(key));
+      draft.closed = draft.closed.filter((key) => draft.selected.includes(key));
+      const selectedRows = rows.filter((item) => draft.selected.includes(item.key));
+      return { rows, draft, selectedRows, enabledRows: selectedRows.filter((item) => !draft.closed.includes(item.key)) };
+    }
+    function prdVideoHireAccountControl(item, actionAttrs) {
+      if (!item.ready) return `<button type="button" ${actionAttrs}>去授权</button>`;
+      const draft = prdVideoHireSelection().draft;
+      const selected = draft.selected.includes(item.key);
+      const enabled = selected && !draft.closed.includes(item.key);
+      return `<label class="prd-hire-switch prd-video-hire-switch${selected ? "" : " is-locked"}"><input type="checkbox" role="switch" data-prd-video-hire-switch="${prdEsc(item.key)}"${enabled ? " checked" : ""}${selected ? "" : " disabled"}><i aria-hidden="true"></i><span>${enabled ? "已开启" : "已关闭"}</span></label>`;
+    }
+    function prdDouyinAuthRosterMarkup(options = {}) {
+      const selection = Boolean(options.selection);
+      const videoSelection = selection ? prdVideoHireSelection() : null;
       const kicker = options.kicker || "多账号触达";
       const title = options.title || "抖音账号授权";
       const readyHint = options.readyHint || "所有可用账号均已授权";
       const pendingHint = options.pendingHint || "建议把可用账号都授权进来，后续可灵活分配私信";
       const doneLabel = options.doneLabel || "账号池已就绪，可配置多账号触达";
       const pendingCta = typeof options.pendingCta === "function" ? options.pendingCta : (count) => `继续授权 ${count} 个账号`;
-      const used = new Set();
-      const rows = candidates.map((candidate, index) => {
-        let record = records.find((item) => item.account === candidate.account || item.nickname === candidate.nickname);
-        if (!record && index === 0 && records[0]) record = records[0];
-        if (record) used.add(record.id);
-        return { key: candidate.id, candidate, record, ready: Boolean(record?.auth?.platform && record?.auth?.marketing) };
-      });
-      records.filter((record) => !used.has(record.id)).forEach((record) => rows.push({ key: record.id, candidate: null, record, ready: Boolean(record.auth?.platform && record.auth?.marketing) }));
+      const rows = videoSelection ? videoSelection.rows : prdDouyinAuthRows(options);
       const total = rows.length || 1;
       const done = rows.filter((item) => item.ready).length;
       const pending = rows.filter((item) => !item.ready);
       const allReady = pending.length === 0;
       const percent = Math.round((done / total) * 100);
       const next = pending[0];
-      const visibleRows = allReady ? rows : rows.filter((item) => item.ready || item === next);
+      const visibleRows = selection ? rows : allReady ? rows : rows.filter((item) => item.ready || item === next);
       const actionAttrs = (item) => `data-prd-douyin-auth="${prdEsc(item.key)}" data-prd-douyin-record="${prdEsc(item.record?.id || "")}" data-prd-douyin-account="${prdEsc(item.candidate?.account || item.record?.account || "")}" data-prd-douyin-nickname="${prdEsc(item.candidate?.nickname || item.record?.nickname || "")}"`;
       const accountRows = visibleRows.map((item) => {
         const name = item.candidate?.nickname || item.record?.nickname || "抖音账号";
         const account = item.candidate?.account || item.record?.account || "待录入账号";
         const platformLabel = item.record?.auth?.platform ? "平台已授权" : "平台待授权";
         const marketingLabel = item.record?.auth?.marketing ? "营销已授权" : "营销待授权";
-        return `<li class="prd-douyin-auth-row${item.ready ? " is-ready" : " is-pending"}"><span class="prd-douyin-auth-avatar">${prdEsc(name.slice(0, 1))}</span><span class="prd-douyin-auth-copy"><strong>${prdEsc(name)}</strong><small>抖音号 · ${prdEsc(account)}</small><em>${item.ready ? "平台、营销授权已完成" : `${platformLabel} · ${marketingLabel}`}</em></span><span class="prd-douyin-auth-state" title="${item.ready ? "授权已完成" : "授权待处理"}" aria-label="${item.ready ? "授权已完成" : "授权待处理"}"><i aria-hidden="true">${item.ready ? "✓" : "!"}</i></span><button type="button" ${actionAttrs(item)}>${item.ready ? "查看" : "去授权"}</button></li>`;
+        const stateCopy = selection ? (item.ready ? "营销授权已完成" : "营销待授权") : item.ready ? "平台、营销授权已完成" : `${platformLabel} · ${marketingLabel}`;
+        const check = selection ? `<label class="prd-video-hire-check" title="${item.ready ? "纳入本次雇佣范围" : "完成营销授权后可勾选"}"><input type="checkbox" aria-label="选择 ${prdEsc(name)}" data-prd-video-hire-account="${prdEsc(item.key)}"${videoSelection.draft.selected.includes(item.key) ? " checked" : ""}${item.ready ? "" : " disabled"}><i aria-hidden="true"></i></label>` : "";
+        const control = selection ? prdVideoHireAccountControl(item, actionAttrs(item)) : `<button type="button" ${actionAttrs(item)}>${item.ready ? "查看" : "去授权"}</button>`;
+        return `<li class="prd-douyin-auth-row${item.ready ? " is-ready" : " is-pending"}${selection ? " is-selectable" : ""}">${check}<span class="prd-douyin-auth-avatar">${prdEsc(name.slice(0, 1))}</span><span class="prd-douyin-auth-copy"><strong>${prdEsc(name)}</strong><small>抖音号 · ${prdEsc(account)}</small><em>${stateCopy}</em></span><span class="prd-douyin-auth-state" title="${item.ready ? "授权已完成" : "授权待处理"}" aria-label="${item.ready ? "授权已完成" : "授权待处理"}"><i aria-hidden="true">${item.ready ? "✓" : "!"}</i></span>${control}</li>`;
       }).join("");
-      const footer = allReady ? `<span class="prd-douyin-auth-done"><i>✓</i>${prdEsc(doneLabel)}</span>` : `<button type="button" class="prd-douyin-auth-cta" ${actionAttrs(next)}>${prdEsc(pendingCta(pending.length))} <span aria-hidden="true">→</span></button>`;
-      return `<section class="prd-douyin-auth-rail${allReady ? " is-complete" : ""}" aria-label="${prdEsc(title)}进度"><header><div><span class="section-kicker">${prdEsc(kicker)}</span><strong>${prdEsc(title)} <b>${done}/${total}</b></strong><small>${allReady ? prdEsc(readyHint) : prdEsc(pendingHint)}</small></div><span class="prd-douyin-auth-meter"><i style="width:${percent}%"></i><b>${allReady ? "已完成" : "建议补齐"}</b></span></header><ul>${accountRows}</ul><footer>${footer}</footer></section>`;
+      const footer = selection
+        ? `<div class="prd-video-hire-toolbar"><button type="button" class="prd-video-hire-select-all" data-prd-video-hire-toggle-all>${done > 0 && videoSelection.draft.selected.length >= done ? "取消全选" : "全选"}</button><span class="prd-video-hire-billing"><b>按账号按日计费 · ¥5 / 账号 / 天</b><small>已勾选 ${videoSelection.draft.selected.length} 个 · 已启用 ${videoSelection.enabledRows.length} 个，雇佣当日预计费用 ¥${(videoSelection.enabledRows.length * 5).toFixed(2)}；当日开启即产生当日费用，次日扣费；关闭当天仍计费，次日起停止。</small></span></div>`
+        : allReady ? `<span class="prd-douyin-auth-done"><i>✓</i>${prdEsc(doneLabel)}</span>` : `<button type="button" class="prd-douyin-auth-cta" ${actionAttrs(next)}>${prdEsc(pendingCta(pending.length))} <span aria-hidden="true">→</span></button>`;
+      return `<section class="prd-douyin-auth-rail${allReady ? " is-complete" : ""}${selection ? " is-selection" : ""}" aria-label="${prdEsc(title)}进度"><header><div><span class="section-kicker">${prdEsc(kicker)}</span><strong>${prdEsc(title)} <b>${done}/${total}</b></strong><small>${allReady ? prdEsc(readyHint) : prdEsc(pendingHint)}</small></div><span class="prd-douyin-auth-meter"><i style="width:${percent}%"></i><b>${allReady ? "已完成" : "建议补齐"}</b></span></header><ul>${accountRows}</ul><footer>${footer}</footer></section>`;
     }
-    function prdEmployeeRequirements(id) { const balanceItem = { id:"balance", label:"余额", ready:typeof accountBalance === "undefined" || accountBalance > 0, note:"覆盖按账号按月托管费用", action:"查看消费明细" }; if (id === "ai-video") { const marketingReady = prdRecords().some((record) => record.platform === "douyin" && prdCapabilityReady(record, "marketing")); return [balanceItem, { id:"douyin-marketing", label:"抖音营销授权", ready:marketingReady, note:marketingReady ? "至少一个账号已授权，可参与发布" : "先完成 1 个抖音账号的营销授权", action:"去账号绑定/授权" }]; } const common = [balanceItem, { id:"vehicle", label:"车型库", ready:vehicleLibraryRows?.some((row) => vehicleState[row.id]?.on), note:"至少启用 1 款", action:"去车型库" }, { id:"digital", label:"数字人配置", ready:true, note:"默认人设已就绪", action:"去对话策略" }]; if (["lead-hunter", "lead-hunter-advanced"].includes(id)) { const douyinReady = prdRecords().some((record) => record.platform === "douyin" && ["platform", "marketing"].every((capability) => prdCapabilityReady(record, capability))); const authNote = douyinReady ? "最低运行门槛已满足" : "先完成 1 个账号的完整授权"; common.push({ id:"douyin-platform", label:"抖音平台授权", ready:douyinReady, note:authNote, action:"去授权" }, { id:"douyin-marketing", label:"抖音营销授权", ready:douyinReady, note:authNote, action:"去授权" }); } else { const ready = prdRecords().some(prdPrivateReady); common.push({ id:"private-any", label:"三平台任一平台授权", ready, note:"任一账号完成平台授权", action:"去授权" }); } return common; }
+    function prdEmployeeRequirements(id) { const balanceItem = { id:"balance", label:"余额", ready:typeof accountBalance === "undefined" || accountBalance > 0, note:"覆盖当日已开启账号的按日费用", action:"查看消费明细" }; if (id === "ai-video") { const marketingReady = prdRecords().some((record) => record.platform === "douyin" && prdCapabilityReady(record, "marketing")); return [balanceItem, { id:"douyin-marketing", label:"抖音营销授权", ready:marketingReady, note:marketingReady ? "至少一个账号已授权，可参与发布" : "先完成 1 个抖音账号的营销授权", action:"去账号绑定/授权" }]; } const common = [balanceItem, { id:"vehicle", label:"车型库", ready:vehicleLibraryRows?.some((row) => vehicleState[row.id]?.on), note:"至少启用 1 款", action:"去车型库" }, { id:"digital", label:"数字人配置", ready:true, note:"默认人设已就绪", action:"去对话策略" }]; if (["lead-hunter", "lead-hunter-advanced"].includes(id)) { const douyinReady = prdRecords().some((record) => record.platform === "douyin" && ["platform", "marketing"].every((capability) => prdCapabilityReady(record, capability))); const authNote = douyinReady ? "最低运行门槛已满足" : "先完成 1 个账号的完整授权"; common.push({ id:"douyin-platform", label:"抖音平台授权", ready:douyinReady, note:authNote, action:"去授权" }, { id:"douyin-marketing", label:"抖音营销授权", ready:douyinReady, note:authNote, action:"去授权" }); } else { const ready = prdRecords().some(prdPrivateReady); common.push({ id:"private-any", label:"三平台任一平台授权", ready, note:"任一账号完成平台授权", action:"去授权" }); } return common; }
     let prdHireEmployeeId = "";
     function prdOpenHireCheck(id) { prdStartHireScan(id); }
     function prdCloseHire() { window.clearTimeout(prdHireScanTimer); prdHireScanTimer = 0; prdHireScanRunning = false; prd$("#first-run-modal")?.classList.remove("is-open"); prd$(".first-run-backdrop")?.classList.remove("is-open"); prd$("#first-run-modal")?.setAttribute("aria-hidden","true"); prd$(".first-run-backdrop")?.setAttribute("aria-hidden","true"); prd$(".first-run-close")?.removeAttribute("disabled"); prd$(".first-run-close")?.removeAttribute("aria-disabled"); prdHireEmployeeId = ""; }
@@ -20241,7 +20294,7 @@ window.setInterval(streamDemoQueueSignal, 4200);
       const recalibrate = event.target.closest("[data-prd-talent-recalibrate]"); if (recalibrate) { event.preventDefault(); event.stopImmediatePropagation(); const id = recalibrate.dataset.prdTalentRecalibrate; prdOpenHireCheck(id); return; }
       if (employeeCard && !event.target.closest("button")) { event.preventDefault(); event.stopImmediatePropagation(); prdOpenEmployeeModal(employeeCard.dataset.employeeId); return; }
       const hire = event.target.closest("#hire-button[data-prd-hire]"); if (hire) { event.preventDefault(); event.stopImmediatePropagation(); const id = hire.dataset.prdHire; if (hiredEmployees.has(id)) { if (window.confirm("解雇后将停止该岗位新任务，但历史结果和计费记录会保留。继续吗？")) { hiredEmployees.delete(id); if (id === "ai-video") { prdRecords().filter((record) => record.platform === "douyin").forEach((record) => { record.service = { ...(record.service || {}), "ai-video": false }; }); prdSaveAccounts(); } prdPersistHiredEmployees(); prdOpenEmployeeModal(id); prdRenderTalentCards("all"); prdRenderDashboard(); prdRenderResults(); prdRenderLiveGate(); prdToast("数字员工已解雇", "历史结果已保留，可在岗位卡片中重新雇佣"); } } else prdOpenHireCheck(id); return; }
-      const confirmHire = event.target.closest("[data-prd-confirm-hire]"); if (confirmHire) { event.preventDefault(); event.stopImmediatePropagation(); const id = prdHireEmployeeId; if (!id || !prdEmployeeRequirements(id).every((item) => item.ready)) return; if (id !== "ai-video" && typeof prdHireStage !== "undefined" && prdHireStage !== "config") { prdHireStage = "config"; prdHireConfigDraft = id === "ai-video" ? { id, ...prdVideoHireConfig() } : prdHireConfigDraft; prdRenderHireFlow(); return; } if (typeof prdHireConfigValid === "function" && !prdHireConfigValid(id)) return; if (typeof prdApplyHireConfig === "function") prdApplyHireConfig(id); hiredEmployees.add(id); prdPersistHiredEmployees(); prdCloseHire(); prdRenderTalentCards("all"); prdRenderDashboard(); prdRenderResults(); prdRenderLiveGate(); prdToast("数字员工已雇佣", `${prdTalentData(employeeById(id)).persona}·${prdTalentData(employeeById(id)).name} 已创建，正在进入实时工作`); prdOpenEmployeeLive(id); return; }
+      const confirmHire = event.target.closest("[data-prd-confirm-hire]"); if (confirmHire) { event.preventDefault(); event.stopImmediatePropagation(); const id = prdHireEmployeeId; if (!id || !prdEmployeeRequirements(id).every((item) => item.ready)) return; if (id === "ai-video" && !prdVideoHireSelection().enabledRows.length) { prdToast("还差一步", "请至少勾选并开启 1 个账号"); prdRenderHireFlow(); return; } if (id !== "ai-video" && typeof prdHireStage !== "undefined" && prdHireStage !== "config") { prdHireStage = "config"; prdHireConfigDraft = id === "ai-video" ? { id, ...prdVideoHireConfig() } : prdHireConfigDraft; prdRenderHireFlow(); return; } if (typeof prdHireConfigValid === "function" && !prdHireConfigValid(id)) return; if (typeof prdApplyHireConfig === "function") prdApplyHireConfig(id); hiredEmployees.add(id); prdPersistHiredEmployees(); prdCloseHire(); prdRenderTalentCards("all"); prdRenderDashboard(); prdRenderResults(); prdRenderLiveGate(); prdToast("数字员工已雇佣", `${prdTalentData(employeeById(id)).persona}·${prdTalentData(employeeById(id)).name} 已创建，正在进入实时工作`); prdOpenEmployeeLive(id); return; }
       const closeHire = event.target.closest("[data-prd-close-hire]"); if (closeHire) { event.preventDefault(); event.stopImmediatePropagation(); prdCloseHire(); return; }
       const dependency = event.target.closest("[data-prd-hire-dependency]"); if (dependency) { event.preventDefault(); event.stopImmediatePropagation(); const dep = dependency.dataset.prdHireDependency; if (dep.startsWith("douyin")) prdOpenAccountBind("douyin", prdAccounts.douyin?.[0]?.id || ""); else if (dep === "vehicle") window.location.hash = "vehicles"; else if (dep === "digital") window.location.hash = "digital-human"; else if (dep === "private-any") prdOpenAccountBind("douyin", prdAccounts.douyin?.[0]?.id || ""); else if (dep === "balance" && typeof openConsumptionDetails === "function") openConsumptionDetails(); return; }
     }, true);
@@ -20391,7 +20444,7 @@ window.setInterval(streamDemoQueueSignal, 4200);
         ["lead-hunter", "主号获客专家", "主号获客专家", "成功转化 6 条留资", "从直播弹幕、短视频评论和关注信息中获取潜客，并完成意向判断、发送私信和留资转化。", [["获取潜客","24 个"],["发送私信","18 人"],["回复","10 人"],["留资","6 条"]]],
         ["lead-hunter-advanced", "副号获客专家", "副号获客专家", "成功转化 6 条留资", "复制主号获客专家的完整获客链路，列表、意向判断、跟进与结果均按副号获客专家独立记录。", [["获取潜客","24 个"],["发送私信","18 人"],["回复","10 人"],["留资","6 条"]]],
         ["smart-reply", "客服专员", "客服专员", "承接 204 个客服会话", "仅展示真实私信会话、有效回复和人工介入记录。", [["客服会话","204 个"],["有效回复","196 条"],["人工介入","8 次"],["计费金额","¥36.00"]]],
-        ["ai-video", "短视频运营专员", "短视频运营专员", "本周已发布 168 条", "管理 14 个抖音账号矩阵，按发布任务批量发布短视频，并回收发布与效果数据。", [["接入账号","14 个"],["本周已发布","168 条"],["本周完成率","68%"],["托管费","¥2,786 / 月"]]],
+        ["ai-video", "短视频运营专员", "短视频运营专员", "本周已发布 168 条", "管理 14 个抖音账号矩阵，按发布任务批量发布短视频，并回收发布与效果数据。", [["接入账号","14 个"],["本周已发布","168 条"],["本周完成率","68%"],["今日托管费","¥70.00"]]],
       ].filter(([id]) => hiredEmployees.has(id)).map(([id,persona,role,result,copy,metrics]) => { const employee = employeeById(id); const image = talentPlazaEmployee(employee)?.image || employee?.image || ""; const action = ["lead-hunter", "lead-hunter-advanced"].includes(id) ? `<button type="button" data-show-result="leads">查看潜客明细</button>` : id === "ai-video" ? `<button type="button" data-route-target="live">查看实时工作</button>` : `<button type="button" data-show-result="overview">查看日报概览</button>`; return `<article class="employee-report-card" data-daily-employee="${id}"><div class="employee-report-identity"><img src="${prdEsc(image)}" alt="${prdEsc(persona)} · ${prdEsc(role)}"/><div><span><i class="report-status-dot"></i> 正式结果</span><h3>${persona}</h3><p>${role}</p></div><strong>${result}</strong></div><div class="employee-report-conclusion"><span>结果口径</span><p>${copy}</p></div><dl class="employee-report-metrics">${metrics.map(([label,value]) => `<div><dt>${label}</dt><dd>${value}</dd></div>`).join("")}</dl><div class="employee-report-actions">${action}<button type="button" data-export-employee="${id}" data-toast-title="${persona}日报已导出" data-toast-message="正式结果日报已生成">导出员工日报 ↓</button></div></article>`; }).join("") || `<div class="prd-empty-state">暂无正式业务结果，雇佣并开启数字员工后这里会同步真实数据。</div>`;
       const leadsView = prd$("[data-result-view=leads]", view); if (leadsView) leadsView.innerHTML = `<article class="panel detailed-result-panel prd-prospect-panel"><div class="panel-heading"><div><span class="section-kicker">主号获客专家获客结果</span><h3>2026 年 7 月 13 日 · 潜客明细</h3><small data-prd-prospect-result-count>当前展示 0 条样例记录</small></div><div class="table-actions"><button class="export-leads-button" type="button" data-prd-export-prospects>导出潜客明细 ↓</button></div></div><div class="prd-prospect-filters"><label><select data-prd-prospect-filter="account"><option value="">全部潜客账号</option><option value="鸿途汽车官方旗舰店">鸿途汽车官方旗舰店</option></select></label><label><select data-prd-prospect-filter="source"><option value="">全部潜客类型</option><option>直播弹幕</option><option>短视频评论</option><option>关注</option></select></label><label><select data-prd-prospect-filter="model"><option value="">全部意向车型</option><option>比亚迪</option><option>捷途VS7</option><option>RAV4荣放</option><option>劲客</option><option>高山DHT-PHEV</option><option>红旗</option><option>锋兰达</option><option>帕萨特</option><option>奥迪Q5</option></select></label><label><select data-prd-prospect-filter="touch"><option value="">全部触达状态</option><option>私信已发送</option><option>待回复</option><option>跟进未成</option></select></label><label><select data-prd-prospect-filter="reply"><option value="">全部回复状态</option><option>已回复</option><option>待回复</option><option>未回复</option></select></label><label><select data-prd-prospect-filter="lead"><option value="">全部留资状态</option><option>已留资</option><option>未留资</option></select></label></div><div class="result-table-wrap"><table class="lead-detail-table prd-prospect-table"><thead><tr><th>潜客信息</th><th>触达状态</th><th>车型</th><th>城市</th><th>触达时间</th><th>回复状态</th><th>留资状态</th><th>潜客账号</th><th>触达账号</th><th>发现时间</th><th>操作</th></tr></thead><tbody id="lead-detail-body"></tbody></table></div></article>`;
       const leadDetailsView = prd$("[data-result-view=lead-details]", view); if (leadDetailsView) leadDetailsView.innerHTML = `<article class="panel detailed-result-panel prd-lead-detail-panel"><div class="panel-heading"><div><span class="section-kicker">主号获客专家获客结果</span><h3>2026 年 7 月 13 日 · 线索明细</h3><small data-prd-lead-result-count>当前展示 0 条样例记录</small></div><div class="table-actions"><button class="export-leads-button" type="button" data-toast-title="线索明细已准备" data-toast-message="当前原型仅支持查看线索和对话流">导出线索明细 ↓</button></div></div><div class="prd-lead-detail-note">线索是已进入跟进范围的客户记录，点击“查看对话流”可查看该客户的历史沟通信息。</div><div class="result-table-wrap"><table class="lead-detail-table prd-lead-detail-table"><thead><tr><th>客户信息</th><th>联系方式(电话/微信)</th><th>平台</th><th>车系</th><th>城市</th><th>最新获客时间</th><th>获客账号</th><th>广告计划</th><th>操作</th></tr></thead><tbody id="prd-lead-detail-body"></tbody></table></div></article>`;
@@ -20408,10 +20461,10 @@ window.setInterval(streamDemoQueueSignal, 4200);
     /* Workbench */
     const prdMetrics = { employees: { value:0, compare:0, unit:"位" }, actions:{ value:0, compare:0, unit:"次" }, leads:{ value:0, compare:0, unit:"条" }, cost:{ value:0, compare:0, unit:"元" } };
     function prdWorkingEmployeeIds() { return ["lead-hunter", "lead-hunter-advanced", "smart-reply", "ai-video"].filter((id) => hiredEmployees.has(id)); }
-    function prdOutcomeSnapshot() { const hasLead = hiredEmployees.has("lead-hunter"); const hasAdvancedLead = hiredEmployees.has("lead-hunter-advanced"); const leadEmployeeCount = Number(hasLead) + Number(hasAdvancedLead); const hasService = hiredEmployees.has("smart-reply"); const hasVideo = hiredEmployees.has("ai-video"); const matrix = window.AIVideoMatrix || null; const videoDayActions = matrix ? Math.round(matrix.weekPublished / 7) + matrix.pendingCount : 48; const videoDayCost = matrix ? Math.round((matrix.accounts.length * 199) / 30) : 663; return { employees:{ value:leadEmployeeCount + Number(hasService) + Number(hasVideo), compare:leadEmployeeCount || hasService || hasVideo ? 1 : 0, unit:"位" }, actions:{ value:(leadEmployeeCount * 122) + (hasService ? 204 : 0) + (hasVideo ? videoDayActions : 0), compare:(leadEmployeeCount * 100) + (hasService ? 184 : 0) + (hasVideo ? Math.max(36, Math.round(videoDayActions * 0.86)) : 0), unit:"次" }, leads:{ value:leadEmployeeCount * 24, compare:leadEmployeeCount * 18, unit:"条" }, cost:{ value:(leadEmployeeCount * 90) + (hasService ? 36 : 0) + (hasVideo ? videoDayCost : 0), compare:(leadEmployeeCount * 72) + (hasService ? 32 : 0) + (hasVideo ? Math.round(videoDayCost * 0.94) : 0), unit:"元" } }; }
+    function prdOutcomeSnapshot() { const hasLead = hiredEmployees.has("lead-hunter"); const hasAdvancedLead = hiredEmployees.has("lead-hunter-advanced"); const leadEmployeeCount = Number(hasLead) + Number(hasAdvancedLead); const hasService = hiredEmployees.has("smart-reply"); const hasVideo = hiredEmployees.has("ai-video"); const matrix = window.AIVideoMatrix || null; const videoDayActions = matrix ? Math.round(matrix.weekPublished / 7) + matrix.pendingCount : 48; const videoDayCost = matrix ? matrix.accounts.length * 5 : 70; return { employees:{ value:leadEmployeeCount + Number(hasService) + Number(hasVideo), compare:leadEmployeeCount || hasService || hasVideo ? 1 : 0, unit:"位" }, actions:{ value:(leadEmployeeCount * 122) + (hasService ? 204 : 0) + (hasVideo ? videoDayActions : 0), compare:(leadEmployeeCount * 100) + (hasService ? 184 : 0) + (hasVideo ? Math.max(36, Math.round(videoDayActions * 0.86)) : 0), unit:"次" }, leads:{ value:leadEmployeeCount * 24, compare:leadEmployeeCount * 18, unit:"条" }, cost:{ value:(leadEmployeeCount * 90) + (hasService ? 36 : 0) + (hasVideo ? videoDayCost : 0), compare:(leadEmployeeCount * 72) + (hasService ? 32 : 0) + (hasVideo ? Math.round(videoDayCost * 0.94) : 0), unit:"元" } }; }
     function prdMetric(label, key, note, tone) { const metric = prdMetrics[key]; const delta = metric.value - metric.compare; const ratio = metric.compare ? Math.round(delta / metric.compare * 1000) / 10 : null; const value = key === "cost" ? `¥${metric.value.toFixed(2)}` : metric.value.toLocaleString("zh-CN"); const change = `${delta >= 0 ? "↑" : "↓"} ${ratio === null ? "—" : Math.abs(ratio) + "%"}`; const absolute = key === "cost" ? `${delta >= 0 ? "+" : "-"}¥${Math.abs(delta).toFixed(2)}` : `${delta >= 0 ? "+" : "-"}${Math.abs(delta)} ${metric.unit}`; return `<article class="metric-card"><div><span>${label}</span><b class="trend ${delta >= 0 ? "trend--up" : ""}">${change}</b></div><strong>${value}</strong><p>较昨日 ${absolute}</p><i class="metric-spark metric-spark--${tone}"></i></article>`; }
     function prdEmployeeOnline(id) { if (["lead-hunter", "lead-hunter-advanced"].includes(id)) return prdRecords().some((record) => record.platform === "douyin" && ["platform", "marketing"].every((capability) => record.auth?.[capability] === true)); if (id === "ai-video") return prdRecords().some((record) => record.platform === "douyin" && record.service?.["ai-video"] === true && prdCapabilityReady(record, "platform")); return prdRecords().some((record) => record.service?.["smart-reply"] === true && prdPrivateReady(record)); }
-    function prdRenderDashboard() { const view = prd$("[data-view=dashboard]"); if (!view) return; Object.assign(prdMetrics, prdOutcomeSnapshot()); const metrics = prd$(".metric-grid", view); if (metrics) metrics.innerHTML = [prdMetric("工作员工","employees","当前执行态数字员工","blue"), prdMetric("业务动作","actions","客服回复、获客与内容发布处理","green"), prdMetric("新增线索","leads","今日首次留资去重客户","purple"), prdMetric("昨日花费","cost","结果计费与账号托管","orange")].join(""); const list = prd$("#dashboard-working-list", view); const ids = prdWorkingEmployeeIds(); if (list) list.innerHTML = ids.length ? `<div class="prd-dashboard-employee-list">${ids.map((id) => { const employee = employeeById(id); const data = prdTalentData(employee); const online = prdEmployeeOnline(id); const status = online ? "在线" : "异常"; const recent = id === "lead-hunter" ? "持续搜索潜客中..." : id === "smart-reply" ? "正在帮您接待私信客户中..." : "正在推进账号矩阵的本周发布任务..."; return `<article class="prd-dashboard-employee"><img src="${prdEsc(talentPlazaEmployee(employee)?.image || employee.image)}" alt="${prdEsc(data.persona)}"><div><strong>${prdEsc(digitalEmployeeLabel(data))}</strong><small>${recent}</small></div><span class="prd-dashboard-employee__state"><b class="${online ? "" : "is-error"}">${status}</b><small>${online ? "功能正常触发" : "授权掉线，去修复"}</small></span></article>`; }).join("")}</div>` : `<div class="prd-empty-state">暂无执行中的数字员工，去人才广场雇佣已上线岗位。</div>`; const resultPanel = prd$(".recent-results-panel", view); if (resultPanel) { const body = prd$(".result-table-wrap", resultPanel); const resultCards = [ids.includes("lead-hunter") ? `<article class="prd-dashboard-result"><strong>主号获客专家</strong><small>昨日新增潜客 24 个，发送私信转化了 6 个留资</small><b>按有效线索计费</b></article>` : "", ids.includes("smart-reply") ? `<article class="prd-dashboard-result"><strong>客服专员</strong><small>昨日承接客户 204 个，转化了 8 条留资</small><b>正式客服结果</b></article>` : "", ids.includes("ai-video") ? `<article class="prd-dashboard-result"><strong>短视频运营专员</strong><small>本周已为 14 个账号发布 168 条内容，回收发布与效果数据</small><b>按账号按月托管</b></article>` : ""].filter(Boolean).join(""); if (body) body.innerHTML = resultCards ? `<div class="prd-dashboard-results">${resultCards}</div>` : `<div class="prd-empty-state">暂无正式成果，雇佣并开启数字员工后这里会同步结果。</div>`; } const todo = prd$(".dashboard-todo-panel .attention-list", view); if (todo) { const todoItems = [ids.includes("lead-hunter") && !prdEmployeeOnline("lead-hunter") ? `<button type="button" data-prd-todo-account><i></i><span><strong>抖音营销授权待处理</strong><small>我暂时无法执行抖音主动触达；请完成平台或营销授权，恢复后我会继续工作。</small></span></button>` : "", ids.includes("smart-reply") ? `<button type="button" data-route-target="demo-live"><i></i><span><strong>客服专员：有客户需要您转人工处理</strong><small>转人工会话实时汇总，人工发送、托管 AI 或关闭会话后待办移除。</small></span></button>` : "", ids.includes("ai-video") && !prdEmployeeOnline("ai-video") ? `<button type="button" data-route-target="accounts"><i></i><span><strong>短视频运营专员：抖音账号矩阵待处理</strong><small>完成平台授权后，短视频运营专员才能继续排期与发布本周内容。</small></span></button>` : ""].filter(Boolean).join(""); todo.innerHTML = todoItems ? `<div class="prd-todo-list">${todoItems}</div>` : `<div class="prd-empty-state">暂无待处理事项，数字员工准备就绪后这里会实时更新。</div>`; } const yesterday = prd$(".dashboard-yesterday-panel", view); if (yesterday) { const dims = prd$(".dashboard-result-dimensions", yesterday); if (dims) dims.innerHTML = `<button type="button" data-open-results="overview"><span>工作员工</span><strong>${prdMetrics.employees.value} 位</strong><small>当前执行态</small><i>↗</i></button><button type="button" data-open-results="history"><span>业务动作</span><strong>${prdMetrics.actions.value} 次</strong><small>客服专员回复 + 主号获客专家 + 短视频运营专员矩阵发布</small><i>↗</i></button><button type="button" data-open-results="leads"><span>新增线索</span><strong>${prdMetrics.leads.value} 条</strong><small>首次留资去重</small><i>↗</i></button><button type="button" data-open-results="overview"><span>昨日花费</span><strong>¥${prdMetrics.cost.value.toFixed(2)}</strong><small>正式计费事件</small><i>↗</i></button>`; } }
+    function prdRenderDashboard() { const view = prd$("[data-view=dashboard]"); if (!view) return; Object.assign(prdMetrics, prdOutcomeSnapshot()); const metrics = prd$(".metric-grid", view); if (metrics) metrics.innerHTML = [prdMetric("工作员工","employees","当前执行态数字员工","blue"), prdMetric("业务动作","actions","客服回复、获客与内容发布处理","green"), prdMetric("新增线索","leads","今日首次留资去重客户","purple"), prdMetric("昨日花费","cost","结果计费与账号托管","orange")].join(""); const list = prd$("#dashboard-working-list", view); const ids = prdWorkingEmployeeIds(); if (list) list.innerHTML = ids.length ? `<div class="prd-dashboard-employee-list">${ids.map((id) => { const employee = employeeById(id); const data = prdTalentData(employee); const online = prdEmployeeOnline(id); const status = online ? "在线" : "异常"; const recent = id === "lead-hunter" ? "持续搜索潜客中..." : id === "smart-reply" ? "正在帮您接待私信客户中..." : "正在推进账号矩阵的本周发布任务..."; return `<article class="prd-dashboard-employee"><img src="${prdEsc(talentPlazaEmployee(employee)?.image || employee.image)}" alt="${prdEsc(data.persona)}"><div><strong>${prdEsc(digitalEmployeeLabel(data))}</strong><small>${recent}</small></div><span class="prd-dashboard-employee__state"><b class="${online ? "" : "is-error"}">${status}</b><small>${online ? "功能正常触发" : "授权掉线，去修复"}</small></span></article>`; }).join("")}</div>` : `<div class="prd-empty-state">暂无执行中的数字员工，去人才广场雇佣已上线岗位。</div>`; const resultPanel = prd$(".recent-results-panel", view); if (resultPanel) { const body = prd$(".result-table-wrap", resultPanel); const resultCards = [ids.includes("lead-hunter") ? `<article class="prd-dashboard-result"><strong>主号获客专家</strong><small>昨日新增潜客 24 个，发送私信转化了 6 个留资</small><b>按有效线索计费</b></article>` : "", ids.includes("smart-reply") ? `<article class="prd-dashboard-result"><strong>客服专员</strong><small>昨日承接客户 204 个，转化了 8 条留资</small><b>正式客服结果</b></article>` : "", ids.includes("ai-video") ? `<article class="prd-dashboard-result"><strong>短视频运营专员</strong><small>本周已为 14 个账号发布 168 条内容，回收发布与效果数据</small><b>按账号按日计费</b></article>` : ""].filter(Boolean).join(""); if (body) body.innerHTML = resultCards ? `<div class="prd-dashboard-results">${resultCards}</div>` : `<div class="prd-empty-state">暂无正式成果，雇佣并开启数字员工后这里会同步结果。</div>`; } const todo = prd$(".dashboard-todo-panel .attention-list", view); if (todo) { const todoItems = [ids.includes("lead-hunter") && !prdEmployeeOnline("lead-hunter") ? `<button type="button" data-prd-todo-account><i></i><span><strong>抖音营销授权待处理</strong><small>我暂时无法执行抖音主动触达；请完成平台或营销授权，恢复后我会继续工作。</small></span></button>` : "", ids.includes("smart-reply") ? `<button type="button" data-route-target="demo-live"><i></i><span><strong>客服专员：有客户需要您转人工处理</strong><small>转人工会话实时汇总，人工发送、托管 AI 或关闭会话后待办移除。</small></span></button>` : "", ids.includes("ai-video") && !prdEmployeeOnline("ai-video") ? `<button type="button" data-route-target="accounts"><i></i><span><strong>短视频运营专员：抖音账号矩阵待处理</strong><small>完成平台授权后，短视频运营专员才能继续排期与发布本周内容。</small></span></button>` : ""].filter(Boolean).join(""); todo.innerHTML = todoItems ? `<div class="prd-todo-list">${todoItems}</div>` : `<div class="prd-empty-state">暂无待处理事项，数字员工准备就绪后这里会实时更新。</div>`; } const yesterday = prd$(".dashboard-yesterday-panel", view); if (yesterday) { const dims = prd$(".dashboard-result-dimensions", yesterday); if (dims) dims.innerHTML = `<button type="button" data-open-results="overview"><span>工作员工</span><strong>${prdMetrics.employees.value} 位</strong><small>当前执行态</small><i>↗</i></button><button type="button" data-open-results="history"><span>业务动作</span><strong>${prdMetrics.actions.value} 次</strong><small>客服专员回复 + 主号获客专家 + 短视频运营专员矩阵发布</small><i>↗</i></button><button type="button" data-open-results="leads"><span>新增线索</span><strong>${prdMetrics.leads.value} 条</strong><small>首次留资去重</small><i>↗</i></button><button type="button" data-open-results="overview"><span>昨日花费</span><strong>¥${prdMetrics.cost.value.toFixed(2)}</strong><small>正式计费事件</small><i>↗</i></button>`; } }
     window.renderDashboard = prdRenderDashboard;
     document.addEventListener("click", (event) => { const todo = event.target.closest("[data-prd-todo-account]"); if (todo) { event.preventDefault(); event.stopImmediatePropagation(); prdOpenAccountBind("douyin", prdAccounts.douyin?.[0]?.id || ""); } }, true);
     prdRenderDashboard();
@@ -20643,7 +20696,9 @@ window.setInterval(streamDemoQueueSignal, 4200);
       ].reduce((html, [from, to]) => html.split(from).join(to), markup);
     };
     function prdVideoHireConfig() {
-      const current = state.settings?.["ai-video"] || {};
+      let current = {};
+      try { current = JSON.parse(localStorage.getItem(prdAgentSettingsKey) || "{}")?.["ai-video"] || {}; } catch { current = {}; }
+      try { current = { ...current, ...(state.settings?.["ai-video"] || {}) }; } catch {}
       const defaultGroups = window.AIVideoMatrix ? window.AIVideoMatrix.groups : ["旗舰店", "城市店", "专营店"];
       return { accountGroups: current.accountGroups && current.accountGroups.length ? [...current.accountGroups] : [...defaultGroups], weeklyTarget: current.weeklyTarget || "4", publishMode: current.publishMode || "review", scheduleSlots: current.scheduleSlots && current.scheduleSlots.length ? [...current.scheduleSlots] : ["每天 09:00"] };
     }
@@ -20653,7 +20708,7 @@ window.setInterval(streamDemoQueueSignal, 4200);
       const groups = matrix ? matrix.groups : ["旗舰店", "城市店", "专营店"];
       const accountCount = matrix ? matrix.accounts.length : 100;
       const groupCards = groups.map((group) => { const active = (draft.accountGroups || []).includes(group); const count = matrix ? matrix.accounts.filter((row) => row.group === group).length : (group === "旗舰店" ? 10 : group === "城市店" ? 40 : 50); return `<label class="prd-hire-strategy-card prd-hire-matrix-group${active ? " is-active" : ""}"><input type="checkbox" data-prd-video-config="accountGroup" value="${group}" ${active ? "checked" : ""}><span><strong>${group}</strong><small>${count} 个账号</small></span></label>`; }).join("");
-      return `<section class="prd-hire-config prd-hire-config--video"><div class="prd-hire-config-intro"><div><strong>短视频运营专员已准备好</strong><small>选择账号范围、每周发布目标与审核方式，雇佣后仍可在实时工作里调整。</small></div><b>可调整配置</b></div><section class="prd-hire-config-block"><header><div><span>01</span><strong>账号接入</strong></div><small>已接入 ${accountCount} 个抖音账号</small></header><div class="prd-hire-matrix-groups">${groupCards}</div></section><section class="prd-hire-config-block"><header><div><span>02</span><strong>发布计划</strong></div><small>按周计划持续发布</small></header><div class="prd-hire-video-fields"><label>每周每账号发布目标<select data-prd-video-config="weeklyTarget">${[2,3,4,5,6,7].map((n) => `<option${draft.weeklyTarget === String(n) ? " selected" : ""}>${n} 条</option>`).join("")}</select></label><label>默认发布时段<select data-prd-video-config="scheduleSlot">${["每天 09:00","每天 12:00","每天 18:00"].map((slot) => `<option${(draft.scheduleSlots || ["每天 09:00"])[0] === slot ? " selected" : ""}>${slot}</option>`).join("")}</select></label></div></section><section class="prd-hire-config-block"><header><div><span>03</span><strong>审核发布</strong></div><small>内容发布前如何确认</small></header><div class="prd-hire-video-publish"><label class="prd-hire-strategy-card${draft.publishMode === "review" ? " is-active" : ""}"><input type="radio" name="prd-video-publish" value="review" data-prd-video-config="publishMode"${draft.publishMode === "review" ? " checked" : ""}><span><strong>人工审核后发布</strong><small>内容先停在待审核，确认后按排期发布。</small></span></label><label class="prd-hire-strategy-card${draft.publishMode === "auto" ? " is-active" : ""}"><input type="radio" name="prd-video-publish" value="auto" data-prd-video-config="publishMode"${draft.publishMode === "auto" ? " checked" : ""}><span><strong>自动发布</strong><small>内容就绪后按排期直接发布。</small></span></label></div><div class="prd-hire-relation-graph is-separate"><div><span>托管口径</span><strong>¥199 / 账号 / 月</strong><small>每个接入账号每月 ¥199，覆盖排期发布与效果回收。</small></div></div></section></section>`;
+      return `<section class="prd-hire-config prd-hire-config--video"><div class="prd-hire-config-intro"><div><strong>短视频运营专员已准备好</strong><small>选择账号范围、每周发布目标与审核方式，雇佣后仍可在实时工作里调整。</small></div><b>可调整配置</b></div><section class="prd-hire-config-block"><header><div><span>01</span><strong>账号接入</strong></div><small>已接入 ${accountCount} 个抖音账号</small></header><div class="prd-hire-matrix-groups">${groupCards}</div></section><section class="prd-hire-config-block"><header><div><span>02</span><strong>发布计划</strong></div><small>按周计划持续发布</small></header><div class="prd-hire-video-fields"><label>每周每账号发布目标<select data-prd-video-config="weeklyTarget">${[2,3,4,5,6,7].map((n) => `<option${draft.weeklyTarget === String(n) ? " selected" : ""}>${n} 条</option>`).join("")}</select></label><label>默认发布时段<select data-prd-video-config="scheduleSlot">${["每天 09:00","每天 12:00","每天 18:00"].map((slot) => `<option${(draft.scheduleSlots || ["每天 09:00"])[0] === slot ? " selected" : ""}>${slot}</option>`).join("")}</select></label></div></section><section class="prd-hire-config-block"><header><div><span>03</span><strong>审核发布</strong></div><small>内容发布前如何确认</small></header><div class="prd-hire-video-publish"><label class="prd-hire-strategy-card${draft.publishMode === "review" ? " is-active" : ""}"><input type="radio" name="prd-video-publish" value="review" data-prd-video-config="publishMode"${draft.publishMode === "review" ? " checked" : ""}><span><strong>人工审核后发布</strong><small>内容先停在待审核，确认后按排期发布。</small></span></label><label class="prd-hire-strategy-card${draft.publishMode === "auto" ? " is-active" : ""}"><input type="radio" name="prd-video-publish" value="auto" data-prd-video-config="publishMode"${draft.publishMode === "auto" ? " checked" : ""}><span><strong>自动发布</strong><small>内容就绪后按排期直接发布。</small></span></label></div><div class="prd-hire-relation-graph is-separate"><div><span>计费口径</span><strong>¥5 / 账号 / 天</strong><small>按账号按日计费：当日开启即产生当日费用，次日扣费；关闭当天仍计费，次日起停止。</small></div></div></section></section>`;
     }
     const prdAgentSettingsKey = "ai-office-agent-settings-v2";
     const prdHumanCollaborationDefaults = { humanHandoffEnabled: false, aiHandoffTimeout: "", aiHandoffTimeoutUnit: "", humanHandoffRules: [], keywordHandoffEnabled: false, handoffKeywords: [] };
@@ -20682,7 +20737,7 @@ window.setInterval(streamDemoQueueSignal, 4200);
     }
     function prdRenderHireFlow() {
       const employee = employeeById(prdHireEmployeeId); const modal = prd$("#first-run-modal"); const back = prd$(".first-run-backdrop"); if (!modal || !employee) return;
-      const isLeadHire = ["lead-hunter", "lead-hunter-advanced"].includes(employee.id); const isVideoHire = employee.id === "ai-video"; const isConfig = !isVideoHire && prdHireStage === "config"; const data = prdTalentData(employee); const requirements = prdEmployeeRequirements(prdHireEmployeeId); const ready = requirements.every((item) => item.ready); const douyinAuthRail = !isConfig && (isLeadHire || isVideoHire) ? prdDouyinAuthRosterMarkup(isVideoHire ? { kicker:"矩阵发布", title:"抖音账号授权状态", pendingHint:"至少完成 1 个账号的营销授权即可雇佣，其余账号可后续授权", doneLabel:"账号授权已就绪，可开始矩阵发布" } : {}) : ""; const douyinReadyCount = isLeadHire ? (prdAccounts.douyin || []).filter((record) => record.auth?.platform && record.auth?.marketing).length : 0; const douyinNeedsMore = isLeadHire && douyinReadyCount < (leadHunterAccounts?.length || 0);
+      const isLeadHire = ["lead-hunter", "lead-hunter-advanced"].includes(employee.id); const isVideoHire = employee.id === "ai-video"; const isConfig = !isVideoHire && prdHireStage === "config"; const data = prdTalentData(employee); const requirements = prdEmployeeRequirements(prdHireEmployeeId); const ready = requirements.every((item) => item.ready); const videoHire = isVideoHire ? prdVideoHireSelection() : null; const videoEnabledCount = videoHire ? videoHire.enabledRows.length : 0; const videoReady = ready && (!isVideoHire || videoEnabledCount > 0); const douyinAuthRail = !isConfig && (isLeadHire || isVideoHire) ? prdDouyinAuthRosterMarkup(isVideoHire ? { kicker:"矩阵发布", title:"账号接入与营销授权", selection:true, pendingHint:"至少完成 1 个账号的营销授权即可雇佣，其余账号可后续授权", doneLabel:"账号授权已就绪，可开始矩阵发布" } : {}) : ""; const douyinReadyCount = isLeadHire ? (prdAccounts.douyin || []).filter((record) => record.auth?.platform && record.auth?.marketing).length : 0; const douyinNeedsMore = isLeadHire && douyinReadyCount < (leadHunterAccounts?.length || 0);
       modal.classList.toggle("is-video-hire", isVideoHire);
       const progress = prd$("#first-run-progress"); if (progress) progress.hidden = isVideoHire;
       const kicker = prd$(".first-run-head .section-kicker"); if (kicker) kicker.textContent = `${isVideoHire ? "雇佣" : "雇佣前"} · ${data.persona}`;
@@ -20694,10 +20749,10 @@ window.setInterval(streamDemoQueueSignal, 4200);
         prd$("#first-run-footer").innerHTML = `<small>配置完成即可雇佣。</small><div><button class="first-run-secondary" type="button" data-prd-hire-config-back>返回检查</button><button class="first-run-primary" type="button" data-prd-confirm-hire ${prdHireConfigValid(prdHireEmployeeId) ? "" : "disabled"}>立即雇佣 ${escapeHTML(data.persona)} <span>→</span></button></div>`;
       } else {
         const items = requirements.map((item) => `<div class="prd-check-item ${item.ready ? "" : "is-pending"}"><i>${item.ready ? "✓" : "!"}</i><span><strong>${item.label}</strong><small>${item.note}</small></span>${item.ready ? "" : `<button type="button" data-prd-hire-dependency="${item.id}">${item.action}</button>`}</div>`).join("");
-        const summaryCopy = isVideoHire ? (ready ? "余额与账号授权已就绪，可直接雇佣。" : "请完成余额或抖音营销授权。") : ready ? (douyinNeedsMore ? "最低条件已满足，建议继续补齐抖音账号。" : "检查完成，可以进入员工配置。") : "请完成待处理项。";
+        const summaryCopy = isVideoHire ? (ready ? (videoEnabledCount ? "余额与账号授权已就绪，可直接雇佣。" : "请至少勾选并开启 1 个账号。") : "请完成余额或抖音营销授权。") : ready ? (douyinNeedsMore ? "最低条件已满足，建议继续补齐抖音账号。" : "检查完成，可以进入员工配置。") : "请完成待处理项。";
         prd$("#first-run-content").innerHTML = `<div class="first-run-check-summary"><div><strong>${isVideoHire ? "雇佣条件" : `雇佣前检查 · ${escapeHTML(data.persona)}`}</strong><small>${summaryCopy}</small></div></div>${douyinAuthRail}<div class="prd-check-list">${items}</div>`;
         prd$("#first-run-footer").innerHTML = employee.id === "ai-video"
-          ? `<small>${ready ? "确认后立即开始工作，不需要额外配置。" : "余额或营销授权未满足，暂不能雇佣。"}</small><div><button class="first-run-secondary" type="button" data-prd-close-hire>取消</button><button class="first-run-primary" type="button" data-prd-confirm-hire ${ready ? "" : "disabled"}>确认并雇佣短视频运营专员 <span>→</span></button></div>`
+          ? `<small>${!ready ? "余额或营销授权未满足，暂不能雇佣。" : videoEnabledCount ? `已启用 ${videoEnabledCount} 个账号，确认后立即开始工作。` : "请至少勾选并开启 1 个账号。"}</small><div><button class="first-run-secondary" type="button" data-prd-close-hire>取消</button><button class="first-run-primary" type="button" data-prd-confirm-hire ${videoReady ? "" : "disabled"}>确认并雇佣短视频运营专员 <span>→</span></button></div>`
           : `<small>${ready ? (douyinNeedsMore ? "已满足最低要求，可继续授权或进入配置。" : "账号池已就绪，完成后进入员工配置。") : "待处理项会阻止下一步。"}</small><div><button class="first-run-secondary" type="button" data-prd-close-hire>取消</button><button class="first-run-primary" type="button" data-prd-hire-config-next ${ready ? "" : "disabled"}>下一步：员工配置 <span>→</span></button></div>`;
       }
       modal.classList.add("is-open"); back?.classList.add("is-open"); modal.setAttribute("aria-hidden", "false"); back?.setAttribute("aria-hidden", "false");
@@ -20781,10 +20836,22 @@ window.setInterval(streamDemoQueueSignal, 4200);
     function prdOpenHireCheck(id) { prdStartHireScan(id); }
     function prdApplyHireConfig(id) {
       if (id === "ai-video") {
-        const authorizedAccounts = prdRecords().filter((record) => record.platform === "douyin" && prdCapabilityReady(record, "marketing"));
-        authorizedAccounts.forEach((record) => { record.service = { ...(record.service || {}), "ai-video": true }; });
-        if (authorizedAccounts.length) prdSaveAccounts();
-        try { const config = prdHireConfigDraft?.id === id ? prdHireConfigDraft : prdVideoHireConfig(); state.settings["ai-video"] = { ...(state.settings["ai-video"] || {}), ...config, strategyMode: config.publishMode === "auto" ? "auto" : "review" }; saveJson(SETTINGS_KEY, state.settings); } catch {}
+        const selection = prdVideoHireSelection();
+        const enabledRecordIds = selection.enabledRows.map((item) => item.record?.id).filter(Boolean);
+        const selectedRecordIds = selection.selectedRows.map((item) => item.record?.id).filter(Boolean);
+        const douyinRecords = prdRecords().filter((record) => record.platform === "douyin");
+        douyinRecords.forEach((record) => { record.service = { ...(record.service || {}), "ai-video": enabledRecordIds.includes(record.id) }; });
+        if (douyinRecords.length) prdSaveAccounts();
+        try {
+          const config = prdVideoHireConfig();
+          let stored = {}; try { stored = JSON.parse(localStorage.getItem(prdAgentSettingsKey) || "{}")?.["ai-video"] || {}; } catch { stored = {}; }
+          const videoSettings = { ...stored, ...config, accountIds: selectedRecordIds, enabledAccountIds: enabledRecordIds, accountEnabled: enabledRecordIds, strategyMode: config.publishMode === "auto" ? "auto" : "review" };
+          try { state.settings["ai-video"] = videoSettings; } catch {}
+          const settings = JSON.parse(localStorage.getItem(prdAgentSettingsKey) || "{}");
+          settings["ai-video"] = { ...(settings["ai-video"] || {}), ...videoSettings };
+          localStorage.setItem(prdAgentSettingsKey, JSON.stringify(settings));
+          window.dispatchEvent(new CustomEvent("ai-office-settings-sync", { detail: { id, settings: settings["ai-video"] } }));
+        } catch {}
         return;
       }
       if (id === "smart-reply") {
@@ -20808,6 +20875,35 @@ window.setInterval(streamDemoQueueSignal, 4200);
       const mode = event.target.closest("[data-prd-hire-mode]"); if (mode) { event.preventDefault(); event.stopImmediatePropagation(); const sourceAccounts = prdHireEmployeeId === "lead-hunter-advanced" ? advancedLeadHunterAccounts : leadHunterAccounts; prdHireConfigDraft.mode = mode.dataset.prdHireMode; const selected = prdHireConfigDraft.accountIds; if (prdHireConfigDraft.mode === "main-sub") { prdHireConfigDraft.leadPoolIds = [selected[0] || "main"]; prdHireConfigDraft.touchPoolIds = selected.filter((id) => id !== prdHireConfigDraft.leadPoolIds[0] && sourceAccounts.some((item) => item.id === id && item.platformAuth)); } else { prdHireConfigDraft.leadPoolIds = [...selected]; prdHireConfigDraft.touchPoolIds = [...selected]; } prdRenderHireFlow(); return; }
       const videoConfig = event.target.closest("[data-prd-video-config]"); if (videoConfig && prdHireEmployeeId === "ai-video" && videoConfig.type === "radio") { event.preventDefault(); event.stopImmediatePropagation(); prdHireConfigDraft = { ...(prdHireConfigDraft || { id: "ai-video" }), [videoConfig.dataset.prdVideoConfig]: videoConfig.value }; prdRenderHireFlow(); return; }
       const humanRemove = event.target.closest("[data-prd-human-remove]"); if (humanRemove && prdHireEmployeeId === "smart-reply") { event.preventDefault(); event.stopImmediatePropagation(); const human = prdHireConfigDraft.humanCollaboration; human.handoffKeywords = (human.handoffKeywords || []).filter((keyword) => keyword !== humanRemove.dataset.prdHumanRemove); prdRenderHireFlow(); return; }
+    }, true);
+    document.addEventListener("click", (event) => {
+      const toggleAll = event.target.closest("[data-prd-video-hire-toggle-all]");
+      if (!toggleAll || prdHireEmployeeId !== "ai-video") return;
+      event.preventDefault(); event.stopImmediatePropagation();
+      const selection = prdVideoHireSelection();
+      const readyKeys = selection.rows.filter((item) => item.ready).map((item) => item.key);
+      const allSelected = readyKeys.length > 0 && readyKeys.every((key) => selection.draft.selected.includes(key));
+      selection.draft.selected = allSelected ? [] : [...readyKeys];
+      if (allSelected) selection.draft.closed = [];
+      prdRenderHireFlow();
+    }, true);
+    document.addEventListener("change", (event) => {
+      const videoAccount = event.target.closest("[data-prd-video-hire-account]");
+      const videoSwitch = event.target.closest("[data-prd-video-hire-switch]");
+      if ((!videoAccount && !videoSwitch) || prdHireEmployeeId !== "ai-video") return;
+      event.stopImmediatePropagation();
+      const draft = prdVideoHireSelection().draft;
+      if (videoAccount) {
+        const key = videoAccount.dataset.prdVideoHireAccount;
+        if (videoAccount.checked) { if (!draft.selected.includes(key)) draft.selected.push(key); }
+        else { draft.selected = draft.selected.filter((item) => item !== key); draft.closed = draft.closed.filter((item) => item !== key); }
+      } else {
+        const key = videoSwitch.dataset.prdVideoHireSwitch;
+        const closed = draft.closed.includes(key);
+        if (videoSwitch.checked && closed) draft.closed = draft.closed.filter((item) => item !== key);
+        if (!videoSwitch.checked && !closed) draft.closed.push(key);
+      }
+      prdRenderHireFlow();
     }, true);
     document.addEventListener("change", (event) => {
       if (!prdHireConfigDraft || prdHireStage !== "config") return;
@@ -22109,6 +22205,28 @@ window.setInterval(streamDemoQueueSignal, 4200);
     .prd-douyin-auth-cta span { margin-left: 3px; font-size: 12px; }
     .prd-douyin-auth-done { display: inline-flex; align-items: center; gap: 5px; color: #2b8f61; font-size: 12px; }
     .prd-douyin-auth-done i { width: 15px; height: 15px; display: grid; place-items: center; border-radius: 50%; color: #fff; background: #2ca66a; font-style: normal; font-size: 12px; }
+    .prd-douyin-auth-rail.is-selection > ul { grid-template-columns: 1fr; }
+    .prd-douyin-auth-rail.is-selection > footer { justify-content: stretch; }
+    .prd-douyin-auth-rail.is-selection .prd-douyin-auth-row { grid-template-columns: 18px 23px minmax(0, 1fr) auto auto; align-items: center; }
+    .prd-video-hire-check { position: relative; display: inline-flex; align-items: center; cursor: pointer; }
+    .prd-video-hire-check input { position: absolute; opacity: 0; pointer-events: none; }
+    .prd-video-hire-check i { position: relative; display: block; width: 16px; height: 16px; border-radius: 5px; background: #fff; box-shadow: inset 0 0 0 1px rgba(28, 63, 87, .2); transition: .15s ease; }
+    .prd-video-hire-check i::after { content: ""; position: absolute; left: 5px; top: 1px; width: 3px; height: 7px; border: 2px solid #fff; border-top: 0; border-left: 0; border-radius: 1px; opacity: 0; transform: rotate(43deg); transition: .15s ease; }
+    .prd-video-hire-check input:checked + i { background: #277db1; box-shadow: none; }
+    .prd-video-hire-check input:checked + i::after { opacity: 1; }
+    .prd-video-hire-check input:disabled + i { background: #eef3f7; box-shadow: inset 0 0 0 1px rgba(28, 63, 87, .1); cursor: not-allowed; }
+    .prd-video-hire-switch.is-locked { opacity: .5; cursor: not-allowed; }
+    .prd-video-hire-toolbar { width: 100%; display: flex; align-items: center; justify-content: space-between; gap: 12px; }
+    .prd-video-hire-select-all { flex: 0 0 auto; min-height: 26px; padding: 0 10px; border: 1px solid rgba(0, 113, 227, .24); border-radius: 7px; color: #216c9a; background: #e6f2fa; font-size: 12px; font-weight: 600; cursor: pointer; }
+    .prd-video-hire-select-all:hover { background: #d8ebf8; }
+    .prd-video-hire-billing { min-width: 0; display: flex; flex-direction: column; gap: 2px; text-align: right; }
+    .prd-video-hire-billing b { color: #216c9a; font-size: 12px; }
+    .prd-video-hire-billing small { color: #6e8796; font-size: 11px; line-height: 1.35; }
+    html[data-theme="dark"] .prd-video-hire-check i { background: #2b3a44; box-shadow: inset 0 0 0 1px rgba(130, 202, 231, .2); }
+    html[data-theme="dark"] .prd-video-hire-check input:disabled + i { background: #22303a; }
+    html[data-theme="dark"] .prd-video-hire-billing b { color: #8cc7e8; }
+    html[data-theme="dark"] .prd-video-hire-billing small { color: #a3b0b7; }
+    html[data-theme="dark"] .prd-video-hire-select-all { color: #8cc7e8; background: #22384a; }
     @media (max-width: 800px) { .prd-douyin-auth-rail > ul { grid-template-columns: 1fr; } }
     @media (max-width: 560px) { .prd-douyin-auth-rail > header { align-items: flex-start; flex-direction: column; gap: 7px; } .prd-douyin-auth-meter { width: 100%; text-align: left; } .prd-douyin-auth-meter b { margin-top: 3px; } .prd-douyin-auth-row { grid-template-columns: 23px minmax(0, 1fr) auto; } .prd-douyin-auth-row button { grid-column: 3; grid-row: 1; } .prd-douyin-auth-state { grid-column: 2; grid-row: 2; justify-self: start; } }
     html[data-theme="dark"] .prd-douyin-auth-rail { background: #20343e; box-shadow: inset 0 0 0 1px rgba(130, 202, 231, .14); }
@@ -25107,7 +25225,7 @@ window.setInterval(streamDemoQueueSignal, 4200);
     }
   </style>
   <script src="assets/ai-office-chibi.bundle.js?v=20260812-remove-fallback-notice"></script>
-  <script src="assets/ai-office-enhancement.js?v=20260909-republish-failure-v1"></script>
+  <script src="assets/ai-office-enhancement.js?v=20260911-monitor-validate-grab-v1"></script>
   <script src="assets/results-prospect-dashboard.js?v=20260828-prospect-redesign-v1"></script>
   <script>
     (() => {

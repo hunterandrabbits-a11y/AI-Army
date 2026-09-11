@@ -203,7 +203,7 @@
       next: "处理待发布作品与账号待办",
       last: "3 分钟前完成一批账号的发布排期",
       greeting: "老板，今天的发布任务正在按计划执行：14 个账号中 6 个已完成发布、3 个发布中、4 个排队，1 个因营销授权过期暂停；本周已发布 535 条。我会先处理授权，再完成剩余账号发布并回收播放、互动和线索数据。",
-      cost: "¥199 / 账号 / 月", outcome: "本周已发布 535 条 · 14 个账号",
+      cost: "¥5 / 账号 / 天", outcome: "本周已发布 535 条 · 14 个账号",
       fixedFlow: ["接入账号", "确定发布计划", "准备内容", "发布", "回收效果"],
       adjustable: ["账号范围", "每周发布目标", "审核方式", "发布时段", "内容来源"],
     },
@@ -318,7 +318,7 @@
       matrixDataTab: "accounts", matrixTimeRange: "week", matrixAccountId: "",
       libraryTab: "pending", libraryReviewDeleted: [], libraryReviewApproved: [],
       publishTaskView: "list", publishTaskStep: 1, publishTaskSource: "library", publishTaskAccountIds: [], publishTaskWorkIds: [], publishTaskScript: "", publishTaskScriptsReady: false, publishTaskScriptsConfirmed: false, publishTaskGenerated: false, publishTaskUploaded: false, publishTaskUploadItem: null, publishTaskRemixGenerated: false, publishTaskTiming: "now", publishTaskScheduleAt: "2026-08-25T18:30", publishTaskReview: "review", publishTaskMessages: [], publishTaskHistoryId: "", publishTasks: [], publishTaskHistory: [], publishTaskResult: null,
-      v13: { section: "overview", publishView: "results", taskStep: 1, taskAccounts: [], taskWorks: [], taskTiming: "now", taskScheduleAt: "2026-08-26T18:30", taskTitleMode: "none", taskTitleCopy: "", libTab: "works", workFilter: "all", accountWorksOpen: "", accountWorksFilter: "all", accountWorkStatuses: {}, generatedTasks: [], worksPoolUploads: [], monitorAddOpen: false, monitorDraftHandle: "", monitors: [] },
+      v13: { section: "overview", publishView: "results", taskStep: 1, taskAccounts: [], taskWorks: [], taskTiming: "now", taskScheduleAt: "2026-08-26T18:30", taskTitleMode: "none", taskTitleCopy: "", libTab: "works", workFilter: "all", accountWorksOpen: "", accountWorksFilter: "all", accountWorkStatuses: {}, generatedTasks: [], worksPoolUploads: [], monitorAddOpen: false, monitorDraftHandle: "", monitorValidating: false, monitorAddError: "", monitorGrabs: {}, monitors: [] },
       ...loadJson(WUJIAN_KEY, {}),
     },
   };
@@ -336,7 +336,7 @@
   if (!["list", "agent", "history"].includes(state.wuJian.publishTaskView)) state.wuJian.publishTaskView = "list";
   if (!["library", "remix", "ai"].includes(state.wuJian.publishTaskSource)) state.wuJian.publishTaskSource = "library";
   // v13 安全重置：如果处于发布流程中途但账号为空，退回第一步；同时补全新字段默认值
-  { const v13 = state.wuJian.v13 || {}; if (v13.publishView === "create" && (v13.taskStep || 1) > 1 && !(v13.taskAccounts || []).length) { v13.taskStep = 1; state.wuJian.v13 = v13; } if (!v13.taskTitleMode) { v13.taskTitleMode = "none"; } if (v13.taskTitleCopy === undefined) { v13.taskTitleCopy = ""; } if (!["all", "待发布", "发布中", "发布完成", "发布失败", "取消发布"].includes(v13.accountWorksFilter)) { v13.accountWorksFilter = "all"; } const validWorkFilters = ["all", "待发布", "发布中", "发布完成", "发布失败", "取消发布"]; if (!Array.isArray(v13.accountWorksFilters)) { v13.accountWorksFilters = v13.accountWorksFilter === "all" ? ["all"] : [v13.accountWorksFilter]; } v13.accountWorksFilters = v13.accountWorksFilters.filter((filter) => validWorkFilters.includes(filter)); if (!v13.accountWorksFilters.length) { v13.accountWorksFilters = ["all"]; } if (!v13.accountWorkStatuses || typeof v13.accountWorkStatuses !== "object" || Array.isArray(v13.accountWorkStatuses)) { v13.accountWorkStatuses = {}; } if (!Array.isArray(v13.monitors)) { v13.monitors = []; } if (typeof v13.monitorAddOpen !== "boolean") { v13.monitorAddOpen = false; } if (typeof v13.monitorDraftHandle !== "string") { v13.monitorDraftHandle = ""; } state.wuJian.v13 = v13; }
+  { const v13 = state.wuJian.v13 || {}; if (v13.publishView === "create" && (v13.taskStep || 1) > 1 && !(v13.taskAccounts || []).length) { v13.taskStep = 1; state.wuJian.v13 = v13; } if (!v13.taskTitleMode) { v13.taskTitleMode = "none"; } if (v13.taskTitleCopy === undefined) { v13.taskTitleCopy = ""; } if (!["all", "待发布", "发布中", "发布完成", "发布失败", "取消发布"].includes(v13.accountWorksFilter)) { v13.accountWorksFilter = "all"; } const validWorkFilters = ["all", "待发布", "发布中", "发布完成", "发布失败", "取消发布"]; if (!Array.isArray(v13.accountWorksFilters)) { v13.accountWorksFilters = v13.accountWorksFilter === "all" ? ["all"] : [v13.accountWorksFilter]; } v13.accountWorksFilters = v13.accountWorksFilters.filter((filter) => validWorkFilters.includes(filter)); if (!v13.accountWorksFilters.length) { v13.accountWorksFilters = ["all"]; } if (!v13.accountWorkStatuses || typeof v13.accountWorkStatuses !== "object" || Array.isArray(v13.accountWorkStatuses)) { v13.accountWorkStatuses = {}; } if (!Array.isArray(v13.monitors)) { v13.monitors = []; } if (typeof v13.monitorAddOpen !== "boolean") { v13.monitorAddOpen = false; } if (typeof v13.monitorDraftHandle !== "string") { v13.monitorDraftHandle = ""; } if (typeof v13.monitorValidating !== "boolean") { v13.monitorValidating = false; } if (typeof v13.monitorAddError !== "string") { v13.monitorAddError = ""; } if (!v13.monitorGrabs || typeof v13.monitorGrabs !== "object" || Array.isArray(v13.monitorGrabs)) { v13.monitorGrabs = {}; } state.wuJian.v13 = v13; }
   syncWuJianPublishState();
 
   if (Array.isArray(state.wuJian.worksCreated)) {
@@ -1431,7 +1431,51 @@
   }
   function wuJianFileSize(bytes) {
     if (bytes < 1024 * 1024) return `${Math.max(1, Math.round(bytes / 1024))} KB`;
-    return `${(bytes / 1024 / 1024).toFixed(1)} MB`;
+    if (bytes < 1024 * 1024 * 1024) return `${(bytes / 1024 / 1024).toFixed(1)} MB`;
+    return `${(bytes / 1024 / 1024 / 1024).toFixed(2)} GB`;
+  }
+  /* 上传校验按抖音官方视频发布限制：MP4 / MOV / WebM，单文件 ≤ 4GB */
+  const WUJIAN_VIDEO_LIMITS = { extensions: ["mp4", "mov", "webm"], mime: /^video\/(mp4|quicktime|webm)$/, maxBytes: 4 * 1024 * 1024 * 1024, formatCopy: "MP4 / MOV / WebM", sizeCopy: "4GB" };
+  function wuJianVideoFileCheck(file) {
+    const name = String(file?.name || "");
+    const ext = (name.match(/\.([a-z0-9]+)$/i)?.[1] || "").toLowerCase();
+    if (!WUJIAN_VIDEO_LIMITS.extensions.includes(ext) && !WUJIAN_VIDEO_LIMITS.mime.test(file?.type || "")) {
+      return { ok: false, copy: `仅支持 ${WUJIAN_VIDEO_LIMITS.formatCopy} 格式（抖音发布限制）` };
+    }
+    if (Number(file?.size || 0) > WUJIAN_VIDEO_LIMITS.maxBytes) {
+      return { ok: false, copy: `单个视频不能超过 ${WUJIAN_VIDEO_LIMITS.sizeCopy}（抖音发布限制），当前文件 ${wuJianFileSize(file.size)}` };
+    }
+    return { ok: true, copy: "" };
+  }
+  const wuJianUploadedBlobUrls = new Set();
+  function wuJianWorkDownloadUrl(item) {
+    const url = String(item?.video || "");
+    if (!url) return "";
+    if (url.startsWith("blob:") && !wuJianUploadedBlobUrls.has(url)) return "";
+    return url;
+  }
+  function wuJianWorkDownloadName(item) {
+    const url = String(item?.video || "");
+    const raw = String(item?.title || "").replace(/[\\/:*?"<>|]/g, "").trim() || "待发布视频";
+    if (/\.[a-z0-9]{2,4}$/i.test(raw)) return raw;
+    const ext = (url.split("?")[0].match(/\.([a-z0-9]{2,4})$/i)?.[1] || "mp4").toLowerCase();
+    return `${raw}.${ext}`;
+  }
+  function wuJianTriggerWorkDownload(item) {
+    const url = wuJianWorkDownloadUrl(item);
+    if (!url) {
+      if (typeof showToast === "function") showToast("原文件不可用", "本次会话上传的原文件已失效，请重新上传后再下载");
+      return false;
+    }
+    const link = document.createElement("a");
+    link.href = url;
+    link.download = wuJianWorkDownloadName(item);
+    link.rel = "noreferrer";
+    document.body.appendChild(link);
+    link.click();
+    link.remove();
+    if (typeof showToast === "function") showToast("开始下载", `${item.title || "待发布视频"} 已开始下载`);
+    return true;
   }
   function handleWuJianUpload(fileList) {
     const files = Array.from(fileList || []).filter((file) => /^(image|video)\//.test(file.type));
@@ -1535,7 +1579,7 @@
     const generating = state.wuJian.generationStatus === "generating";
     const complete = state.wuJian.generationStatus === "complete";
     return `<div class="wujian-page wujian-create-page">
-      <section class="wujian-page-head"><div><span>汽车短视频创作台</span><h2>把一个想法，变成可发布成片</h2><p>告诉短视频运营专员你想拍什么，脚本和画面会准备好，发布前由你确认，通过后进入本周发布计划。</p></div><div class="wujian-head-metrics"><article><strong>100</strong><span>接入账号</span></article><article><strong>12</strong><span>待审核</span></article><article><strong>¥199</strong><span>每账号/月</span></article></div></section>
+      <section class="wujian-page-head"><div><span>汽车短视频创作台</span><h2>把一个想法，变成可发布成片</h2><p>告诉短视频运营专员你想拍什么，脚本和画面会准备好，发布前由你确认，通过后进入本周发布计划。</p></div><div class="wujian-head-metrics"><article><strong>100</strong><span>接入账号</span></article><article><strong>12</strong><span>待审核</span></article><article><strong>¥5</strong><span>每账号/天</span></article></div></section>
       <div class="wujian-create-layout">
         <form class="wujian-studio" id="ai-wujian-create-form">
           <section class="wujian-composer"><header><div><span class="wujian-avatar"><img src="${employeeImage("ai-video")}" alt="短视频运营专员"></span><div><strong>短视频运营专员</strong><small><i></i>在线，随时可以开始</small></div></div><em>车型信息会帮你核对</em></header><label><span>你想拍一条什么视频？</span><textarea name="prompt" rows="3" placeholder="比如：为 E7 做一条 30 秒后排空间实测，吸引家庭用户来试驾">${escapeHtml(state.wuJian.prompt)}</textarea></label><div class="wujian-composer-tools"><button type="button" data-wujian-open-picker="history">＋ 添加素材</button><button type="button" data-wujian-add-vehicle>车 引用车型</button><span>${selectedMaterials.length} 项素材已准备好</span></div></section>
@@ -1893,7 +1937,7 @@
     const matrix = wuJianMatrixAccountRows();
     const data = matrixData();
     return `<div class="wujian-page wujian-matrix-page ai-matrix-overview">
-      ${wuJianMatrixKpiMarkup([["计入账号", matrix.accounts.length || 100, "按账号按月托管"], ["本周发布数", matrix.weekPublished || 224, "已发布内容"], ["待人工处理", data.pendingCount || 24, "需要你确认"]])}
+      ${wuJianMatrixKpiMarkup([["计入账号", matrix.accounts.length || 100, "按账号按日计费"], ["本周发布数", matrix.weekPublished || 224, "已发布内容"], ["待人工处理", data.pendingCount || 24, "需要你确认"]])}
       ${wuJianLivePublishMarkup(data)}
     </div>`;
   }
@@ -1948,19 +1992,25 @@
     const libraryItems = [
       { id: "library-e7-space", title: "E7 后排空间实测_待发布.mp4", meta: "客户上传 · 1080 × 1920 · 00:30", cover: "assets/vehicles/e7-flagship-2025.jpg", duration: "00:30", source: "素材库" },
       { id: "library-t9-family", title: "风云 T9 家庭口播_待发布.mp4", meta: "客户上传 · 1080 × 1920 · 00:32", cover: "assets/vehicles/fengyun-t9-120-2025.jpg", duration: "00:32", source: "素材库" },
-      { id: "library-showroom", title: "上海门店展厅走拍_待发布.mp4", meta: "客户上传 · 竖版视频 · 00:18", cover: "assets/live/ai-lead-live.jpg", duration: "00:18", source: "素材库" },
-    ];
+      { id: "library-showroom", title: "上海门店展厅走拍_待发布.mp4", meta: "客户上传 · 竖版视频 · 00:18", cover: "assets/live/ai-lead-live.jpg", duration: "00:18", source: "素材库", video: "assets/wujian/cases/car-case-03.mp4" },
+    ].map((item, index) => ({ ...item, video: item.video || ["assets/wujian/cases/car-case-01.mp4", "assets/wujian/cases/car-case-02.mp4", "assets/wujian/cases/car-case-03.mp4"][index % 3] }));
     const uploaded = state.wuJian.publishTaskUploadItem;
     return uploaded?.id ? [uploaded, ...libraryItems.filter((item) => item.id !== uploaded.id)] : libraryItems;
   }
   function wuJianPublishTaskUpload(files) {
-    const file = files?.[0];
+    const list = Array.from(files || []);
+    if (!list.length) return;
+    const accepted = [];
+    const rejected = [];
+    list.forEach((file) => {
+      const check = wuJianVideoFileCheck(file);
+      if (check.ok) accepted.push(file); else rejected.push(`${file.name || "该视频"}：${check.copy}`);
+    });
+    if (rejected.length && typeof showToast === "function") showToast(accepted.length ? "部分视频未通过校验" : "上传失败", rejected.join("；"));
+    const file = accepted[0];
     if (!file) return;
-    const isVideo = file.type?.startsWith("video/") || /\.(mp4|mov|m4v|avi|webm)$/i.test(file.name || "");
-    if (!isVideo) {
-      if (typeof showToast === "function") showToast("上传失败", "请上传 MP4、MOV、M4V、AVI 或 WEBM 视频");
-      return;
-    }
+    const video = typeof URL !== "undefined" && typeof URL.createObjectURL === "function" ? URL.createObjectURL(file) : "";
+    if (video) wuJianUploadedBlobUrls.add(video);
     const id = `library-upload-${Date.now()}`;
     state.wuJian.publishTaskUploadItem = {
       id,
@@ -1969,12 +2019,13 @@
       cover: "assets/vehicles/e7-flagship-2025.jpg",
       duration: "待识别",
       source: "素材库",
+      video,
     };
     state.wuJian.publishTaskUploaded = true;
     state.wuJian.publishTaskWorkIds = [id];
     persistWuJian();
     refreshWuJianLiveWorkspace();
-    if (typeof showToast === "function") showToast("视频已加入素材库", `${file.name || "客户上传视频"} 已放入待发布视频列表`);
+    if (typeof showToast === "function") showToast("校验通过，已加入作品库", `${file.name || "客户上传视频"} 符合抖音发布格式与大小限制，已放入待发布作品`);
   }
   function wuJianPublishTaskAgentMessage() {
     const step = Number(state.wuJian.publishTaskStep) || 1;
@@ -2002,7 +2053,7 @@
       const library = source === "library";
       const selectedCount = selected.size;
       const remixStatus = source === "remix" && selectedCount ? `<div class="ai-publish-task-remix-status"><div><strong>已选 ${selectedCount} 个二创作品</strong><small>先让大模型完成改编，生成可发布版本后再进入发布条件。</small></div><button type="button" class="is-primary" data-wujian-publish-remix-generate>${state.wuJian.publishTaskRemixGenerated ? "二创已完成" : "开始大模型二创"}</button>${state.wuJian.publishTaskRemixGenerated ? `<span class="ai-publish-task-ready">已生成 ${selectedCount} 个可发布版本</span>` : ""}</div>` : "";
-      content = `<div class="ai-publish-task-library-head"><div><strong>${library ? "待发布视频" : "二创作品列表"}</strong><small>${library ? "客户上传后会出现在这里，素材库视频不需要人工审核。" : "从已监控抖音账号抓取的作品中选择，先经过大模型编辑再发布。"}</small></div>${library ? `<input type="file" data-wujian-publish-upload-input accept="video/*,.mp4,.mov,.m4v,.avi,.webm" hidden><button type="button" class="is-quiet" data-wujian-publish-upload>＋ 上传待发布视频</button>` : `<button type="button" class="is-quiet" data-wujian-publish-remix-manage>管理二创素材</button>`}</div><div class="ai-publish-task-source-list">${items.map((item) => `<label class="ai-publish-task-source-item"><input type="checkbox" data-wujian-publish-work-id="${escapeHtml(item.id)}" ${selected.has(item.id) ? "checked" : ""}><img src="${escapeHtml(item.cover)}" alt="${escapeHtml(item.title)}"><span><strong>${escapeHtml(item.title)}</strong><small>${escapeHtml(item.meta)}</small></span><em>${escapeHtml(item.duration)}</em></label>`).join("")}</div>${state.wuJian.publishTaskUploaded && library ? `<small class="ai-publish-task-uploaded">刚上传的视频已加入待发布视频列表</small>` : ""}${remixStatus}</div>`;
+      content = `<div class="ai-publish-task-library-head"><div><strong>${library ? "待发布视频" : "二创作品列表"}</strong><small>${library ? "客户上传后会出现在这里，素材库视频不需要人工审核。" : "从已监控抖音账号抓取的作品中选择，先经过大模型编辑再发布。"}</small></div>${library ? `<input type="file" data-wujian-publish-upload-input accept=".mp4,.mov,.webm,video/mp4,video/quicktime,video/webm" hidden><button type="button" class="is-quiet" data-wujian-publish-upload>＋ 上传待发布视频</button>` : `<button type="button" class="is-quiet" data-wujian-publish-remix-manage>管理二创素材</button>`}</div><div class="ai-publish-task-source-list">${items.map((item) => `<label class="ai-publish-task-source-item"><input type="checkbox" data-wujian-publish-work-id="${escapeHtml(item.id)}" ${selected.has(item.id) ? "checked" : ""}><img src="${escapeHtml(item.cover)}" alt="${escapeHtml(item.title)}"><span><strong>${escapeHtml(item.title)}</strong><small>${escapeHtml(item.meta)}</small></span><em>${escapeHtml(item.duration)}</em>${library ? (wuJianWorkDownloadUrl(item) ? `<a class="ai-publish-task-source-download" href="${escapeHtml(wuJianWorkDownloadUrl(item))}" download="${escapeHtml(wuJianWorkDownloadName(item))}" data-wujian-work-download-link>下载 <span aria-hidden="true">↓</span></a>` : `<button type="button" class="ai-publish-task-source-download" data-wujian-work-download-missing="${escapeHtml(item.id)}">下载 <span aria-hidden="true">↓</span></button>`) : ""}</label>`).join("")}</div>${state.wuJian.publishTaskUploaded && library ? `<small class="ai-publish-task-uploaded">刚上传的视频已加入待发布视频列表</small>` : ""}${remixStatus}</div>`;
     }
     return `<div class="ai-publish-task-source-picker"><div class="ai-publish-task-source-tabs">${tabs.map(([key, label, desc]) => `<button type="button" class="${source === key ? "is-active" : ""}" data-wujian-publish-source="${key}"><strong>${label}</strong><small>${desc}</small></button>`).join("")}</div>${content}</div>`;
   }
@@ -2121,7 +2172,7 @@
     const data = matrixData();
     const openId = state.wuJian.matrixEffectId || "";
     return `<div class="wujian-page wujian-matrix-page">
-      ${wuJianMatrixKpiMarkup([["累计播放", wuJianMatrixCount(data.statTotals.plays), "本周已发布内容"], ["互动总数", wuJianMatrixCount(data.statTotals.interactions), "赞、评、藏、转"], ["线索", data.statTotals.leads, "可继续跟进"], ["接入账号", data.accounts.length, "按账号按月托管"]])}
+      ${wuJianMatrixKpiMarkup([["累计播放", wuJianMatrixCount(data.statTotals.plays), "本周已发布内容"], ["互动总数", wuJianMatrixCount(data.statTotals.interactions), "赞、评、藏、转"], ["线索", data.statTotals.leads, "可继续跟进"], ["接入账号", data.accounts.length, "按账号按日计费"]])}
       <section class="ai-matrix-section">
         <header class="ai-matrix-section-head"><div><span>内容效果</span><strong>每条内容的播放、互动与线索</strong><small>点击内容查看详情与账号表现。</small></div></header>
         <div class="ai-matrix-table">${wuJianMatrixEffectsTable(data.effects, openId)}</div>
@@ -2212,7 +2263,7 @@
     const detail = selected ? `<button type="button" class="ai-matrix-data-back" data-wujian-matrix-account-back>← 返回按账号</button><div class="ai-matrix-data-detail-title"><div><span>账号作品列表</span><strong>${escapeHtml(selected.name)}</strong><small>${wuJianMatrixTimeLabel(range)} · 已发布作品互动数据</small></div><em>${workRows.length} 条作品</em></div>` : "";
     const body = selected ? wuJianMatrixWorksTable(workRows, true) : tab === "accounts" ? wuJianMatrixAccountDataTable(accountRows) : wuJianMatrixWorksTable(workRows, false);
     return `<div class="wujian-page wujian-matrix-page ai-matrix-data-page">
-      ${wuJianMatrixKpiMarkup([["计入账号", data.accounts.length || 100, "按账号按月托管"], ["本周发布数", data.weekPublished || 224, "已发布内容"], ["待人工处理", data.pendingCount || 24, "需要你确认"]])}
+      ${wuJianMatrixKpiMarkup([["计入账号", data.accounts.length || 100, "按账号按日计费"], ["本周发布数", data.weekPublished || 224, "已发布内容"], ["待人工处理", data.pendingCount || 24, "需要你确认"]])}
       <section class="ai-matrix-section ai-matrix-data-section">
         <header class="ai-matrix-section-head ai-matrix-data-head"><div><span>内容数据</span><strong>${selected ? "已发布作品数据" : "按账号与作品查看发布效果"}</strong><small>${selected ? "查看该账号作品发布后的播放、点赞、评论、收藏与分享数据。" : "按照发布时间筛选发布计划、发布结果和作品互动效果。"}</small></div><div class="ai-matrix-data-toolbar"><div class="ai-matrix-time-filter" aria-label="按发布时间筛选"><span>按发布时间</span>${wuJianMatrixRangeOptions()}</div>${!selected ? wuJianMatrixDataTabMarkup() : ""}</div></header>
         <div class="ai-matrix-data-body">${detail}<div class="ai-matrix-table ai-matrix-data-table">${body}</div></div>
@@ -2278,6 +2329,7 @@
       sourceLabel: "二创审核通过",
       statusLabel: "待发布",
       statusTone: "approved",
+      video: ["assets/wujian/cases/car-case-01.mp4", "assets/wujian/cases/car-case-02.mp4", "assets/wujian/cases/car-case-03.mp4"][index % 3],
     }));
     return [...uploaded, ...approvedReviewItems, ...approvedRemix];
   }
@@ -2375,10 +2427,10 @@
     const action = review
       ? `<div class="ai-works-library-review-actions"><button type="button" class="is-primary" data-wujian-library-review-approve="${escapeHtml(item.id)}">审核通过</button><button type="button" data-wujian-library-review-optimize="${escapeHtml(item.id)}">优化视频</button><button type="button" class="is-danger" data-wujian-library-review-delete="${escapeHtml(item.id)}">删除</button></div>`
       : pending
-      ? `<button type="button" class="ai-works-library-card__action is-primary" data-wujian-library-publish="${escapeHtml(item.id)}" data-wujian-library-source="${escapeHtml(item.source === "二创素材" ? "remix" : "library")}">去创建发布任务 <span aria-hidden="true">→</span></button>`
+      ? `<div class="ai-works-library-card__actions">${wuJianWorkDownloadUrl(item) ? `<a class="ai-works-library-card__action" href="${escapeHtml(wuJianWorkDownloadUrl(item))}" download="${escapeHtml(wuJianWorkDownloadName(item))}">下载视频 <span aria-hidden="true">↓</span></a>` : `<button type="button" class="ai-works-library-card__action" data-wujian-work-download-missing="${escapeHtml(item.id)}">下载视频 <span aria-hidden="true">↓</span></button>`}<button type="button" class="ai-works-library-card__action is-primary" data-wujian-library-publish="${escapeHtml(item.id)}" data-wujian-library-source="${escapeHtml(item.source === "二创素材" ? "remix" : "library")}">去创建发布任务 <span aria-hidden="true">→</span></button></div>`
       : pool
         ? `<button type="button" class="ai-works-library-card__action is-primary" data-wujian-works-recreate="${escapeHtml(item.id)}">开始二创 <span aria-hidden="true">→</span></button>`
-        : `<a class="ai-works-library-card__action" href="${escapeHtml(item.video)}" download="${escapeHtml(item.title || "已发布作品")}">下载视频 <span aria-hidden="true">↓</span></a>`;
+        : `<a class="ai-works-library-card__action" href="${escapeHtml(item.video)}" download="${escapeHtml(wuJianWorkDownloadName({ ...item, title: item.title || "已发布作品" }))}">下载视频 <span aria-hidden="true">↓</span></a>`;
     const poolSelect = pool ? `<label class="ai-works-library-card__select${selectable ? "" : " is-disabled"}"><input type="checkbox" data-wujian-works-select="${escapeHtml(item.id)}" ${selected ? "checked" : ""} ${selectable ? "" : "disabled"} aria-label="选择${escapeHtml(item.title)}"><i></i><span>${selected ? "已选" : "选择"}</span></label>` : "";
     return `<article class="ai-works-library-card ai-works-library-card--${kind}${selected ? " is-selected" : ""}">
       <div class="ai-works-library-card__cover"><img src="${escapeHtml(item.cover)}" alt="${escapeHtml(item.title)}" loading="lazy"><span>${escapeHtml(item.duration || "00:30")}</span>${published ? `<i>已发布</i>` : ""}${poolSelect}</div>
@@ -2391,7 +2443,7 @@
 
   function wuJianLibraryPendingPage() {
     const items = wuJianLibraryPendingItems();
-    return `<section class="ai-works-library-panel"><header class="ai-works-library-panel__head"><div><span>待发布作品</span><strong>客户上传与审核通过的作品</strong><small>素材库视频和二创审核通过的成片都会在这里等待发布。</small></div><div class="ai-works-library-head-actions"><input type="file" data-wujian-library-upload-input accept="video/*,.mp4,.mov,.m4v,.avi,.webm" hidden><button type="button" class="is-primary" data-wujian-library-upload>＋ 上传待发布视频</button></div></header><div class="ai-works-library-grid">${items.map((item, index) => wuJianLibraryWorkCard(item, "pending", index)).join("")}</div></section>`;
+    return `<section class="ai-works-library-panel"><header class="ai-works-library-panel__head"><div><span>待发布作品</span><strong>客户上传与审核通过的作品</strong><small>素材库视频和二创审核通过的成片都会在这里等待发布。</small></div><div class="ai-works-library-head-actions"><input type="file" data-wujian-library-upload-input accept=".mp4,.mov,.webm,video/mp4,video/quicktime,video/webm" hidden><button type="button" class="is-primary" data-wujian-library-upload>＋ 上传待发布视频</button></div></header><div class="ai-works-library-grid">${items.map((item, index) => wuJianLibraryWorkCard(item, "pending", index)).join("")}</div></section>`;
   }
 
   function wuJianLibraryPoolPage() {
@@ -2504,15 +2556,97 @@
     persistWuJian();
     return true;
   }
+
+  /* 抖音作品库（演示数据）：同一条作品可能被多个账号发布，用于体现"不同账号相同作品不去重" */
+  const V13_MONITOR_GRAB_SIZE = 15;
+  const V13_DOUYIN_WORK_POOL = [
+    { key: "DY7400000001", title: "门店实拍：这台车适合哪类家庭", duration: "00:31" },
+    { key: "DY7400000002", title: "试驾实测：城市通勤的三个细节", duration: "00:44" },
+    { key: "DY7400000003", title: "配置对比：买车前先看这项", duration: "00:27" },
+    { key: "DY7400000004", title: "空间体验：后排到底够不够用", duration: "00:38" },
+    { key: "DY7400000005", title: "提车日记：从下订到交车用了几天", duration: "00:52" },
+    { key: "DY7400000006", title: "冬季续航实测：高速与市区差多少", duration: "01:05" },
+    { key: "DY7400000007", title: "自动泊车挑战窄车位", duration: "00:29" },
+    { key: "DY7400000008", title: "一次看懂增程与纯电怎么选", duration: "00:47" },
+    { key: "DY7400000009", title: "保养到底要花多少钱", duration: "00:41" },
+    { key: "DY7400000010", title: "后排安装儿童座椅实测", duration: "00:33" },
+    { key: "DY7400000011", title: "车主真实油耗记录", duration: "00:36" },
+    { key: "DY7400000012", title: "城市通勤一周电费账单", duration: "00:25" },
+    { key: "DY7400000013", title: "试驾必看的三个细节", duration: "00:39" },
+    { key: "DY7400000014", title: "这台车的隔音到底怎么样", duration: "00:42" },
+    { key: "DY7400000015", title: "高速服务区充电体验", duration: "00:30" },
+    { key: "DY7400000016", title: "新车首保都做了什么", duration: "00:34" },
+    { key: "DY7400000017", title: "语音助手实测：连续指令会不会崩", duration: "00:46" },
+    { key: "DY7400000018", title: "后备箱到底能装多少行李", duration: "00:28" },
+    { key: "DY7400000019", title: "夜间灯光表现实测", duration: "00:32" },
+    { key: "DY7400000020", title: "老车主换车为什么还选它", duration: "00:50" },
+  ];
+
+  /* 添加监控账号：抖音号格式本地即时校验，有效性校验模拟服务端请求（带加载状态） */
+  const V13_MONITOR_VALIDATE_MS = 1400;
+  const V13_MONITOR_HANDLE_PATTERN = /^[A-Za-z0-9._-]{2,24}$/;
+  const V13_MONITOR_VALIDATE_MOCK = {
+    notfound_demo: "未找到该抖音号，请核对后重新输入",
+    banned_demo: "该抖音号状态异常（已被封禁或停用），暂不支持监控",
+  };
+  function v13MonitorHandleFormatError(handle) {
+    if (!V13_MONITOR_HANDLE_PATTERN.test(handle)) return "抖音号仅支持字母、数字、下划线、点和短横线，长度 2–24 位";
+    return "";
+  }
+  function v13MonitorValidateMock(handle) {
+    return V13_MONITOR_VALIDATE_MOCK[String(handle).toLowerCase()] || "";
+  }
+  /* 该账号已获取到的作品ID：演示前的历史作品（按"已获取作品数"折算）+ 本次演示已抓取的作品 */
+  function v13MonitorKnownKeys(monitor, monitorIndex) {
+    const history = Math.min(Number(monitor.works || 0), V13_MONITOR_GRAB_SIZE);
+    const baseline = v13GrabWindow(monitorIndex, 0).slice(0, history).map((item) => item.key);
+    return baseline.concat(v13GrabbedWorks(monitor.id).map((work) => work.workKey));
+  }
+  /* 抓取窗口：首次抓取最近 15 条；每次同步窗口前移 1 条，模拟该账号新发布 1 条作品 */
+  function v13GrabWindow(monitorIndex, offset) {
+    const pool = V13_DOUYIN_WORK_POOL;
+    const size = Math.min(V13_MONITOR_GRAB_SIZE, pool.length);
+    const start = ((Number(monitorIndex) || 0) * 5 + Number(offset || 0)) % pool.length;
+    return Array.from({ length: size }, (_, i) => pool[(start + i) % pool.length]);
+  }
+  function v13GrabbedWorks(monitorId) {
+    const store = v13State().monitorGrabs || {};
+    return Array.isArray(store[monitorId]) ? store[monitorId] : [];
+  }
+  function v13AllGrabbedWorks() {
+    const store = v13State().monitorGrabs || {};
+    return Object.keys(store).reduce((rows, id) => rows.concat(Array.isArray(store[id]) ? store[id] : []), []);
+  }
+  /* 去重规则：同一账号的同一条作品（相同抖音作品ID）去重；不同账号的同一条作品不去重，按账号分别保留 */
+  function v13GrabMonitorWorks(monitor, monitorIndex, offset) {
+    const window = v13GrabWindow(monitorIndex, offset);
+    const known = new Set(v13MonitorKnownKeys(monitor, monitorIndex));
+    const accepted = [];
+    window.forEach((item) => {
+      if (known.has(item.key)) return;
+      known.add(item.key);
+      accepted.push({ id: `grab-${monitor.id}-${item.key}`, title: item.title, source: "监控抓取", from: monitor.name, monitorId: monitor.id, workKey: item.key, duration: item.duration, grabbedAt: "刚刚" });
+    });
+    return { accepted, fetched: window.length, deduped: window.length - accepted.length };
+  }
+  function v13CommitMonitorGrab(monitor, monitorIndex, offset, lastSyncLabel) {
+    const batch = v13GrabMonitorWorks(monitor, monitorIndex, offset);
+    const store = Object.assign({}, v13State().monitorGrabs);
+    store[monitor.id] = [...batch.accepted, ...v13GrabbedWorks(monitor.id)];
+    v13Patch({ monitorGrabs: store });
+    v13UpdateMonitor(monitor.id, { paused: false, lastSync: lastSyncLabel(batch) });
+    return batch;
+  }
+
   const V13_WORKS_SEED = [
     { id: "wp-001", title: "星途 E7 后排空间实测", source: "监控抓取", from: "鸿途汽车官方", duration: "00:30", grabbedAt: "今天 09:05" },
     { id: "wp-002", title: "一次看懂 E7 增程续航", source: "监控抓取", from: "鸿途汽车官方", duration: "00:42", grabbedAt: "今天 09:06" },
     { id: "wp-003", title: "自动泊车挑战窄车位", source: "监控抓取", from: "鸿途汽车官方", duration: "00:35", grabbedAt: "今天 09:07" },
     { id: "wp-004", title: "旗舰店 18:30 首发记录", source: "监控抓取", from: "鸿途汽车旗舰店", duration: "00:28", grabbedAt: "今天 09:10" },
     { id: "wp-005", title: "城西店交车现场", source: "监控抓取", from: "杭州城西店", duration: "00:22", grabbedAt: "昨天 18:20" },
-    { id: "wp-006", title: "风云 T9 家庭口播_竖版.mp4", source: "用户上传", from: "客户上传", duration: "00:32", grabbedAt: "昨天 16:40" },
-    { id: "wp-007", title: "上海门店展厅走拍.mp4", source: "用户上传", from: "客户上传", duration: "00:18", grabbedAt: "昨天 15:10" },
-    { id: "wp-008", title: "瑶光智能座舱夜景大片", source: "用户上传", from: "客户上传", duration: "00:20", grabbedAt: "08-24 11:20" },
+    { id: "wp-006", title: "风云 T9 家庭口播_竖版.mp4", source: "用户上传", from: "客户上传", duration: "00:32", size: "126.4 MB", grabbedAt: "昨天 16:40" },
+    { id: "wp-007", title: "上海门店展厅走拍.mp4", source: "用户上传", from: "客户上传", duration: "00:18", size: "88.2 MB", grabbedAt: "昨天 15:10" },
+    { id: "wp-008", title: "瑶光智能座舱夜景大片.mp4", source: "用户上传", from: "客户上传", duration: "00:20", size: "203.7 MB", grabbedAt: "08-24 11:20" },
     { id: "wp-009", title: "长续航通勤挑战实录", source: "监控抓取", from: "星途 E7 测评号", duration: "00:45", grabbedAt: "今天 09:15" },
     { id: "wp-010", title: "电车保值率真实样本", source: "监控抓取", from: "电车严选", duration: "00:38", grabbedAt: "昨天 18:30" },
     { id: "wp-011", title: "家庭出游装载实测", source: "监控抓取", from: "鸿途汽车官方", duration: "00:33", grabbedAt: "今天 09:08" },
@@ -2526,7 +2660,7 @@
   function v13Video(index) { return V13_VIDEOS[index % V13_VIDEOS.length]; }
   function v13Works() {
     const uploads = Array.isArray(v13State().worksPoolUploads) ? v13State().worksPoolUploads : [];
-    return [...uploads, ...V13_WORKS_SEED];
+    return [...uploads, ...v13AllGrabbedWorks(), ...V13_WORKS_SEED];
   }
   function v13AccountWorks(accountId, accountIndex) {
     const rows = [];
@@ -2696,9 +2830,9 @@
     const errored = accounts.filter((a) => a.status === "发布异常").length;
     const weekPublished = accounts.reduce((sum, a) => sum + v13Published(a, accounts.indexOf(a)), 0);
     const pendingWorks = v13Works().length;
-    const wall = accounts.map(v13WallCard).join("") + `<button type="button" class="wjv-wall-card wjv-wall-add" data-wjv-bind-account aria-label="绑定新的抖音账号"><span class="wjv-wall-add__icon" aria-hidden="true">＋</span><span class="wjv-wall-add__eyebrow">账号管理</span><strong>绑定新的抖音账号</strong><small>完成营销授权后加入矩阵发布，按账号按月托管。</small><span class="wjv-wall-add__action">去绑定账号 <b aria-hidden="true">→</b></span></button>`;
+    const wall = accounts.map(v13WallCard).join("") + `<button type="button" class="wjv-wall-card wjv-wall-add" data-wjv-bind-account aria-label="绑定新的抖音账号"><span class="wjv-wall-add__icon" aria-hidden="true">＋</span><span class="wjv-wall-add__eyebrow">账号管理</span><strong>绑定新的抖音账号</strong><small>完成营销授权后加入矩阵发布，按账号按日计费。</small><span class="wjv-wall-add__action">去绑定账号 <b aria-hidden="true">→</b></span></button>`;
     return `<div class="wujian-page wujian-matrix-page wjv-page">
-      ${v13Kpis([["接入账号", `${accounts.length} 个`, "按账号按月托管"], ["本周已发布", weekPublished, "矩阵累计发布"], ["实时状态", `${publishing} 正在发布 · ${queued} 排队 · ${errored} 发布异常`, "发布进度实时更新"]])}
+      ${v13Kpis([["接入账号", `${accounts.length} 个`, "按账号按日计费"], ["本周已发布", weekPublished, "矩阵累计发布"], ["实时状态", `${publishing} 正在发布 · ${queued} 排队 · ${errored} 发布异常`, "发布进度实时更新"]])}
       ${v13SectionHead("总览", "账号发布状态", "每个账号展示最近一次发布视频和当前状态，账号发布节奏一目了然。", `<div class="wjv-wall-legend"><span class="is-live"><i></i>正在发布</span><span class="is-queue"><i></i>排队中</span><span class="is-done"><i></i>已发布</span><span class="is-error"><i></i>发布异常</span></div>`)}
       <div class="wjv-wall">${wall}</div>
     </div>`;
@@ -2741,7 +2875,7 @@
     const nextDisabled = selected.size === 0 || underflow;
     return `<section class="wjv-step">
       <div class="wjv-step-options">
-        <div class="wjv-filter-row"><div class="wjv-segmented">${chips.map(([key, label]) => `<button type="button" class="${filter === key ? "is-active" : ""}" data-wjv-work-filter="${escapeHtml(key)}">${escapeHtml(label)}</button>`).join("")}</div><div><input type="file" data-wjv-upload-input accept="video/*,.mp4,.mov,.m4v,.avi,.webm" hidden><button type="button" class="wjv-quiet" data-wjv-upload>＋ 上传视频</button></div></div>
+        <div class="wjv-filter-row"><div class="wjv-segmented">${chips.map(([key, label]) => `<button type="button" class="${filter === key ? "is-active" : ""}" data-wjv-work-filter="${escapeHtml(key)}">${escapeHtml(label)}</button>`).join("")}</div><div><input type="file" data-wjv-upload-input accept=".mp4,.mov,.webm,video/mp4,video/quicktime,video/webm" hidden><button type="button" class="wjv-quiet" data-wjv-upload>＋ 上传视频</button></div></div>
         <div class="wjv-work-grid">${visible.map((w, i) => `<label class="wjv-work-option${selected.has(w.id) ? " is-selected" : ""}"><input type="checkbox" data-wjv-work="${escapeHtml(w.id)}" ${selected.has(w.id) ? "checked" : ""}><img src="${v13Cover(i)}" alt="${escapeHtml(w.title)}"><span><em>${escapeHtml(w.source)}</em><strong>${escapeHtml(w.title)}</strong><small>${escapeHtml(w.duration)} · ${escapeHtml(w.grabbedAt)}</small></span><b>${selected.has(w.id) ? "✓" : ""}</b></label>`).join("")}</div>
         <p class="wjv-step-count">已选 <b>${selected.size}</b> 条素材${selected.size ? `，预计发布 <b>${selected.size}</b> 条（去重分发，每条素材发到一个账号）` : ""}</p>
         ${underflow ? `<p class="wjv-step-warn">当前 ${selected.size} 条素材不足以覆盖 ${accountCount} 个账号（每个账号至少需要 1 条素材），请补充素材或返回上一步减少账号。</p>` : ""}
@@ -2835,25 +2969,32 @@
 
   /* ---------- 作品库 ---------- */
   function v13LibraryWorkCard(work, index) {
-    return `<article class="wjv-work-card"><div class="wjv-work-cover"><img src="${v13Cover(index)}" alt="${escapeHtml(work.title)}"><span>${escapeHtml(work.duration)}</span><em class="${work.source === "用户上传" ? "is-upload" : "is-monitor"}">${escapeHtml(work.source)}</em></div><div class="wjv-work-body"><h3>${escapeHtml(work.title)}</h3><p><span>${escapeHtml(work.from)}</span> · ${escapeHtml(work.grabbedAt)}</p><footer><button type="button" class="wjv-link" data-wjv-work-publish="${escapeHtml(work.id)}">去发布 <span aria-hidden="true">→</span></button></footer></div></article>`;
+    const downloadSource = { ...work, video: work.video || v13Video(index) };
+    const downloadUrl = wuJianWorkDownloadUrl(downloadSource);
+    const downloadMarkup = downloadUrl
+      ? `<a class="wjv-link" href="${escapeHtml(downloadUrl)}" download="${escapeHtml(wuJianWorkDownloadName(downloadSource))}">下载视频 <span aria-hidden="true">↓</span></a>`
+      : `<button type="button" class="wjv-link" data-wjv-work-download="${escapeHtml(work.id)}">下载视频 <span aria-hidden="true">↓</span></button>`;
+    const meta = `${escapeHtml(work.from)} · ${escapeHtml(work.grabbedAt)}${work.workKey ? ` · 作品ID ${escapeHtml(work.workKey)}` : ""}${work.size ? ` · ${escapeHtml(work.size)}` : ""}`;
+    return `<article class="wjv-work-card"><div class="wjv-work-cover"><img src="${v13Cover(index)}" alt="${escapeHtml(work.title)}"><span>${escapeHtml(work.duration)}</span><em class="${work.source === "用户上传" ? "is-upload" : "is-monitor"}">${escapeHtml(work.source)}</em></div><div class="wjv-work-body"><h3>${escapeHtml(work.title)}</h3><p><span>${meta}</span></p><footer>${downloadMarkup}<button type="button" class="wjv-link" data-wjv-work-publish="${escapeHtml(work.id)}">去发布 <span aria-hidden="true">→</span></button></footer></div></article>`;
   }
   function v13LibraryWorks() {
     const filter = v13State().workFilter || "all";
     const works = v13Works().filter((w) => filter === "all" || w.source === filter);
     const chips = [["all", "全部", v13Works().length], ["监控抓取", "监控抓取", v13Works().filter((w) => w.source === "监控抓取").length], ["用户上传", "用户上传", v13Works().filter((w) => w.source === "用户上传").length]];
     return `<section class="wjv-lib-panel">
-      ${v13SectionHead("作品库", "待发布作品", "监控账号抓取与客户上传的作品统一沉淀在这里，作为发布任务的素材来源。", `<div class="wjv-filter-row"><div class="wjv-segmented">${chips.map(([key, label, count]) => `<button type="button" class="${filter === key ? "is-active" : ""}" data-wjv-work-filter="${escapeHtml(key)}">${escapeHtml(label)}<em>${count}</em></button>`).join("")}</div><input type="file" data-wjv-upload-input accept="video/*,.mp4,.mov,.m4v,.avi,.webm" hidden><button type="button" class="is-primary" data-wjv-upload>＋ 上传视频</button></div>`)}
+      ${v13SectionHead("作品库", "待发布作品", "监控账号抓取与客户上传的作品统一沉淀在这里，作为发布任务的素材来源。上传视频按抖音发布限制校验：MP4 / MOV / WebM，单个不超过 4GB。", `<div class="wjv-filter-row"><div class="wjv-segmented">${chips.map(([key, label, count]) => `<button type="button" class="${filter === key ? "is-active" : ""}" data-wjv-work-filter="${escapeHtml(key)}">${escapeHtml(label)}<em>${count}</em></button>`).join("")}</div><input type="file" data-wjv-upload-input accept=".mp4,.mov,.webm,video/mp4,video/quicktime,video/webm" multiple hidden><button type="button" class="is-primary" data-wjv-upload>＋ 上传视频</button></div>`)}
       <div class="wjv-work-grid">${works.map(v13LibraryWorkCard).join("")}</div>
     </section>`;
   }
   function v13MonitorRow(monitor, index) {
-    return `<tr><td><strong>${escapeHtml(monitor.name)}</strong><small>@${escapeHtml(monitor.handle)}</small></td><td>${monitor.works} 条</td><td>${escapeHtml(monitor.lastSync)}</td><td><button type="button" class="wjv-switch${monitor.auto ? " is-on" : ""}" data-wjv-monitor-auto="${escapeHtml(monitor.id)}" aria-label="切换 ${escapeHtml(monitor.name)} 每日自动抓取" aria-pressed="${monitor.auto ? "true" : "false"}"><i></i></button><span class="wjv-switch-label">${monitor.auto ? "开启" : "关闭"}</span></td><td>${monitor.paused ? `<span class="wjv-paused">已暂停</span>` : `<span class="wjv-live-dot"><i></i>监控中</span>`}</td><td><div class="wjv-row-actions"><button type="button" data-wjv-monitor-sync="${escapeHtml(monitor.id)}">${monitor.paused ? "恢复监控" : "同步"}</button><button type="button" class="is-danger" data-wjv-monitor-delete="${escapeHtml(monitor.id)}">删除</button></div></td></tr>`;
+    return `<tr><td><strong>${escapeHtml(monitor.name)}</strong><small>@${escapeHtml(monitor.handle)}</small></td><td>${v13MonitorKnownKeys(monitor, index).length} 条</td><td>${escapeHtml(monitor.lastSync)}</td><td><button type="button" class="wjv-switch${monitor.auto ? " is-on" : ""}" data-wjv-monitor-auto="${escapeHtml(monitor.id)}" aria-label="切换 ${escapeHtml(monitor.name)} 每日自动抓取" aria-pressed="${monitor.auto ? "true" : "false"}"><i></i></button><span class="wjv-switch-label">${monitor.auto ? "开启" : "关闭"}</span></td><td>${monitor.paused ? `<span class="wjv-paused">已暂停</span>` : `<span class="wjv-live-dot"><i></i>监控中</span>`}</td><td><div class="wjv-row-actions"><button type="button" data-wjv-monitor-sync="${escapeHtml(monitor.id)}">${monitor.paused ? "恢复监控" : "同步"}</button><button type="button" class="is-danger" data-wjv-monitor-delete="${escapeHtml(monitor.id)}">删除</button></div></td></tr>`;
   }
   function v13LibraryMonitor() {
     const rows = v13Monitors();
     return `<section class="wjv-lib-panel">
-      ${v13SectionHead("作品库", "监控抖音账号", "配置要监控的抖音账号，新发布的作品自动进入待发布作品池。", `<button type="button" class="is-primary" data-wjv-monitor-add>＋ 添加监控账号</button>`)}
+      ${v13SectionHead("作品库", "监控抖音账号", "配置要监控的抖音账号：添加时先校验有效性，校验通过后首次抓取 15 条作品，之后每日自动同步。", `<button type="button" class="is-primary" data-wjv-monitor-add>＋ 添加监控账号</button>`)}
       <div class="ai-matrix-table"><table><thead><tr><th>账号</th><th>已获取作品</th><th>最近同步</th><th>每日自动抓取</th><th>状态</th><th>操作</th></tr></thead><tbody>${rows.map(v13MonitorRow).join("")}</tbody></table></div>
+      <p class="wjv-lib-note">去重规则：同一账号重复抓取到同一条作品时只保留一条；不同账号发布的同一条作品不去重，按账号分别保留（以作品ID 区分）。</p>
     </section>`;
   }
   function wujianV13Library() {
@@ -2867,14 +3008,40 @@
 
   function wujianV13MonitorAddModal() {
     if (!v13State().monitorAddOpen) return "";
+    const validating = Boolean(v13State().monitorValidating);
+    const error = String(v13State().monitorAddError || "");
+    const status = validating
+      ? `<p class="wjv-form-status is-validating" role="status"><i class="wjv-spinner" aria-hidden="true"></i>正在校验抖音号有效性，请稍候…</p>`
+      : error ? `<p class="wjv-form-status is-error" role="alert">${escapeHtml(error)}</p>` : "";
     return `<div class="wjv-modal-backdrop" data-wjv-monitor-add-close></div><section class="wjv-modal wjv-monitor-add-modal" role="dialog" aria-modal="true" aria-labelledby="wjv-monitor-add-title">
-      <header><div><span>监控账号</span><h3 id="wjv-monitor-add-title">添加抖音账号</h3><p>输入抖音号后即可开始监控新作品。</p></div><button type="button" data-wjv-monitor-add-close aria-label="关闭">×</button></header>
+      <header><div><span>监控账号</span><h3 id="wjv-monitor-add-title">添加抖音账号</h3><p>输入抖音号后先校验有效性，通过后自动开始监控并首次抓取 15 条作品。</p></div><button type="button" data-wjv-monitor-add-close aria-label="关闭">×</button></header>
       <form class="wjv-monitor-add-form" data-wjv-monitor-add-form>
-        <label><span>抖音号</span><input name="handle" value="${escapeHtml(v13State().monitorDraftHandle || "")}" placeholder="例如：hongtu_official" autocomplete="off" required></label>
-        <small>支持输入抖音号或带 @ 的账号标识。</small>
-        <footer><button type="button" class="is-primary" data-wjv-monitor-add-submit>开始监控</button><button type="button" data-wjv-monitor-add-cancel>取消</button></footer>
+        <label><span>抖音号</span><input name="handle" value="${escapeHtml(v13State().monitorDraftHandle || "")}" placeholder="例如：hongtu_official" autocomplete="off" ${validating ? "disabled" : "required"}></label>
+        <small>支持输入抖音号或带 @ 的账号标识；演示可输入 <code>notfound_demo</code>、<code>banned_demo</code> 查看校验不通过的反馈。</small>
+        ${status}
+        <footer><button type="button" class="is-primary${validating ? " is-loading" : ""}" data-wjv-monitor-add-submit ${validating ? "disabled" : ""}>${validating ? `<i class="wjv-spinner" aria-hidden="true"></i>校验中…` : "开始监控"}</button><button type="button" data-wjv-monitor-add-cancel>取消</button></footer>
       </form>
     </section>`;
+  }
+
+  /* 校验结果返回：通过则加入监控列表并首次抓取 15 条；不通过就地提示原因，账号不进入列表 */
+  function v13FinishMonitorAdd(handle) {
+    if (!v13State().monitorValidating || v13State().monitorDraftHandle !== handle) return; /* 校验期间已关闭弹窗 */
+    const failure = v13MonitorValidateMock(handle);
+    if (failure) {
+      v13Patch({ monitorValidating: false, monitorAddError: failure });
+      refreshWuJianLiveWorkspace();
+      if (typeof showToast === "function") showToast("校验未通过", failure);
+      return;
+    }
+    const custom = Array.isArray(v13State().monitors) ? [...v13State().monitors] : [];
+    custom.unshift({ id: `ma-${Date.now()}`, name: handle, handle, auto: true, lastSync: "尚未同步", works: 0, syncCount: 1 });
+    v13Patch({ monitors: custom, monitorValidating: false, monitorAddOpen: false, monitorDraftHandle: "" });
+    const monitor = custom[0];
+    const index = v13Monitors().findIndex((item) => item.id === monitor.id);
+    const batch = v13CommitMonitorGrab(monitor, index, 0, (result) => `刚刚 · 首次抓取 ${result.accepted.length} 条`);
+    refreshWuJianLiveWorkspace();
+    if (typeof showToast === "function") showToast("校验通过，已开始监控", `@${handle} 首次抓取 ${batch.accepted.length} 条作品，已进入待发布作品池`);
   }
 
   /* ---------- 账号作品弹窗 ---------- */
@@ -3112,18 +3279,22 @@
     };
     const source = loadJson(ACCOUNT_KEY, fallback);
     const platformNames = { douyin: "抖音", kuaishou: "快手", xiaohongshu: "小红书" };
+    const marketingOnly = id === "ai-video";
     return Object.entries(source).flatMap(([platform, rows]) => (Array.isArray(rows) ? rows : []).map((item) => ({
       id: item.id, nickname: item.nickname, account: `${platformNames[platform] || platform} · ${item.account}`, platform: platformNames[platform] || platform,
-      enabled: item.service?.[id] !== false, canDiscover: Boolean(item.auth?.platform), canTouch: Boolean(item.auth?.platform && item.auth?.marketing !== false),
-      authCopy: !item.auth?.platform ? "平台授权待完成" : item.auth?.marketing === false ? "营销授权待完成" : "平台、营销已授权",
+      enabled: item.service?.[id] !== false, canDiscover: Boolean(item.auth?.platform),
+      canTouch: marketingOnly ? item.auth?.marketing === true : Boolean(item.auth?.platform && item.auth?.marketing !== false),
+      authCopy: marketingOnly
+        ? (item.auth?.marketing === true ? "营销授权已完成" : "营销授权待完成")
+        : !item.auth?.platform ? "平台授权待完成" : item.auth?.marketing === false ? "营销授权待完成" : "平台、营销已授权",
     })));
   }
 
   function wuJianPublishAccounts(accounts) {
     const source = Array.isArray(accounts) ? accounts.filter((item) => item.platform === "抖音") : [];
     const fallback = [
-      { id: "wujian-official", nickname: "鸿途汽车官方旗舰店", account: "抖音 · 鸿途汽车官方旗舰店", platform: "抖音", canTouch: true, authCopy: "平台、营销已授权" },
-      { id: "wujian-shanghai", nickname: "鸿途汽车上海店", account: "抖音 · 鸿途汽车上海店", platform: "抖音", canTouch: true, authCopy: "平台、营销已授权" },
+      { id: "wujian-official", nickname: "鸿途汽车官方旗舰店", account: "抖音 · 鸿途汽车官方旗舰店", platform: "抖音", canTouch: true, authCopy: "营销授权已完成" },
+      { id: "wujian-shanghai", nickname: "鸿途汽车上海店", account: "抖音 · 鸿途汽车上海店", platform: "抖音", canTouch: true, authCopy: "营销授权已完成" },
       { id: "wujian-service", nickname: "鸿途汽车内容号", account: "抖音 · 鸿途汽车内容号", platform: "抖音", canTouch: false, authCopy: "营销授权待完成" },
     ];
     fallback.forEach((item) => { if (!source.some((account) => account.nickname === item.nickname)) source.push(item); });
@@ -3200,7 +3371,7 @@
           <label class="ai-video-strategy-field"><span>默认发布时段</span><select name="defaultSlot">${slotOptions}</select><small>可配置多个时间点错峰发布</small></label>
         </div>
         <div class="ai-video-strategy-field"><span>审核发布方式</span><div class="ai-publish-mode-options" role="radiogroup" aria-label="审核发布方式"><label class="${publishMode === "review" ? "is-selected" : ""}"><input type="radio" name="publishMode" value="review" ${publishMode === "review" ? "checked" : ""}><span>人工审核后发布</span></label><label class="${publishMode === "auto" ? "is-selected" : ""}"><input type="radio" name="publishMode" value="auto" ${publishMode === "auto" ? "checked" : ""}><span>自动发布</span></label></div><small>人工审核模式下，内容先进入待审核，确认后按排期发布。</small></div>
-        <div class="ai-strategy-pricing"><span>托管口径</span><strong>¥199 / 账号 / 月</strong><small>覆盖排期发布与效果回收</small></div>
+        <div class="ai-strategy-pricing"><span>计费口径</span><strong>¥5 / 账号 / 天</strong><small>当日开启即产生当日费用，次日扣费</small></div>
       </div>`;
     }
     if (!["lead-hunter", "lead-hunter-advanced"].includes(id)) return `<div class="ai-strategy-static"><i>→</i><div><strong>按来访账号原路回复</strong><small>客户从哪个账号发起私信，就由该账号承接，当前岗位不发起主动触达。</small></div><em>固定</em></div>`;
@@ -3241,7 +3412,7 @@
       const canUse = Boolean(item.canTouch);
       return `<article class="ai-permission-row ${canUse ? "" : "is-unavailable"}"><div class="ai-permission-account"><i>${escapeHtml(item.nickname.slice(0, 1))}</i><span><strong>${escapeHtml(item.nickname)}</strong><small>${escapeHtml(item.account)}</small></span></div><span class="ai-permission-auth ${canUse ? "is-ready" : "is-pending"}"><i>${canUse ? "✓" : "!"}</i>${escapeHtml(item.authCopy)}</span><label class="ai-permission-check ai-permission-check--account"><input type="checkbox" name="accountEnabled" value="${escapeHtml(item.id)}" ${selectedEnabled.includes(item.id) ? "checked" : ""} ${canUse ? "" : "disabled"}><span>启用账号</span></label></article>`;
     }).join("");
-    return `<form class="ai-settings-form ai-settings-form--restructured" id="ai-settings-form" data-settings-employee="${id}"><section class="ai-config-section ai-config-identity"><header><span class="ai-config-index">01</span><div><h3>身份</h3><p>定义 Agent 的称呼、头像、人设和说话风格。</p></div></header><div class="ai-identity-layout"><label class="ai-avatar-picker"><img src="${escapeHtml(employeeImage(id))}" alt="${escapeHtml(employee.name)}头像" data-agent-avatar-preview><span>更换头像</span><small>JPG、PNG，建议正方形</small><input type="file" accept="image/png,image/jpeg,image/webp" data-agent-avatar-input></label><div class="ai-identity-fields"><label><span>Agent 称呼</span><input type="text" name="displayName" maxlength="12" value="${escapeHtml(values.displayName || employee.name)}"></label><label><span>说话风格</span><select name="tone"><option value="professional" ${values.tone === "professional" ? "selected" : ""}>专业清晰</option><option value="friendly" ${values.tone === "friendly" ? "selected" : ""}>亲切自然</option><option value="clear" ${values.tone === "clear" ? "selected" : ""}>先结论后依据</option><option value="concise" ${values.tone === "concise" ? "selected" : ""}>简短克制</option></select></label><label class="is-full"><span>Agent 人设</span><textarea name="persona" maxlength="160">${escapeHtml(values.persona || "")}</textarea><small>人设影响表达方式，不会改变能力和权限。</small></label></div></div></section><section class="ai-config-section ai-config-skills"><header><span class="ai-config-index">02</span><div><h3>技能</h3><p>这些是 Agent 的固定能力，当前不支持添加、删除或调整。</p></div><em class="ai-readonly-badge">固定 · 不可更改</em></header><div class="ai-fixed-skills">${fixedSkills.map((skill, index) => `<span><i>✓</i><b>${index + 1}</b><strong>${skill}</strong></span>`).join("")}</div></section><section class="ai-config-section ai-config-permissions"><header><span class="ai-config-index">03</span><div><h3>权限</h3><p>只有已完成抖音平台和营销授权的账号可以参与发布。</p></div><button type="button" data-settings-accounts>管理账号授权 ↗</button></header><div class="ai-permission-table"><div class="ai-permission-head"><span>账号</span><span>授权状态</span><span>是否启用</span></div>${permissionRows || `<div class="ai-empty-copy">还没有可用的授权账号。</div>`}</div></section><footer class="ai-settings-footer"><span>保存后，身份和账号范围将在下一次发布任务中生效。</span><button type="submit">保存设置</button></footer></form>`;
+    return `<form class="ai-settings-form ai-settings-form--restructured" id="ai-settings-form" data-settings-employee="${id}"><section class="ai-config-section ai-config-identity"><header><span class="ai-config-index">01</span><div><h3>身份</h3><p>定义 Agent 的称呼、头像、人设和说话风格。</p></div></header><div class="ai-identity-layout"><label class="ai-avatar-picker"><img src="${escapeHtml(employeeImage(id))}" alt="${escapeHtml(employee.name)}头像" data-agent-avatar-preview><span>更换头像</span><small>JPG、PNG，建议正方形</small><input type="file" accept="image/png,image/jpeg,image/webp" data-agent-avatar-input></label><div class="ai-identity-fields"><label><span>Agent 称呼</span><input type="text" name="displayName" maxlength="12" value="${escapeHtml(values.displayName || employee.name)}"></label><label><span>说话风格</span><select name="tone"><option value="professional" ${values.tone === "professional" ? "selected" : ""}>专业清晰</option><option value="friendly" ${values.tone === "friendly" ? "selected" : ""}>亲切自然</option><option value="clear" ${values.tone === "clear" ? "selected" : ""}>先结论后依据</option><option value="concise" ${values.tone === "concise" ? "selected" : ""}>简短克制</option></select></label><label class="is-full"><span>Agent 人设</span><textarea name="persona" maxlength="160">${escapeHtml(values.persona || "")}</textarea><small>人设影响表达方式，不会改变能力和权限。</small></label></div></div></section><section class="ai-config-section ai-config-skills"><header><span class="ai-config-index">02</span><div><h3>技能</h3><p>这些是 Agent 的固定能力，当前不支持添加、删除或调整。</p></div><em class="ai-readonly-badge">固定 · 不可更改</em></header><div class="ai-fixed-skills">${fixedSkills.map((skill, index) => `<span><i>✓</i><b>${index + 1}</b><strong>${skill}</strong></span>`).join("")}</div></section><section class="ai-config-section ai-config-permissions"><header><span class="ai-config-index">03</span><div><h3>权限</h3><p>只有已完成抖音营销授权的账号可以参与发布。</p></div><button type="button" data-settings-accounts>管理账号授权 ↗</button></header><div class="ai-permission-table"><div class="ai-permission-head"><span>账号</span><span>授权状态</span><span>是否启用</span></div>${permissionRows || `<div class="ai-empty-copy">还没有可用的授权账号。</div>`}</div></section><footer class="ai-settings-footer"><span>保存后，身份和账号范围将在下一次发布任务中生效。</span><button type="submit">保存设置</button></footer></form>`;
   }
 
   function settingOptions(id) {
@@ -3362,7 +3533,7 @@
       { id: "lead-hunter", name: "主号获客专家", role: "主号获客专家", description: "从抖音弹幕、评论和关注信号中发现潜客，完成意向判断、首轮触达和结果回传。", fixed: "获取 → 判断 → 触达 → 留资", adjust: "意向判断、话术内容和风格", boundary: "优惠承诺和批量发送前请你确认", price: "¥7 / 有效线索" },
       { id: "lead-hunter-advanced", name: "副号获客专家", role: "副号获客专家", description: "一个账号池专门找客，另一个账号池接力跟进，线索不混淆、每条都有承接。", fixed: "获取 → 判断 → 触达 → 留资", adjust: "意向判断、话术内容和风格", boundary: "优惠承诺和批量发送前请你确认", price: "¥7 / 有效线索" },
       { id: "smart-reply", name: "客服专员", role: "客服专员", description: "接住抖音、快手和小红书私信，引用门店知识回复，遇到特殊承诺交给人工。", fixed: "接收 → 理解 → 查知识 → 回复/转人工", adjust: "回复风格、判断和转人工规则", boundary: "价格承诺、低置信度和敏感内容请你确认", price: "¥5 / 天" },
-      { id: "ai-video", name: "短视频运营专员", role: "短视频运营专员", description: "统一管理客户在抖音的账号矩阵，按每周发布计划持续排期与发布，并回收播放、互动和线索效果。", fixed: "接入账号 → 发布计划 → 审核排期 → 发布 → 效果回收", adjust: "账号组、每周发布目标、审核方式、发布时段、内容来源", boundary: "车型事实、素材版权、公开承诺和发布动作需人工确认", price: "¥199 / 账号 / 月", image: employeeImage("ai-video") },
+      { id: "ai-video", name: "短视频运营专员", role: "短视频运营专员", description: "统一管理客户在抖音的账号矩阵，按每周发布计划持续排期与发布，并回收播放、互动和线索效果。", fixed: "接入账号 → 发布计划 → 审核排期 → 发布 → 效果回收", adjust: "账号组、每周发布目标、审核方式、发布时段、内容来源", boundary: "车型事实、素材版权、公开承诺和发布动作需人工确认", price: "¥5 / 账号 / 天", image: employeeImage("ai-video") },
     ];
     return active.concat(legacyTalentIds.map(legacyTalentData));
   }
@@ -3729,6 +3900,13 @@
       if (typeof showToast === "function") showToast("已重新加入待发布", "该作品状态已更新为待发布，可继续安排发布");
       return;
     }
+    const wjvWorkDownload = event.target.closest("[data-wjv-work-download]");
+    if (wjvWorkDownload) {
+      const workId = wjvWorkDownload.dataset.wjvWorkDownload || "";
+      const upload = (Array.isArray(v13State().worksPoolUploads) ? v13State().worksPoolUploads : []).find((item) => item.id === workId) || {};
+      wuJianTriggerWorkDownload({ ...upload, title: upload.title || "待发布视频" });
+      return;
+    }
     const wjvWorkPublish = event.target.closest("[data-wjv-work-publish]");
     if (wjvWorkPublish) {
       const workId = wjvWorkPublish.dataset.wjvWorkPublish || "";
@@ -3783,12 +3961,13 @@
     }
     const wjvMonitorAddClose = event.target.closest("[data-wjv-monitor-add-close], [data-wjv-monitor-add-cancel]");
     if (wjvMonitorAddClose) {
-      v13Patch({ monitorAddOpen: false, monitorDraftHandle: "" });
+      v13Patch({ monitorAddOpen: false, monitorDraftHandle: "", monitorValidating: false, monitorAddError: "" });
       refreshWuJianLiveWorkspace();
       return;
     }
     const wjvMonitorAddSubmit = event.target.closest("[data-wjv-monitor-add-submit]");
     if (wjvMonitorAddSubmit) {
+      if (v13State().monitorValidating) return;
       const form = wjvMonitorAddSubmit.closest("[data-wjv-monitor-add-form]");
       const rawHandle = String(new FormData(form || undefined).get("handle") || "").trim();
       const handle = rawHandle.replace(/^@+/, "").replace(/\s+/g, "");
@@ -3796,15 +3975,23 @@
         if (typeof showToast === "function") showToast("请输入抖音号", "输入抖音号后才能开始监控");
         return;
       }
+      const formatError = v13MonitorHandleFormatError(handle);
+      if (formatError) {
+        v13Patch({ monitorDraftHandle: handle, monitorAddError: formatError });
+        refreshWuJianLiveWorkspace();
+        if (typeof showToast === "function") showToast("抖音号格式不正确", formatError);
+        return;
+      }
       if (v13Monitors().some((monitor) => String(monitor.handle).toLowerCase() === handle.toLowerCase())) {
+        v13Patch({ monitorDraftHandle: handle, monitorAddError: "该抖音号已在监控列表中" });
+        refreshWuJianLiveWorkspace();
         if (typeof showToast === "function") showToast("账号已存在", `@${handle} 已在监控列表中`);
         return;
       }
-      const custom = Array.isArray(v13State().monitors) ? [...v13State().monitors] : [];
-      custom.unshift({ id: `ma-${Date.now()}`, name: handle, handle, auto: true, lastSync: "尚未同步", works: 0 });
-      v13Patch({ monitors: custom, monitorAddOpen: false, monitorDraftHandle: "" });
+      /* 有效性校验：进入加载态，校验期间不可重复提交，结果返回后回到表单 */
+      v13Patch({ monitorValidating: true, monitorDraftHandle: handle, monitorAddError: "" });
       refreshWuJianLiveWorkspace();
-      if (typeof showToast === "function") showToast("已开始监控", `正在监控 @${handle}`);
+      window.setTimeout(() => v13FinishMonitorAdd(handle), V13_MONITOR_VALIDATE_MS);
       return;
     }
     const wjvMonitorAuto = event.target.closest("[data-wjv-monitor-auto]");
@@ -3817,9 +4004,14 @@
     const wjvMonitorSync = event.target.closest("[data-wjv-monitor-sync]");
     if (wjvMonitorSync) {
       const row = v13MonitorById(wjvMonitorSync.dataset.wjvMonitorSync);
-      if (row) v13UpdateMonitor(row.id, { lastSync: "刚刚", paused: false, works: Number(row.works || 0) + 1 });
+      if (row) {
+        const index = v13Monitors().findIndex((item) => item.id === row.id);
+        const offset = Number(row.syncCount || 0);
+        const batch = v13CommitMonitorGrab(row, index, offset, (result) => `刚刚 · 新增 ${result.accepted.length} 条`);
+        v13UpdateMonitor(row.id, { syncCount: offset + 1 });
+        if (typeof showToast === "function") showToast("同步完成", batch.accepted.length ? `本次抓取 ${batch.fetched} 条，新增 ${batch.accepted.length} 条进入待发布作品池，同一账号相同作品去重 ${batch.deduped} 条` : `本次抓取 ${batch.fetched} 条，同一账号相同作品已全部去重（${batch.deduped} 条），无新增作品`);
+      }
       refreshWuJianLiveWorkspace();
-      if (typeof showToast === "function") showToast("同步完成", "最新作品已落入待发布作品池");
       return;
     }
     const wjvMonitorDelete = event.target.closest("[data-wjv-monitor-delete]");
@@ -3961,6 +4153,13 @@
     const libraryUpload = event.target.closest("[data-wujian-library-upload]");
     if (libraryUpload) {
       libraryUpload.closest(".ai-works-library-panel")?.querySelector("[data-wujian-library-upload-input]")?.click();
+      return;
+    }
+    const workDownloadMissing = event.target.closest("[data-wujian-work-download-missing]");
+    if (workDownloadMissing) {
+      event.preventDefault();
+      event.stopPropagation();
+      wuJianTriggerWorkDownload({ id: workDownloadMissing.dataset.wujianWorkDownloadMissing || "", title: "待发布视频" });
       return;
     }
     const libraryPublish = event.target.closest("[data-wujian-library-publish]");
@@ -4749,13 +4948,20 @@
     }
     const wjvUploadInput = event.target.closest("[data-wjv-upload-input]");
     if (wjvUploadInput) {
-      const file = wjvUploadInput.files?.[0];
-      if (file) {
-        const uploads = Array.isArray(v13State().worksPoolUploads) ? v13State().worksPoolUploads : [];
-        uploads.unshift({ id: `up-${Date.now()}`, title: file.name || "客户上传视频.mp4", source: "用户上传", from: "客户上传", duration: "待识别", grabbedAt: "刚刚" });
-        v13Patch({ worksPoolUploads: uploads.slice(0, 20) });
-        if (typeof showToast === "function") showToast("视频已加入作品库", `${file.name || "客户上传视频"} 已进入待发布作品池`);
-      }
+      const files = Array.from(wjvUploadInput.files || []);
+      const uploads = Array.isArray(v13State().worksPoolUploads) ? v13State().worksPoolUploads : [];
+      const accepted = [];
+      const rejected = [];
+      files.forEach((file) => {
+        const check = wuJianVideoFileCheck(file);
+        if (!check.ok) { rejected.push(`${file.name || "该视频"}：${check.copy}`); return; }
+        const video = typeof URL !== "undefined" && typeof URL.createObjectURL === "function" ? URL.createObjectURL(file) : "";
+        if (video) wuJianUploadedBlobUrls.add(video);
+        accepted.push({ id: `up-${Date.now()}-${accepted.length}`, title: file.name || "客户上传视频.mp4", source: "用户上传", from: "客户上传", duration: "待识别", size: wuJianFileSize(file.size), grabbedAt: "刚刚", video });
+      });
+      if (accepted.length) v13Patch({ worksPoolUploads: [...accepted, ...uploads].slice(0, 20) });
+      if (rejected.length && typeof showToast === "function") showToast(accepted.length ? "部分视频未通过校验" : "上传失败", rejected.join("；"));
+      if (accepted.length && typeof showToast === "function") showToast("校验通过，已加入作品库", `${accepted.map((item) => item.title).join("、")} 已进入待发布作品池`);
       wjvUploadInput.value = "";
       refreshWuJianLiveWorkspace();
       return;
