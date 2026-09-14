@@ -318,7 +318,7 @@
       matrixDataTab: "accounts", matrixTimeRange: "week", matrixAccountId: "",
       libraryTab: "pending", libraryReviewDeleted: [], libraryReviewApproved: [],
       publishTaskView: "list", publishTaskStep: 1, publishTaskSource: "library", publishTaskAccountIds: [], publishTaskWorkIds: [], publishTaskScript: "", publishTaskScriptsReady: false, publishTaskScriptsConfirmed: false, publishTaskGenerated: false, publishTaskUploaded: false, publishTaskUploadItem: null, publishTaskRemixGenerated: false, publishTaskTiming: "now", publishTaskScheduleAt: "2026-08-25T18:30", publishTaskReview: "review", publishTaskMessages: [], publishTaskHistoryId: "", publishTasks: [], publishTaskHistory: [], publishTaskResult: null,
-      v13: { section: "overview", publishView: "results", taskStep: 1, taskAccounts: [], taskWorks: [], taskTiming: "now", taskScheduleAt: "2026-08-26T18:30", taskTitleMode: "none", taskTitleCopy: "", libTab: "works", workFilter: "all", accountWorksOpen: "", accountWorksFilter: "all", accountWorkStatuses: {}, generatedTasks: [], worksPoolUploads: [], monitorAddOpen: false, monitorDraftHandle: "", monitorValidating: false, monitorAddError: "", monitorGrabs: {}, monitors: [] },
+      v13: { section: "overview", publishView: "results", taskStep: 1, taskAccounts: [], taskWorks: [], taskTiming: "now", taskScheduleAt: "2026-08-26T18:30", taskTitleMode: "none", taskTitleCopy: "", taskTitles: {}, taskTitlesSignature: "", libTab: "works", workFilter: "all", accountWorksOpen: "", accountWorksFilter: "all", accountWorkStatuses: {}, generatedTasks: [], worksPoolUploads: [], monitorAddOpen: false, monitorDraftHandle: "", monitorValidating: false, monitorAddError: "", monitorGrabs: {}, monitors: [] },
       ...loadJson(WUJIAN_KEY, {}),
     },
   };
@@ -336,7 +336,7 @@
   if (!["list", "agent", "history"].includes(state.wuJian.publishTaskView)) state.wuJian.publishTaskView = "list";
   if (!["library", "remix", "ai"].includes(state.wuJian.publishTaskSource)) state.wuJian.publishTaskSource = "library";
   // v13 安全重置：如果处于发布流程中途但账号为空，退回第一步；同时补全新字段默认值
-  { const v13 = state.wuJian.v13 || {}; if (v13.publishView === "create" && (v13.taskStep || 1) > 1 && !(v13.taskAccounts || []).length) { v13.taskStep = 1; state.wuJian.v13 = v13; } if (!v13.taskTitleMode) { v13.taskTitleMode = "none"; } if (v13.taskTitleCopy === undefined) { v13.taskTitleCopy = ""; } if (!["all", "待发布", "发布中", "发布完成", "发布失败", "取消发布"].includes(v13.accountWorksFilter)) { v13.accountWorksFilter = "all"; } const validWorkFilters = ["all", "待发布", "发布中", "发布完成", "发布失败", "取消发布"]; if (!Array.isArray(v13.accountWorksFilters)) { v13.accountWorksFilters = v13.accountWorksFilter === "all" ? ["all"] : [v13.accountWorksFilter]; } v13.accountWorksFilters = v13.accountWorksFilters.filter((filter) => validWorkFilters.includes(filter)); if (!v13.accountWorksFilters.length) { v13.accountWorksFilters = ["all"]; } if (!v13.accountWorkStatuses || typeof v13.accountWorkStatuses !== "object" || Array.isArray(v13.accountWorkStatuses)) { v13.accountWorkStatuses = {}; } if (!Array.isArray(v13.monitors)) { v13.monitors = []; } if (typeof v13.monitorAddOpen !== "boolean") { v13.monitorAddOpen = false; } if (typeof v13.monitorDraftHandle !== "string") { v13.monitorDraftHandle = ""; } if (typeof v13.monitorValidating !== "boolean") { v13.monitorValidating = false; } if (typeof v13.monitorAddError !== "string") { v13.monitorAddError = ""; } if (!v13.monitorGrabs || typeof v13.monitorGrabs !== "object" || Array.isArray(v13.monitorGrabs)) { v13.monitorGrabs = {}; } state.wuJian.v13 = v13; }
+  { const v13 = state.wuJian.v13 || {}; if (v13.publishView === "create" && (v13.taskStep || 1) > 1 && !(v13.taskAccounts || []).length) { v13.taskStep = 1; state.wuJian.v13 = v13; } if (!v13.taskTitleMode) { v13.taskTitleMode = "none"; } if (v13.taskTitleCopy === undefined) { v13.taskTitleCopy = ""; } if (!["all", "待发布", "发布中", "发布完成", "发布失败", "取消发布"].includes(v13.accountWorksFilter)) { v13.accountWorksFilter = "all"; } const validWorkFilters = ["all", "待发布", "发布中", "发布完成", "发布失败", "取消发布"]; if (!Array.isArray(v13.accountWorksFilters)) { v13.accountWorksFilters = v13.accountWorksFilter === "all" ? ["all"] : [v13.accountWorksFilter]; } v13.accountWorksFilters = v13.accountWorksFilters.filter((filter) => validWorkFilters.includes(filter)); if (!v13.accountWorksFilters.length) { v13.accountWorksFilters = ["all"]; } if (!v13.accountWorkStatuses || typeof v13.accountWorkStatuses !== "object" || Array.isArray(v13.accountWorkStatuses)) { v13.accountWorkStatuses = {}; } if (!Array.isArray(v13.monitors)) { v13.monitors = []; } if (typeof v13.monitorAddOpen !== "boolean") { v13.monitorAddOpen = false; } if (typeof v13.monitorDraftHandle !== "string") { v13.monitorDraftHandle = ""; } if (typeof v13.monitorValidating !== "boolean") { v13.monitorValidating = false; } if (typeof v13.monitorAddError !== "string") { v13.monitorAddError = ""; } if (!v13.monitorGrabs || typeof v13.monitorGrabs !== "object" || Array.isArray(v13.monitorGrabs)) { v13.monitorGrabs = {}; } if (!v13.taskTitles || typeof v13.taskTitles !== "object" || Array.isArray(v13.taskTitles)) { v13.taskTitles = {}; } if (typeof v13.taskTitlesSignature !== "string") { v13.taskTitlesSignature = ""; } state.wuJian.v13 = v13; }
   syncWuJianPublishState();
 
   if (Array.isArray(state.wuJian.worksCreated)) {
@@ -849,25 +849,28 @@
     const employee = employees[id];
     const status = getStatus(id);
     const accounts = V13_ACCOUNTS;
-    const focusAccount = accounts.find((a) => a.status === "正在发布")
+    /* 发布过程视频仅在发布完成后可获取，优先展示最近一次已完成发布的账号 */
+    const focusAccount = accounts.find((a) => a.status === "已发布")
+      || accounts.find((a) => a.status === "正在发布")
       || accounts.find((a) => a.status === "发布异常")
       || accounts.find((a) => a.status === "排队中")
-      || accounts.find((a) => a.status === "已发布")
       || accounts[0];
     const focusIndex = Math.max(0, accounts.indexOf(focusAccount));
     const focusStatus = focusAccount?.status || "已发布";
     const focusError = focusAccount?.failureType === "marketing" ? "营销未授权" : focusAccount?.failureType === "rpa" ? "发布失败" : "发布异常";
     const focusTime = focusStatus === "已发布" ? v13WallTime(focusAccount) : "";
-    const focusMedia = focusStatus === "正在发布" || focusStatus === "已发布"
+    const focusMedia = focusStatus === "已发布"
       ? `<video class="ai-wujian-side-media" src="${v13Video(focusIndex)}" poster="${v13Cover(focusIndex)}" autoplay muted loop playsinline preload="metadata" aria-label="${escapeHtml(focusAccount.name)}账号发布过程视频"></video>`
-      : `<div class="ai-wujian-side-empty is-${focusStatus === "排队中" ? "queue" : "error"}"><strong>${escapeHtml(focusStatus === "排队中" ? "排队中" : focusError)}</strong><small>${escapeHtml(focusStatus === "排队中" ? "待发布，暂时没有可展示视频" : focusAccount.error || "发布失败，请点击重新发布")}</small></div>`;
+      : focusStatus === "正在发布"
+        ? `<div class="ai-wujian-side-empty is-live"><strong>正在发布</strong><small>发布过程视频将在发布完成后展示</small></div>`
+        : `<div class="ai-wujian-side-empty is-${focusStatus === "排队中" ? "queue" : "error"}"><strong>${escapeHtml(focusStatus === "排队中" ? "排队中" : focusError)}</strong><small>${escapeHtml(focusStatus === "排队中" ? "待发布，暂时没有可展示视频" : focusAccount.error || "发布失败，请点击重新发布")}</small></div>`;
     const focusAction = focusStatus === "发布异常" && focusAccount.failureType === "marketing"
       ? `<button type="button" data-wjv-account-todo="${escapeHtml(focusAccount.id)}" data-wjv-account-name="${escapeHtml(focusAccount.name)}">去处理</button>`
       : focusStatus === "发布异常"
         ? `<button type="button" class="ai-wujian-side-republish" data-wjv-republish-account="${escapeHtml(focusAccount.id)}">重新发布</button>`
         : `<button type="button" data-open-workspace="overview">查看实时工作</button>`;
     const greeting = `<section class="ai-side-greeting ai-side-greeting--bottom ai-lead-greeting" data-employee-greeting="${id}"><header><span>${employee.name}主动汇报</span><em>刚刚</em></header>${dialogueMessage(id, "agent", "", "刚刚", wuJianReportMarkup(status))}</section>`;
-    return `<header class="ai-side-head"><img src="${escapeHtml(employeeImage(id))}" alt="${escapeHtml(employee.name)}"><div class="ai-side-head__identity"><strong>${escapeHtml(digitalEmployeeLabel(employee))}</strong><small><i></i>${escapeHtml(statusMeta[status].label)} · 抖音 ${accounts.length} 个账号</small></div><div class="ai-side-head__actions"><button class="ai-side-icon" type="button" data-open-workspace="overview" title="进入实时工作" aria-label="进入短视频运营专员实时工作"><span aria-hidden="true">⛶</span></button><button class="ai-side-icon" type="button" data-open-workspace="settings" title="Agent 设置" aria-label="短视频运营专员 Agent 设置"><span aria-hidden="true">⚙︎</span></button></div></header><div class="ai-side-scroll ai-lead-panel"><section class="ai-lead-section ai-lead-cloud" aria-label="工作界面"><header class="ai-lead-section__head"><div><span>工作界面</span><strong>${escapeHtml(focusAccount.name)}</strong></div><em class="ai-wujian-side-status is-${focusStatus === "正在发布" ? "live" : focusStatus === "已发布" ? "done" : focusStatus === "排队中" ? "queue" : "error"}">${escapeHtml(focusStatus === "正在发布" ? "正在发布" : focusStatus === "发布异常" ? "发布异常" : focusStatus)}</em></header><div class="ai-lead-workspace"><div class="ai-lead-cloud__screen is-wujian-status-${focusStatus === "正在发布" ? "live" : focusStatus === "已发布" ? "done" : focusStatus === "排队中" ? "queue" : "error"}">${focusMedia}${focusTime ? `<time class="ai-wujian-side-time">${escapeHtml(focusTime)}</time>` : ""}<span><i></i>${escapeHtml(focusStatus === "正在发布" ? "正在发布" : focusStatus === "发布异常" ? focusError : focusStatus)}</span></div><div class="ai-lead-cloud__copy"><span>${escapeHtml(focusStatus === "排队中" ? "待发布，暂时没有可展示视频" : focusStatus === "发布异常" ? (focusAccount.error || "发布失败，请点击重新发布") : focusStatus === "已发布" ? "最近一次发布视频 · 动态回放" : "正在发布 · 动态视频")}</span>${focusAction}</div></div></section>${pendingMemoryMarkup(id)}${messageMarkup(id)}</div>${greeting}${sideChatForm(id)}`;
+    return `<header class="ai-side-head"><img src="${escapeHtml(employeeImage(id))}" alt="${escapeHtml(employee.name)}"><div class="ai-side-head__identity"><strong>${escapeHtml(digitalEmployeeLabel(employee))}</strong><small><i></i>${escapeHtml(statusMeta[status].label)} · 抖音 ${accounts.length} 个账号</small></div><div class="ai-side-head__actions"><button class="ai-side-icon" type="button" data-open-workspace="overview" title="进入实时工作" aria-label="进入短视频运营专员实时工作"><span aria-hidden="true">⛶</span></button><button class="ai-side-icon" type="button" data-open-workspace="settings" title="Agent 设置" aria-label="短视频运营专员 Agent 设置"><span aria-hidden="true">⚙︎</span></button></div></header><div class="ai-side-scroll ai-lead-panel"><section class="ai-lead-section ai-lead-cloud" aria-label="工作界面"><header class="ai-lead-section__head"><div><span>工作界面</span><strong>${escapeHtml(focusAccount.name)}</strong></div><em class="ai-wujian-side-status is-${focusStatus === "正在发布" ? "live" : focusStatus === "已发布" ? "done" : focusStatus === "排队中" ? "queue" : "error"}">${escapeHtml(focusStatus === "正在发布" ? "正在发布" : focusStatus === "发布异常" ? "发布异常" : focusStatus)}</em></header><div class="ai-lead-workspace"><div class="ai-lead-cloud__screen is-wujian-status-${focusStatus === "正在发布" ? "live" : focusStatus === "已发布" ? "done" : focusStatus === "排队中" ? "queue" : "error"}">${focusMedia}${focusTime ? `<time class="ai-wujian-side-time">${escapeHtml(focusTime)}</time>` : ""}<span><i></i>${escapeHtml(focusStatus === "正在发布" ? "正在发布" : focusStatus === "发布异常" ? focusError : focusStatus)}</span></div><div class="ai-lead-cloud__copy"><span>${escapeHtml(focusStatus === "排队中" ? "待发布，暂时没有可展示视频" : focusStatus === "发布异常" ? (focusAccount.error || "发布失败，请点击重新发布") : focusStatus === "已发布" ? "最近一次发布视频 · 动态回放" : "正在发布 · 发布完成后展示过程视频")}</span>${focusAction}</div></div></section>${pendingMemoryMarkup(id)}${messageMarkup(id)}</div>${greeting}${sideChatForm(id)}`;
   }
 
   function wuJianPublishStrategyHistory() {
@@ -2699,9 +2702,10 @@
         : (task.workTitles || []).map((title, workIndex) => ({ workId: (task.workIds || [])[workIndex] || `generated-${gi}-${workIndex}`, title }));
       assignedWorks.forEach((assignedWork, wi) => {
         const title = assignedWork.title;
+        const record = (task.titles || []).find((item) => item.workId === assignedWork.workId);
         const taskCompleted = task.status === "已完成";
         const douyinWorkId = taskCompleted ? `741987654321${String(accountIndex).padStart(2, "0")}${String(gi).padStart(2, "0")}${String(wi).padStart(2, "0")}` : "";
-        rows.unshift({ id: `${accountId}-${task.id || `task-${gi}`}-work-${wi}`, taskId: task.id || `task-${gi}`, materialId: assignedWork.workId, materialTitle: title, publishedTitle: title, title, cover: v13Cover(accountIndex + gi + wi + 2), duration: "00:30", publishedAt: task.publishedAt || task.createdAt || task.time, plays: taskCompleted ? 5200 + gi * 640 + wi * 210 : 0, likes: taskCompleted ? 310 + gi * 55 : 0, comments: taskCompleted ? 24 + wi * 6 : 0, favorites: taskCompleted ? 96 + gi * 12 : 0, shares: taskCompleted ? 41 + wi * 3 : 0, status: taskCompleted ? "发布完成" : "发布中", douyinWorkId, link: taskCompleted ? `https://www.douyin.com/video/${douyinWorkId}` : "" });
+        rows.unshift({ id: `${accountId}-${task.id || `task-${gi}`}-work-${wi}`, taskId: task.id || `task-${gi}`, materialId: assignedWork.workId, materialTitle: record ? record.materialTitle : title, publishedTitle: title, title, topicTags: record ? (record.tags || []).slice() : [], titleEdited: Boolean(record?.edited), cover: v13Cover(accountIndex + gi + wi + 2), duration: "00:30", publishedAt: task.publishedAt || task.createdAt || task.time, plays: taskCompleted ? 5200 + gi * 640 + wi * 210 : 0, likes: taskCompleted ? 310 + gi * 55 : 0, comments: taskCompleted ? 24 + wi * 6 : 0, favorites: taskCompleted ? 96 + gi * 12 : 0, shares: taskCompleted ? 41 + wi * 3 : 0, status: taskCompleted ? "发布完成" : "发布中", douyinWorkId, link: taskCompleted ? `https://www.douyin.com/video/${douyinWorkId}` : "" });
       });
     });
     return rows;
@@ -2750,6 +2754,7 @@
           materialId: work.materialId || work.id,
           materialTitle: work.materialTitle || work.title,
           publishedTitle: work.publishedTitle || work.title,
+          topicTags: Array.isArray(work.topicTags) ? work.topicTags.slice() : [],
           coverUrl: work.cover,
           durationSeconds: durationSeconds(work.duration),
           duration: work.duration,
@@ -2804,11 +2809,14 @@
     const errored = account.status === "发布异常";
     const done = account.status === "已发布";
     const errorLabel = account.failureType === "marketing" ? "营销未授权" : "发布失败";
-    const media = publishing || done
+    /* 发布过程视频在作品发布完成后才可从抖音获取：仅"已发布"展示视频，"正在发布"使用进行中空态 */
+    const media = done
       ? `<video class="wjv-wall-media" autoplay muted loop playsinline preload="metadata" poster="${v13Cover(index)}" src="${v13Video(index)}" aria-label="${escapeHtml(account.name)}账号发布过程视频"></video>`
-      : queued
-        ? `<div class="wjv-wall-empty is-queue"><span class="wjv-wall-empty-icon" aria-hidden="true">⋯</span><strong>排队中</strong><small>待发布，暂时没有可展示视频</small></div>`
-        : `<div class="wjv-wall-empty is-error"><span class="wjv-wall-empty-icon" aria-hidden="true">!</span><strong>${errorLabel}</strong><small>${escapeHtml(account.error || "发布失败，请点击重新发布")}</small></div>`;
+      : publishing
+        ? `<div class="wjv-wall-empty is-live"><span class="wjv-wall-empty-icon" aria-hidden="true">●</span><strong>正在发布</strong><small>发布过程视频将在发布完成后展示</small></div>`
+        : queued
+          ? `<div class="wjv-wall-empty is-queue"><span class="wjv-wall-empty-icon" aria-hidden="true">⋯</span><strong>排队中</strong><small>待发布，暂时没有可展示视频</small></div>`
+          : `<div class="wjv-wall-empty is-error"><span class="wjv-wall-empty-icon" aria-hidden="true">!</span><strong>${errorLabel}</strong><small>${escapeHtml(account.error || "发布失败，请点击重新发布")}</small></div>`;
     const stateTag = errored ? `<i class="wjv-wall-state is-error">!</i>` : queued ? `<i class="wjv-wall-state is-queue">⋯</i>` : publishing ? `<i class="wjv-wall-state is-live"></i>` : `<i class="wjv-wall-state is-done">✓</i>`;
     const mediaTime = done ? v13WallTime(account) : account.time;
     const action = errored
@@ -2833,7 +2841,7 @@
     const wall = accounts.map(v13WallCard).join("") + `<button type="button" class="wjv-wall-card wjv-wall-add" data-wjv-bind-account aria-label="绑定新的抖音账号"><span class="wjv-wall-add__icon" aria-hidden="true">＋</span><span class="wjv-wall-add__eyebrow">账号管理</span><strong>绑定新的抖音账号</strong><small>完成营销授权后加入矩阵发布，按账号按日计费。</small><span class="wjv-wall-add__action">去绑定账号 <b aria-hidden="true">→</b></span></button>`;
     return `<div class="wujian-page wujian-matrix-page wjv-page">
       ${v13Kpis([["接入账号", `${accounts.length} 个`, "按账号按日计费"], ["本周已发布", weekPublished, "矩阵累计发布"], ["实时状态", `${publishing} 正在发布 · ${queued} 排队 · ${errored} 发布异常`, "发布进度实时更新"]])}
-      ${v13SectionHead("总览", "账号发布状态", "每个账号展示最近一次发布视频和当前状态，账号发布节奏一目了然。", `<div class="wjv-wall-legend"><span class="is-live"><i></i>正在发布</span><span class="is-queue"><i></i>排队中</span><span class="is-done"><i></i>已发布</span><span class="is-error"><i></i>发布异常</span></div>`)}
+      ${v13SectionHead("总览", "账号发布状态", "每个账号展示当前状态；已完成发布的账号展示最近一次发布视频，账号发布节奏一目了然。", `<div class="wjv-wall-legend"><span class="is-live"><i></i>正在发布</span><span class="is-queue"><i></i>排队中</span><span class="is-done"><i></i>已发布</span><span class="is-error"><i></i>发布异常</span></div>`)}
       <div class="wjv-wall">${wall}</div>
     </div>`;
   }
@@ -2883,6 +2891,121 @@
       <footer class="wjv-step-actions"><button type="button" class="wjv-quiet" data-wjv-step-back>上一步</button><button type="button" class="is-primary" ${nextDisabled ? "disabled" : ""} data-wjv-step-next>下一步 · 选择发布方式 <span aria-hidden="true">→</span></button></footer>
     </section>`;
   }
+  /* ---------- AI 拓展：标题与话题标签（确认页可编辑，见 PRD 4.5.2） ---------- */
+  const V13_TITLE_MAX = 55;
+  const V13_TAG_MAX = 3;
+  const V13_AI_TITLE_PATTERNS = [
+    (core) => `${core}，看完这条再决定`,
+    (core) => `为什么大家都在聊${core}`,
+    (core) => `${core}｜3 个关键点一次说清`,
+    (core) => `${core}到底怎么样？这条讲透了`,
+    (core) => `关于${core}，你可能想错了`,
+    (core) => `${core}的真实体验，值得看完`,
+    (core) => `一条视频看懂${core}`,
+    (core) => `${core}值不值？先看这几点`,
+  ];
+  /* 话题标签只从核心文案里取词，不引用素材标题或文件名 */
+  function v13AiTags(core) {
+    const tokens = String(core || "").split(/[，,。！!？?、\s｜|：:；;""'']+/).filter((token) => token.length >= 2);
+    const tags = [];
+    tokens.forEach((token) => {
+      if (tags.length >= V13_TAG_MAX) return;
+      const tag = `#${token.slice(0, 10)}`;
+      if (!tags.includes(tag)) tags.push(tag);
+    });
+    return tags;
+  }
+  function v13TitleText(record) {
+    const title = String(record?.title || "");
+    const tags = Array.isArray(record?.tags) ? record.tags.filter(Boolean) : [];
+    return tags.length ? `${title} ${tags.join(" ")}` : title;
+  }
+  function v13TitleIssue(record) {
+    if (!record) return "";
+    if (!String(record.title || "").trim()) return "标题正文不能为空";
+    if ((record.tags || []).length > V13_TAG_MAX) return `最多添加 ${V13_TAG_MAX} 个话题标签`;
+    if (v13TitleText(record).length > V13_TITLE_MAX) return `发布标题不能超过 ${V13_TITLE_MAX} 个字符`;
+    return "";
+  }
+  /* 仅以核心文案为输入批量生成：素材信息不参与生成，只用于按 materialId 回写 */
+  function v13AiTitleSet(coreCopy, works) {
+    const core = String(coreCopy || "").trim().replace(/[，,。！!？?、\s]+$/, "") || "本条内容";
+    const tags = v13AiTags(core);
+    const map = {};
+    (works || []).forEach((work, index) => {
+      const pattern = V13_AI_TITLE_PATTERNS[index % V13_AI_TITLE_PATTERNS.length];
+      const record = { title: pattern(core), tags: tags.slice(), edited: false };
+      while (v13TitleText(record).length > V13_TITLE_MAX && record.tags.length) record.tags.pop();
+      if (v13TitleText(record).length > V13_TITLE_MAX) record.title = record.title.slice(0, V13_TITLE_MAX);
+      map[work.id] = record;
+    });
+    return map;
+  }
+  function v13TaskTitleRecords() {
+    const s = v13State();
+    if ((s.taskTitleMode || "none") !== "ai-expand") return {};
+    const works = v13Works().filter((w) => (s.taskWorks || []).includes(w.id));
+    const stored = s.taskTitles && typeof s.taskTitles === "object" ? s.taskTitles : {};
+    const signature = `${String(s.taskTitleCopy || "").trim()}|${works.map((w) => w.id).join(",")}`;
+    if (s.taskTitlesSignature === signature && works.length && works.every((w) => stored[w.id])) return stored;
+    const generated = v13AiTitleSet(s.taskTitleCopy, works);
+    const next = v13State();
+    next.taskTitles = generated;
+    next.taskTitlesSignature = signature;
+    persistWuJian();
+    return generated;
+  }
+  function v13ClearTaskTitles() {
+    const next = v13State();
+    next.taskTitles = {};
+    next.taskTitlesSignature = "";
+  }
+  /* 新增话题标签：自动补 #、最多 3 个、同条不重复、拼接后不得超过 55 个字符 */
+  function v13AddAiTag(workId, rowId) {
+    const record = v13State().taskTitles?.[workId];
+    if (!record) return;
+    const tags = Array.isArray(record.tags) ? record.tags : [];
+    if (tags.length >= V13_TAG_MAX) { if (typeof showToast === "function") showToast(`最多添加 ${V13_TAG_MAX} 个话题标签`, "先删除不需要的标签再添加"); return; }
+    const row = rowId ? document.querySelector(`[data-wjv-ai-row="${rowId}"]`) : null;
+    const input = row ? row.querySelector("[data-wjv-ai-tag-input]") : null;
+    const raw = String(input?.value || "").trim();
+    if (!raw) return;
+    const tag = raw.startsWith("#") ? raw : `#${raw}`;
+    if (tag === "#" || tag.length < 2) { if (typeof showToast === "function") showToast("话题标签无效", "话题标签不能为空，请重新输入"); return; }
+    if (tags.includes(tag)) { if (typeof showToast === "function") showToast("该话题标签已存在", "同一条发布标题内话题标签不重复"); return; }
+    const next = { title: record.title, tags: [...tags, tag], edited: true };
+    if (v13TitleText(next).length > V13_TITLE_MAX) { if (typeof showToast === "function") showToast("发布标题不能超过 55 个字符", "请先精简标题正文或删除其他话题标签"); return; }
+    record.tags = next.tags;
+    record.edited = true;
+    persistWuJian();
+    refreshWuJianLiveWorkspace();
+    const focus = document.querySelector(`[data-wjv-ai-row="${workId}"] [data-wjv-ai-tag-input]`);
+    if (focus) focus.focus();
+  }
+  /* 确认页统一行：素材 → 目标账号 → 发布标题（AI 拓展模式下标题与话题标签可编辑） */
+  function v13DistRow(work, coverIndex, account, record, mode, fixedCopy) {
+    const headMarkup = (edited) => `<div class="wjv-ai-row-head"><img src="${v13Cover(coverIndex)}" alt="${escapeHtml(work.title)}"><span><strong>${escapeHtml(work.title)}</strong><small>${escapeHtml(work.duration)} · ${escapeHtml(work.source)}</small></span>${edited ? `<em class="wjv-ai-edited">用户修改</em>` : ""}</div>`;
+    const head = headMarkup(false);
+    const target = `<div class="wjv-dist-target"><small>分配给</small><strong>${escapeHtml(account?.name || "待分配")}</strong><em>${escapeHtml(account?.city || "")}</em></div>`;
+    if (mode !== "ai-expand") {
+      const plain = mode === "fixed"
+        ? `<p class="wjv-dist-plain">${escapeHtml(fixedCopy || "—")}</p><small class="wjv-dist-note">固定文案 · 本次所有素材统一使用，如需修改请返回上一步</small>`
+        : `<p class="wjv-dist-plain is-empty">—（无标题）</p><small class="wjv-dist-note">无标题发布 · 发布时文案为空</small>`;
+      return `<li class="wjv-ai-row wjv-dist-row" data-wjv-dist-row="${escapeHtml(work.id)}">${head}${target}<div class="wjv-dist-publish">${plain}</div></li>`;
+    }
+    const tags = Array.isArray(record.tags) ? record.tags : [];
+    const issue = v13TitleIssue(record);
+    const length = v13TitleText(record).length;
+    return `<li class="wjv-ai-row wjv-dist-row" data-wjv-ai-row="${escapeHtml(work.id)}" data-wjv-dist-row="${escapeHtml(work.id)}">
+      ${headMarkup(record.edited)}
+      ${target}
+      <div class="wjv-dist-publish">
+        <label class="wjv-ai-title-input"><span>标题正文</span><input type="text" data-wjv-ai-title="${escapeHtml(work.id)}" value="${escapeHtml(record.title)}" placeholder="标题正文，不能为空"></label>
+        <div class="wjv-ai-tags"><span class="wjv-ai-tag-label">话题标签</span>${tags.map((tag) => `<span class="wjv-ai-tag">${escapeHtml(tag)}<button type="button" data-wjv-ai-tag-remove="${escapeHtml(work.id)}" data-wjv-ai-tag="${escapeHtml(tag)}" aria-label="删除话题标签 ${escapeHtml(tag)}">×</button></span>`).join("")}${tags.length >= V13_TAG_MAX ? `<em class="wjv-ai-tag-full">最多 ${V13_TAG_MAX} 个</em>` : ""}<input type="text" class="wjv-ai-tag-input" data-wjv-ai-tag-input="${escapeHtml(work.id)}" placeholder="${tags.length >= V13_TAG_MAX ? "已达上限" : "+ 添加话题"}" ${tags.length >= V13_TAG_MAX ? "disabled" : ""}><button type="button" class="wjv-ai-tag-add" data-wjv-ai-tag-add="${escapeHtml(work.id)}" data-wjv-ai-title-row="${escapeHtml(work.id)}">添加</button></div>
+        <p class="wjv-ai-row-meta"><span data-wjv-ai-count="${escapeHtml(work.id)}" class="${length > V13_TITLE_MAX ? "is-over" : ""}">${length}/${V13_TITLE_MAX}</span><span class="wjv-ai-error" data-wjv-ai-error="${escapeHtml(work.id)}">${escapeHtml(issue)}</span></p>
+      </div>
+    </li>`;
+  }
   function v13TimingPicker() {
     const s = v13State();
     const timing = s.taskTiming || "now";
@@ -2920,23 +3043,33 @@
     const timing = s.taskTiming === "scheduled" ? `定时 ${String(s.taskScheduleAt || "").replace("T", " ")}` : "立即发布";
     const titleMode = s.taskTitleMode || "none";
     const titleCopy = s.taskTitleCopy || "";
-    const titleLabels = { none: "无标题发布", fixed: `固定文案：${titleCopy || "—"}`, "ai-expand": `AI 拓展：基于「${titleCopy || "—"}」生成 ${works.length} 条不同标题` };
+    /* 摘要行只给结论值，标题与分发的细节在下方「分发预览」逐条呈现 */
+    const titleLabels = { none: "无标题发布", fixed: "固定文案", "ai-expand": "AI 拓展" };
     const total = works.length;
     const dist = v13ComputeDistribution(accounts, works);
     const distMarkup = dist.map((row) => `<div class="wjv-dist-row"><strong>${escapeHtml(row.account.name)}</strong><span>${escapeHtml(row.account.city)}</span><ul>${row.works.map((w) => `<li>${escapeHtml(w.title)}<em>${escapeHtml(w.duration)}</em></li>`).join("")}</ul></div>`).join("");
+    const aiTitles = titleMode === "ai-expand" ? v13TaskTitleRecords() : {};
+    const accountOf = {};
+    dist.forEach((row) => row.works.forEach((w) => { accountOf[w.id] = row.account; }));
+    const aiIssues = titleMode === "ai-expand" ? works.filter((w) => v13TitleIssue(aiTitles[w.id])).length : 0;
+    const aiEdited = titleMode === "ai-expand" ? works.filter((w) => aiTitles[w.id]?.edited).length : 0;
+    const distTitles = `<div class="wjv-dist-preview"><p class="wjv-setting-label">分发预览<small>逐条确认「素材 → 目标账号 → 发布标题」${titleMode === "ai-expand" ? "；标题正文与话题标签可直接修改" : "（按选择顺序轮询分配，不可调整）"}</small></p>
+        <ul class="wjv-dist-title-list">${works.map((w) => v13DistRow(w, v13Works().indexOf(w) + 1, accountOf[w.id], aiTitles[w.id] || { title: titleCopy, tags: [], edited: false }, titleMode, titleCopy)).join("")}</ul>
+        ${titleMode === "ai-expand" ? `<p class="wjv-step-hint">${aiEdited ? `已修改 ${aiEdited} 条，` : ""}共 ${works.length} 条标题，仅基于核心文案生成，每条素材使用各自唯一的标题与话题组合。</p>` : ""}
+      </div>`;
     return `<section class="wjv-step">
       <div class="wjv-step-options wjv-confirm">
         <dl class="wjv-confirm-rows">
           <div><dt>发布账号</dt><dd>${accounts.length} 个</dd></div>
-          <div><dt>发布素材</dt><dd>${works.length} 条（去重分发，每条发到唯一账号）</dd></div>
+          <div><dt>发布素材</dt><dd>${works.length} 条</dd></div>
           <div><dt>发布方式</dt><dd>${escapeHtml(timing)}</dd></div>
-          <div><dt>标题策略</dt><dd>${escapeHtml(titleLabels[titleMode] || "无标题")}</dd></div>
+          <div><dt>标题策略</dt><dd>${escapeHtml(titleLabels[titleMode] || "无标题发布")}</dd></div>
           <div><dt>预计发布</dt><dd>${total} 条</dd></div>
         </dl>
-        ${dist.length ? `<div class="wjv-dist-preview"><p class="wjv-setting-label">分配预览<small>每个账号将收到的素材（按选择顺序轮询分配，不可调整）</small></p><div class="wjv-dist-list">${distMarkup}</div></div>` : ""}
+        ${dist.length ? distTitles : ""}
         <p class="wjv-confirm-note">确认后系统将校验账号授权，通过后立即锁定素材并创建任务。各账号并行发布，同一账号内素材串行执行。</p>
       </div>
-      <footer class="wjv-step-actions"><button type="button" class="wjv-quiet" data-wjv-step-back>上一步</button><button type="button" class="is-primary" data-wjv-submit>确认发布 · 生成任务 <span aria-hidden="true">→</span></button></footer>
+      <footer class="wjv-step-actions"><button type="button" class="wjv-quiet" data-wjv-step-back>上一步</button><button type="button" class="is-primary" ${aiIssues ? "disabled" : ""} data-wjv-submit>确认发布 · 生成任务 <span aria-hidden="true">→</span></button></footer>
     </section>`;
   }
   function v13Flow() {
@@ -2975,7 +3108,8 @@
       ? `<a class="wjv-link" href="${escapeHtml(downloadUrl)}" download="${escapeHtml(wuJianWorkDownloadName(downloadSource))}">下载视频 <span aria-hidden="true">↓</span></a>`
       : `<button type="button" class="wjv-link" data-wjv-work-download="${escapeHtml(work.id)}">下载视频 <span aria-hidden="true">↓</span></button>`;
     const meta = `${escapeHtml(work.from)} · ${escapeHtml(work.grabbedAt)}${work.workKey ? ` · 作品ID ${escapeHtml(work.workKey)}` : ""}${work.size ? ` · ${escapeHtml(work.size)}` : ""}`;
-    return `<article class="wjv-work-card"><div class="wjv-work-cover"><img src="${v13Cover(index)}" alt="${escapeHtml(work.title)}"><span>${escapeHtml(work.duration)}</span><em class="${work.source === "用户上传" ? "is-upload" : "is-monitor"}">${escapeHtml(work.source)}</em></div><div class="wjv-work-body"><h3>${escapeHtml(work.title)}</h3><p><span>${meta}</span></p><footer>${downloadMarkup}<button type="button" class="wjv-link" data-wjv-work-publish="${escapeHtml(work.id)}">去发布 <span aria-hidden="true">→</span></button></footer></div></article>`;
+    /* 作品库卡片只保留"下载视频"：发布统一从"发布任务 → 选择素材"进入，卡片不再提供"去发布"入口 */
+    return `<article class="wjv-work-card"><div class="wjv-work-cover"><img src="${v13Cover(index)}" alt="${escapeHtml(work.title)}"><span>${escapeHtml(work.duration)}</span><em class="${work.source === "用户上传" ? "is-upload" : "is-monitor"}">${escapeHtml(work.source)}</em></div><div class="wjv-work-body"><h3>${escapeHtml(work.title)}</h3><p><span>${meta}</span></p><footer>${downloadMarkup}</footer></div></article>`;
   }
   function v13LibraryWorks() {
     const filter = v13State().workFilter || "all";
@@ -2987,13 +3121,14 @@
     </section>`;
   }
   function v13MonitorRow(monitor, index) {
-    return `<tr><td><strong>${escapeHtml(monitor.name)}</strong><small>@${escapeHtml(monitor.handle)}</small></td><td>${v13MonitorKnownKeys(monitor, index).length} 条</td><td>${escapeHtml(monitor.lastSync)}</td><td><button type="button" class="wjv-switch${monitor.auto ? " is-on" : ""}" data-wjv-monitor-auto="${escapeHtml(monitor.id)}" aria-label="切换 ${escapeHtml(monitor.name)} 每日自动抓取" aria-pressed="${monitor.auto ? "true" : "false"}"><i></i></button><span class="wjv-switch-label">${monitor.auto ? "开启" : "关闭"}</span></td><td>${monitor.paused ? `<span class="wjv-paused">已暂停</span>` : `<span class="wjv-live-dot"><i></i>监控中</span>`}</td><td><div class="wjv-row-actions"><button type="button" data-wjv-monitor-sync="${escapeHtml(monitor.id)}">${monitor.paused ? "恢复监控" : "同步"}</button><button type="button" class="is-danger" data-wjv-monitor-delete="${escapeHtml(monitor.id)}">删除</button></div></td></tr>`;
+    /* 监控状态不单列展示：是否在监控由"每日自动抓取"开关与操作列的"同步/恢复监控"体现 */
+    return `<tr><td><strong>${escapeHtml(monitor.name)}</strong><small>@${escapeHtml(monitor.handle)}</small></td><td>${v13MonitorKnownKeys(monitor, index).length} 条</td><td>${escapeHtml(monitor.lastSync)}</td><td><button type="button" class="wjv-switch${monitor.auto ? " is-on" : ""}" data-wjv-monitor-auto="${escapeHtml(monitor.id)}" aria-label="切换 ${escapeHtml(monitor.name)} 每日自动抓取" aria-pressed="${monitor.auto ? "true" : "false"}"><i></i></button><span class="wjv-switch-label">${monitor.auto ? "开启" : "关闭"}</span></td><td><div class="wjv-row-actions"><button type="button" data-wjv-monitor-sync="${escapeHtml(monitor.id)}">${monitor.paused ? "恢复监控" : "同步"}</button><button type="button" class="is-danger" data-wjv-monitor-delete="${escapeHtml(monitor.id)}">删除</button></div></td></tr>`;
   }
   function v13LibraryMonitor() {
     const rows = v13Monitors();
     return `<section class="wjv-lib-panel">
       ${v13SectionHead("作品库", "监控抖音账号", "配置要监控的抖音账号：添加时先校验有效性，校验通过后首次抓取 15 条作品，之后每日自动同步。", `<button type="button" class="is-primary" data-wjv-monitor-add>＋ 添加监控账号</button>`)}
-      <div class="ai-matrix-table"><table><thead><tr><th>账号</th><th>已获取作品</th><th>最近同步</th><th>每日自动抓取</th><th>状态</th><th>操作</th></tr></thead><tbody>${rows.map(v13MonitorRow).join("")}</tbody></table></div>
+      <div class="ai-matrix-table"><table><thead><tr><th>账号</th><th>已获取作品</th><th>最近同步</th><th>每日自动抓取</th><th>操作</th></tr></thead><tbody>${rows.map(v13MonitorRow).join("")}</tbody></table></div>
       <p class="wjv-lib-note">去重规则：同一账号重复抓取到同一条作品时只保留一条；不同账号发布的同一条作品不去重，按账号分别保留（以作品ID 区分）。</p>
     </section>`;
   }
@@ -3068,7 +3203,7 @@
     }).join("");
     return `<div class="wjv-modal-backdrop" data-wjv-modal-close></div><section class="wjv-modal" role="dialog" aria-modal="true" aria-labelledby="wjv-modal-title">
       <header><div><span>发布作品</span><h3 id="wjv-modal-title">${escapeHtml(account.name)}</h3><p>共 ${allRows.length} 条作品 · ${completedCount} 条发布完成 · ${escapeHtml(account.city)}</p></div><button type="button" data-wjv-modal-close aria-label="关闭">×</button></header>
-      <div class="wjv-modal-body"><fieldset class="wjv-modal-status-filters"><legend>筛选状态</legend>${filterMarkup}</fieldset><div class="ai-matrix-table"><table><thead><tr><th>封面</th><th>作品标题</th><th>发布状态</th><th>时长</th><th>发布时间</th><th>播放</th><th>点赞</th><th>评论</th><th>收藏</th><th>分享</th><th>操作</th></tr></thead><tbody>${rows.length ? rows.map((w) => { const action = w.status === "待发布" ? `<button type="button" class="wjv-link is-cancel" data-wjv-cancel-account-work="${escapeHtml(account.id)}" data-wjv-account-work-id="${escapeHtml(w.id)}">取消发布</button>` : w.status === "发布失败" ? `<button type="button" class="wjv-link is-retry" data-wjv-retry-account-work="${escapeHtml(account.id)}" data-wjv-account-work-id="${escapeHtml(w.id)}">重试发布</button>` : w.status === "取消发布" ? `<span class="wjv-link is-muted">已取消</span>` : w.link ? `<a class="wjv-link" href="${escapeHtml(w.link)}" target="_blank" rel="noopener noreferrer">打开抖音</a>` : `<span class="wjv-link is-muted">链接同步中</span>`; return `<tr><td>${w.link ? `<a href="${escapeHtml(w.link)}" target="_blank" rel="noopener noreferrer"><img class="wjv-modal-cover" src="${escapeHtml(w.cover)}" alt="${escapeHtml(w.title)}"></a>` : `<img class="wjv-modal-cover" src="${escapeHtml(w.cover)}" alt="${escapeHtml(w.title)}">`}</td><td><strong>${escapeHtml(w.title)}</strong></td><td>${statusMarkup(w.status)}</td><td>${escapeHtml(w.duration)}</td><td>${escapeHtml(statusTime(w))}</td><td>${w.plays.toLocaleString()}</td><td>${w.likes.toLocaleString()}</td><td>${w.comments.toLocaleString()}</td><td>${w.favorites.toLocaleString()}</td><td>${w.shares.toLocaleString()}</td><td>${action}</td></tr>`; }).join("") : `<tr><td colspan="11"><div class="wjv-modal-empty">暂无${showAll ? "符合条件" : escapeHtml(selectedFilters.join("、"))}作品</div></td></tr>`}</tbody></table></div></div>
+      <div class="wjv-modal-body"><fieldset class="wjv-modal-status-filters"><legend>筛选状态</legend>${filterMarkup}</fieldset><div class="ai-matrix-table"><table><thead><tr><th>封面</th><th>作品标题</th><th>发布状态</th><th>时长</th><th>发布时间</th><th>播放</th><th>点赞</th><th>评论</th><th>收藏</th><th>分享</th><th>操作</th></tr></thead><tbody>${rows.length ? rows.map((w) => { const action = w.status === "待发布" ? `<button type="button" class="wjv-link is-cancel" data-wjv-cancel-account-work="${escapeHtml(account.id)}" data-wjv-account-work-id="${escapeHtml(w.id)}">取消发布</button>` : w.status === "发布失败" ? `<button type="button" class="wjv-link is-retry" data-wjv-retry-account-work="${escapeHtml(account.id)}" data-wjv-account-work-id="${escapeHtml(w.id)}">重试发布</button>` : w.status === "取消发布" ? `<span class="wjv-link is-muted">已取消</span>` : w.link ? `<a class="wjv-link" href="${escapeHtml(w.link)}" target="_blank" rel="noopener noreferrer">打开抖音</a>` : `<span class="wjv-link is-muted">链接同步中</span>`; return `<tr><td>${w.link ? `<a href="${escapeHtml(w.link)}" target="_blank" rel="noopener noreferrer"><img class="wjv-modal-cover" src="${escapeHtml(w.cover)}" alt="${escapeHtml(w.title)}"></a>` : `<img class="wjv-modal-cover" src="${escapeHtml(w.cover)}" alt="${escapeHtml(w.title)}">`}</td><td><strong>${escapeHtml(w.title)}</strong>${w.titleEdited ? `<em class="wjv-modal-edited">用户修改</em>` : ""}</td><td>${statusMarkup(w.status)}</td><td>${escapeHtml(w.duration)}</td><td>${escapeHtml(statusTime(w))}</td><td>${w.plays.toLocaleString()}</td><td>${w.likes.toLocaleString()}</td><td>${w.comments.toLocaleString()}</td><td>${w.favorites.toLocaleString()}</td><td>${w.shares.toLocaleString()}</td><td>${action}</td></tr>`; }).join("") : `<tr><td colspan="11"><div class="wjv-modal-empty">暂无${showAll ? "符合条件" : escapeHtml(selectedFilters.join("、"))}作品</div></td></tr>`}</tbody></table></div></div>
       </section>`;
   }
 
@@ -3764,13 +3899,15 @@
     }
     const wjvNewTask = event.target.closest("[data-wjv-new-task]");
     if (wjvNewTask) {
-      v13Patch({ publishView: "create", taskStep: 1, taskAccounts: [], taskWorks: [], taskTiming: "now", taskScheduleAt: "2026-08-26T18:30", taskTitleMode: "none", taskTitleCopy: "", workFilter: "all" });
+      v13ClearTaskTitles();
+      v13Patch({ publishView: "create", taskStep: 1, taskAccounts: [], taskWorks: [], taskTiming: "now", taskScheduleAt: "2026-08-26T18:30", taskTitleMode: "none", taskTitleCopy: "", taskTitles: {}, taskTitlesSignature: "", workFilter: "all" });
       refreshWuJianLiveWorkspace();
       return;
     }
     const wjvFlowCancel = event.target.closest("[data-wjv-flow-cancel]");
     if (wjvFlowCancel) {
-      v13Patch({ publishView: "results", taskAccounts: [], taskWorks: [] });
+      v13ClearTaskTitles();
+      v13Patch({ publishView: "results", taskAccounts: [], taskWorks: [], taskTitles: {}, taskTitlesSignature: "" });
       refreshWuJianLiveWorkspace();
       return;
     }
@@ -3784,6 +3921,24 @@
       if (step === 3 && (s.taskTitleMode === "fixed" || s.taskTitleMode === "ai-expand") && !(s.taskTitleCopy || "").trim()) { if (typeof showToast === "function") showToast("请填写文案", s.taskTitleMode === "ai-expand" ? "请输入核心文案，AI 将基于此拓展标题" : "请输入发布文案"); return; }
       v13Patch({ taskStep: Math.min(4, step + 1) });
       refreshWuJianLiveWorkspace();
+      return;
+    }
+    const wjvAiTagRemove = event.target.closest("[data-wjv-ai-tag-remove]");
+    if (wjvAiTagRemove) {
+      const workId = wjvAiTagRemove.dataset.wjvAiTagRemove || "";
+      const tag = wjvAiTagRemove.dataset.wjvAiTag || "";
+      const record = v13State().taskTitles?.[workId];
+      if (record) {
+        record.tags = (record.tags || []).filter((item) => item !== tag);
+        record.edited = true;
+        persistWuJian();
+      }
+      refreshWuJianLiveWorkspace();
+      return;
+    }
+    const wjvAiTagAdd = event.target.closest("[data-wjv-ai-tag-add]");
+    if (wjvAiTagAdd) {
+      v13AddAiTag(wjvAiTagAdd.dataset.wjvAiTagAdd || "", wjvAiTagAdd.dataset.wjvAiTitleRow || "");
       return;
     }
     const wjvStepBack = event.target.closest("[data-wjv-step-back]");
@@ -3853,14 +4008,22 @@
       const dist = v13ComputeDistribution(validAccounts, works);
       const titleMode = s.taskTitleMode || "none";
       const titleCopy = s.taskTitleCopy || "";
-      const titleLabel = titleMode === "fixed" ? `固定文案` : titleMode === "ai-expand" ? `AI 拓展（${works.length} 条）` : "无标题";
+      const records = titleMode === "ai-expand" ? v13TaskTitleRecords() : {};
+      const invalid = works.filter((w) => v13TitleIssue(records[w.id]));
+      if (invalid.length) { if (typeof showToast === "function") showToast("标题待调整", `${invalid.length} 条素材的发布标题不合规，请修正后再提交`); return; }
+      const titles = titleMode === "ai-expand"
+        ? works.map((w) => { const record = records[w.id]; return { workId: w.id, materialTitle: w.title, title: record.title, tags: (record.tags || []).slice(), edited: Boolean(record.edited), publishedTitle: v13TitleText(record) }; })
+        : [];
+      const editedCount = titles.filter((item) => item.edited).length;
+      const titleLabel = titleMode === "fixed" ? `固定文案` : titleMode === "ai-expand" ? `AI 拓展（${works.length} 条${editedCount ? `，含 ${editedCount} 条用户修改` : ""}）` : "无标题";
       const task = {
         id: `task-${Date.now()}`,
         status: "执行中",
         accountIds: validAccounts.map((a) => a.id),
         distribution: dist.map((row) => ({ accountId: row.account.id, accountName: row.account.name, workIds: row.works.map((w) => w.id) })),
         workIds: works.map((w) => w.id),
-        workTitles: works.map((w) => w.title),
+        workTitles: titles.length ? titles.map((item) => item.publishedTitle) : works.map((w) => w.title),
+        titles,
         workCount: works.length,
         titleMode,
         titleCopy,
@@ -3869,7 +4032,8 @@
         time: s.taskTiming === "scheduled" ? String(s.taskScheduleAt || "").replace("T", " ") : "刚刚发布",
         createdAt: nowDateTime(),
       };
-      v13Patch({ generatedTasks: [task, ...((s.generatedTasks) || [])].slice(0, 50), publishView: "results", taskAccounts: [], taskWorks: [], taskTitleMode: "none", taskTitleCopy: "" });
+      v13ClearTaskTitles();
+      v13Patch({ generatedTasks: [task, ...((s.generatedTasks) || [])].slice(0, 50), publishView: "results", taskAccounts: [], taskWorks: [], taskTitleMode: "none", taskTitleCopy: "", taskTitles: {}, taskTitlesSignature: "" });
       refreshWuJianLiveWorkspace();
       if (typeof showToast === "function") showToast("发布任务已生成", `${validAccounts.length} 个账号并行执行，共发布 ${works.length} 条素材（去重分发）`);
       return;
@@ -3905,13 +4069,6 @@
       const workId = wjvWorkDownload.dataset.wjvWorkDownload || "";
       const upload = (Array.isArray(v13State().worksPoolUploads) ? v13State().worksPoolUploads : []).find((item) => item.id === workId) || {};
       wuJianTriggerWorkDownload({ ...upload, title: upload.title || "待发布视频" });
-      return;
-    }
-    const wjvWorkPublish = event.target.closest("[data-wjv-work-publish]");
-    if (wjvWorkPublish) {
-      const workId = wjvWorkPublish.dataset.wjvWorkPublish || "";
-      v13Patch({ section: "publish", publishView: "create", taskStep: 2, taskAccounts: [], taskWorks: [workId], taskTiming: "now" });
-      refreshWuJianLiveWorkspace();
       return;
     }
     const wjvModalClose = event.target.closest("[data-wjv-modal-close]");
@@ -5159,7 +5316,47 @@
     }
   }
 
+  /* 标题正文就地编辑：不整体重渲染，避免输入过程中失焦 */
+  function handleInput(event) {
+    const copyField = event.target.closest("[data-wjv-title-copy]");
+    if (copyField) {
+      v13Patch({ taskTitleCopy: copyField.value || "" });
+      const stepBtn = copyField.closest(".wjv-step")?.querySelector("[data-wjv-step-next]");
+      if (stepBtn) stepBtn.disabled = !copyField.value.trim();
+      return;
+    }
+    const titleInput = event.target.closest("[data-wjv-ai-title]");
+    if (!titleInput) return;
+    const workId = titleInput.dataset.wjvAiTitle || "";
+    const record = v13State().taskTitles?.[workId];
+    if (!record) return;
+    record.title = titleInput.value;
+    record.edited = true;
+    persistWuJian();
+    const row = titleInput.closest(".wjv-ai-row");
+    const length = v13TitleText(record).length;
+    const count = row?.querySelector(`[data-wjv-ai-count="${workId}"]`);
+    if (count) { count.textContent = `${length}/${V13_TITLE_MAX}`; count.classList.toggle("is-over", length > V13_TITLE_MAX); }
+    const error = row?.querySelector(`[data-wjv-ai-error="${workId}"]`);
+    if (error) error.textContent = v13TitleIssue(record);
+    if (row && !row.querySelector(".wjv-ai-edited")) row.querySelector(".wjv-ai-row-head")?.insertAdjacentHTML("beforeend", `<em class="wjv-ai-edited">用户修改</em>`);
+    v13SyncAiSubmitState();
+  }
+  function v13SyncAiSubmitState() {
+    const s = v13State();
+    if ((s.taskTitleMode || "none") !== "ai-expand") return;
+    const works = v13Works().filter((w) => (s.taskWorks || []).includes(w.id));
+    const records = s.taskTitles || {};
+    const submit = document.querySelector("[data-wjv-submit]");
+    if (submit) submit.disabled = works.some((w) => v13TitleIssue(records[w.id]));
+  }
+
   function handleKeydown(event) {
+    if (event.key === "Enter" && event.target.closest("[data-wjv-ai-tag-input]")) {
+      event.preventDefault();
+      v13AddAiTag(event.target.dataset.wjvAiTagInput || "", event.target.dataset.wjvAiTagInput || "");
+      return;
+    }
     if (event.key === "Enter" && !event.shiftKey && event.target.closest("[data-wujian-publish-chat-input]")) {
       event.preventDefault();
       event.target.closest(".ai-publish-chat-composer")?.querySelector("[data-wujian-publish-chat-send]")?.click();
@@ -5231,6 +5428,7 @@
     document.addEventListener("click", handleClick);
     document.addEventListener("submit", handleSubmit);
     document.addEventListener("change", handleChange);
+    document.addEventListener("input", handleInput);
     document.addEventListener("keydown", handleKeydown);
     document.addEventListener("error", handleWuJianCoverError, true);
     window.addEventListener("ai-office-settings-sync", (event) => {
