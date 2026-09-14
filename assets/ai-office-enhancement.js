@@ -318,7 +318,7 @@
       matrixDataTab: "accounts", matrixTimeRange: "week", matrixAccountId: "",
       libraryTab: "pending", libraryReviewDeleted: [], libraryReviewApproved: [],
       publishTaskView: "list", publishTaskStep: 1, publishTaskSource: "library", publishTaskAccountIds: [], publishTaskWorkIds: [], publishTaskScript: "", publishTaskScriptsReady: false, publishTaskScriptsConfirmed: false, publishTaskGenerated: false, publishTaskUploaded: false, publishTaskUploadItem: null, publishTaskRemixGenerated: false, publishTaskTiming: "now", publishTaskScheduleAt: "2026-08-25T18:30", publishTaskReview: "review", publishTaskMessages: [], publishTaskHistoryId: "", publishTasks: [], publishTaskHistory: [], publishTaskResult: null,
-      v13: { section: "overview", publishView: "results", taskStep: 1, taskAccounts: [], taskWorks: [], taskTiming: "now", taskScheduleAt: "2026-08-26T18:30", taskTitleMode: "none", taskTitleCopy: "", taskTitles: {}, taskTitlesSignature: "", libTab: "works", workFilter: "all", accountWorksOpen: "", accountWorksFilter: "all", accountWorkStatuses: {}, generatedTasks: [], worksPoolUploads: [], monitorAddOpen: false, monitorDraftHandle: "", monitorValidating: false, monitorAddError: "", monitorGrabs: {}, monitors: [] },
+      v13: { section: "overview", publishView: "results", taskStep: 1, taskAccounts: [], taskWorks: [], taskTiming: "now", taskScheduleAt: "2026-08-26T18:30", taskTitleMode: "none", taskTitleCopy: "", taskTitles: {}, taskTitlesSignature: "", libTab: "works", workFilter: "all", publishAccount: "all", publishTask: "all", publishStart: "", publishEnd: "", publishStatus: "all", publishPage: 1, accountWorkStatuses: {}, generatedTasks: [], worksPoolUploads: [], monitorAddOpen: false, monitorDraftHandle: "", monitorValidating: false, monitorAddError: "", monitorGrabs: {}, monitors: [] },
       ...loadJson(WUJIAN_KEY, {}),
     },
   };
@@ -336,7 +336,16 @@
   if (!["list", "agent", "history"].includes(state.wuJian.publishTaskView)) state.wuJian.publishTaskView = "list";
   if (!["library", "remix", "ai"].includes(state.wuJian.publishTaskSource)) state.wuJian.publishTaskSource = "library";
   // v13 安全重置：如果处于发布流程中途但账号为空，退回第一步；同时补全新字段默认值
-  { const v13 = state.wuJian.v13 || {}; if (v13.publishView === "create" && (v13.taskStep || 1) > 1 && !(v13.taskAccounts || []).length) { v13.taskStep = 1; state.wuJian.v13 = v13; } if (!v13.taskTitleMode) { v13.taskTitleMode = "none"; } if (v13.taskTitleCopy === undefined) { v13.taskTitleCopy = ""; } if (!["all", "待发布", "发布中", "发布完成", "发布失败", "取消发布"].includes(v13.accountWorksFilter)) { v13.accountWorksFilter = "all"; } const validWorkFilters = ["all", "待发布", "发布中", "发布完成", "发布失败", "取消发布"]; if (!Array.isArray(v13.accountWorksFilters)) { v13.accountWorksFilters = v13.accountWorksFilter === "all" ? ["all"] : [v13.accountWorksFilter]; } v13.accountWorksFilters = v13.accountWorksFilters.filter((filter) => validWorkFilters.includes(filter)); if (!v13.accountWorksFilters.length) { v13.accountWorksFilters = ["all"]; } if (!v13.accountWorkStatuses || typeof v13.accountWorkStatuses !== "object" || Array.isArray(v13.accountWorkStatuses)) { v13.accountWorkStatuses = {}; } if (!Array.isArray(v13.monitors)) { v13.monitors = []; } if (typeof v13.monitorAddOpen !== "boolean") { v13.monitorAddOpen = false; } if (typeof v13.monitorDraftHandle !== "string") { v13.monitorDraftHandle = ""; } if (typeof v13.monitorValidating !== "boolean") { v13.monitorValidating = false; } if (typeof v13.monitorAddError !== "string") { v13.monitorAddError = ""; } if (!v13.monitorGrabs || typeof v13.monitorGrabs !== "object" || Array.isArray(v13.monitorGrabs)) { v13.monitorGrabs = {}; } if (!v13.taskTitles || typeof v13.taskTitles !== "object" || Array.isArray(v13.taskTitles)) { v13.taskTitles = {}; } if (typeof v13.taskTitlesSignature !== "string") { v13.taskTitlesSignature = ""; } state.wuJian.v13 = v13; }
+  { const v13 = state.wuJian.v13 || {}; if (v13.publishView === "create" && (v13.taskStep || 1) > 1 && !(v13.taskAccounts || []).length) { v13.taskStep = 1; state.wuJian.v13 = v13; } if (!v13.taskTitleMode) { v13.taskTitleMode = "none"; } if (v13.taskTitleCopy === undefined) { v13.taskTitleCopy = ""; } /* 发布结果列表的筛选状态：账号/任务/时间/状态四个维度 + 页码（页码每次加载重置为 1） */
+  { const validPublishStatus = ["all", "待发布", "发布中", "发布完成", "发布失败", "取消发布"]; if (!validPublishStatus.includes(v13.publishStatus)) { v13.publishStatus = "all"; } }
+  if (typeof v13.publishAccount !== "string" || !v13.publishAccount) { v13.publishAccount = "all"; }
+  if (typeof v13.publishTask !== "string" || !v13.publishTask) { v13.publishTask = "all"; }
+  /* 时间筛选默认"最近一个月"：空值/脏值（含旧版本存下的空串）一律回落到该默认区间，重置也回到这里 */
+  { const publishRange = v13PublishDefaultRange(); if (typeof v13.publishStart !== "string" || !/^\d{4}-\d{2}-\d{2}$/.test(v13.publishStart)) { v13.publishStart = publishRange.start; } if (typeof v13.publishEnd !== "string" || !/^\d{4}-\d{2}-\d{2}$/.test(v13.publishEnd)) { v13.publishEnd = publishRange.end; } }
+  v13.publishPage = 1;
+  /* 账号作品弹窗已下线，清掉历史状态，避免旧 localStorage 残留 */
+  delete v13.accountWorksOpen; delete v13.accountWorksFilter; delete v13.accountWorksFilters;
+  if (!v13.accountWorkStatuses || typeof v13.accountWorkStatuses !== "object" || Array.isArray(v13.accountWorkStatuses)) { v13.accountWorkStatuses = {}; } if (!Array.isArray(v13.monitors)) { v13.monitors = []; } if (typeof v13.monitorAddOpen !== "boolean") { v13.monitorAddOpen = false; } if (typeof v13.monitorDraftHandle !== "string") { v13.monitorDraftHandle = ""; } if (typeof v13.monitorValidating !== "boolean") { v13.monitorValidating = false; } if (typeof v13.monitorAddError !== "string") { v13.monitorAddError = ""; } if (!v13.monitorGrabs || typeof v13.monitorGrabs !== "object" || Array.isArray(v13.monitorGrabs)) { v13.monitorGrabs = {}; } if (!v13.taskTitles || typeof v13.taskTitles !== "object" || Array.isArray(v13.taskTitles)) { v13.taskTitles = {}; } if (typeof v13.taskTitlesSignature !== "string") { v13.taskTitlesSignature = ""; } state.wuJian.v13 = v13; }
   syncWuJianPublishState();
 
   if (Array.isArray(state.wuJian.worksCreated)) {
@@ -2712,10 +2721,6 @@
   }
   const V13_ACCOUNT_WORK_STATUSES = ["发布完成", "发布中", "发布失败", "待发布"];
   const V13_ACCOUNT_WORK_FILTERS = ["待发布", "发布中", "发布完成", "发布失败", "取消发布"];
-  function v13AccountWorkFilters() {
-    const selected = Array.isArray(v13State().accountWorksFilters) ? v13State().accountWorksFilters.filter((filter) => ["all", ...V13_ACCOUNT_WORK_FILTERS].includes(filter)) : [];
-    return selected.length ? selected : ["all"];
-  }
   function v13AccountWorkStatus(accountId, work, index) {
     const overrides = v13State().accountWorkStatuses || {};
     if ([...V13_ACCOUNT_WORK_FILTERS].includes(overrides[work.id])) return overrides[work.id];
@@ -2725,28 +2730,38 @@
   function v13AccountWorkStatusTone(status) {
     return { "待发布": "pending", "发布中": "publishing", "发布完成": "complete", "发布失败": "failed", "取消发布": "canceled" }[status] || "pending";
   }
+  function v13PublishStatusMarkup(status, title) {
+    return `<span class="wjv-publish-status is-${v13AccountWorkStatusTone(status)}"${title ? ` title="${escapeHtml(title)}"` : ""}><i></i>${escapeHtml(status)}</span>`;
+  }
+  /* "发布时间"列：只有发布完成的作品才有真实发布时间，其余状态展示状态文案 */
+  function v13PublishStatusTime(work) {
+    return work.status === "发布完成" ? v13NormalizePublishedAt(work.publishedAt) : work.status === "发布中" ? "正在发布" : work.status === "待发布" ? "待安排" : work.status === "取消发布" ? "已取消" : "发布失败";
+  }
   function v13Published(account, index) {
     const generated = (v13State().generatedTasks || []).filter((task) => task.status === "已完成" && (task.accountIds || []).includes(account.id));
     const added = generated.reduce((sum, task) => sum + (task.workCount || 0), 0);
     return (account.published || 0) + added;
   }
 
+  /* 发布时间统一成定宽的 "YYYY-MM-DD HH:mm"：排序、时间筛选与成果中心都依赖这个格式 */
+  function v13NormalizePublishedAt(value) {
+    const text = String(value || "").replace("T", " ");
+    if (/^\d{4}-\d{2}-\d{2} \d{2}:\d{2}/.test(text)) return text.slice(0, 16);
+    if (/^\d{2}-\d{2} \d{2}:\d{2}/.test(text)) return `2026-${text}`;
+    /* nowDateTime() 产出的是 zh-CN 的 "09/14 15:22"（斜杠），生成任务的 createdAt 就是这个格式 */
+    if (/^\d{2}\/\d{2} \d{2}:\d{2}/.test(text)) return `2026-${text.replace(/\//g, "-")}`;
+    return "2026-08-27 10:00";
+  }
   function v13PublishResults() {
     const durationSeconds = (duration) => {
       const parts = String(duration || "00:00").split(":").map(Number);
       return parts.length === 2 ? parts[0] * 60 + parts[1] : 0;
     };
-    const normalizePublishedAt = (value) => {
-      const text = String(value || "").replace("T", " ");
-      if (/^\d{4}-\d{2}-\d{2} \d{2}:\d{2}/.test(text)) return text.slice(0, 16);
-      if (/^\d{2}-\d{2} \d{2}:\d{2}/.test(text)) return `2026-${text}`;
-      return "2026-08-27 10:00";
-    };
     const rows = [];
     V13_ACCOUNTS.forEach((account, accountIndex) => {
       v13AccountWorks(account.id, accountIndex).forEach((work, workIndex) => {
         if (v13AccountWorkStatus(account.id, work, workIndex) !== "发布完成") return;
-        const publishedAt = normalizePublishedAt(work.publishedAt);
+        const publishedAt = v13NormalizePublishedAt(work.publishedAt);
         const douyinWorkId = work.douyinWorkId || `740123456789${String(accountIndex).padStart(2, "0")}${String(workIndex).padStart(2, "0")}`;
         rows.push({
           publishResultId: `result-${work.id}`,
@@ -2777,9 +2792,6 @@
     return rows.sort((a, b) => b.publishedAt.localeCompare(a.publishedAt));
   }
   window.aiVideoPublishResults = v13PublishResults;
-  function v13Pending(account) {
-    return Number.isFinite(Number(account?.pending)) ? Number(account.pending) : 0;
-  }
   function v13StatusTone(status) {
     return { "正在发布": "ok", "排队中": "schedule", "已发布": "ok", "发布异常": "danger" }[status] || "muted";
   }
@@ -3083,15 +3095,155 @@
       <div class="wjv-flow-body">${step === 1 ? v13AccountPicker() : step === 2 ? v13WorkPicker() : step === 3 ? v13TimingPicker() : v13Confirm()}</div>
     </div>`;
   }
+  /* ---------- 发布结果 · 统一作品明细列表 ---------- */
+  const V13_PUBLISH_PAGE_SIZE = 20;
+
+  /* 历史作品的任务号是每个账号一个的占位（task-history-01..14），筛选时归并成同一个批次 */
+  function v13PublishTaskValue(taskId) {
+    const text = String(taskId || "");
+    return text.startsWith("task-history") ? "history" : text;
+  }
+  /* 所属任务统一用"时间 + 作品数量"标识：生成任务取 createdAt，历史批次取该批最早的发布时间（不再出现"历史发布任务"文案） */
+  function v13PublishTaskIndex(rows) {
+    const index = new Map();
+    (v13State().generatedTasks || []).forEach((task) => {
+      if (task.id) index.set(task.id, { value: task.id, label: `任务 · ${String(task.createdAt || task.time || "").replace("T", " ")}`, note: `${task.workCount || 0} 个作品` });
+    });
+    const history = (rows || v13PublishWorkRows()).filter((work) => !index.has(work.taskValue));
+    if (history.length) {
+      const earliest = history.map((work) => work.publishedKey).sort()[0];
+      index.set("history", { value: "history", label: `任务 · ${earliest.slice(5, 16).replace("-", "/")}`, note: `${history.length} 个作品` });
+    }
+    return index;
+  }
+  /* 生成任务在前、历史批次在后（Map 保序），调用方直接用 [...v13PublishTaskIndex(rows).values()] */
+  /* 时间筛选取"任务创建时间"：生成任务取任务自身的时间，历史批次整批取该批最早的发布时间（与"所属任务"列展示的时间同源） */
+  function v13PublishTaskTimeMap() {
+    const map = new Map();
+    (v13State().generatedTasks || []).forEach((task) => {
+      if (task.id) map.set(task.id, v13NormalizePublishedAt(task.publishedAt || task.createdAt || task.time));
+    });
+    return map;
+  }
+  /* 时间范围默认"最近一个月"：按系统当天回推一个月（本地时区；不能用 toISOString——那是 UTC，跨月会差一天） */
+  function v13PublishDefaultRange() {
+    const pad = (value) => String(value).padStart(2, "0");
+    const stamp = (date) => `${date.getFullYear()}-${pad(date.getMonth() + 1)}-${pad(date.getDate())}`;
+    const now = new Date();
+    return { start: stamp(new Date(now.getFullYear(), now.getMonth() - 1, now.getDate())), end: stamp(now) };
+  }
+  /* 时间范围两端各自兜底：只填一侧时另一侧不能参与"交换比较"（成果中心的写法假设两端都有值） */
+  function v13PublishRange() {
+    const s = v13State();
+    return { start: s.publishStart || "0000-01-01", end: s.publishEnd || "9999-12-31", active: Boolean(s.publishStart || s.publishEnd) };
+  }
+  function v13PublishWorkRows() {
+    const rows = [];
+    V13_ACCOUNTS.forEach((account, accountIndex) => {
+      v13AccountWorks(account.id, accountIndex).forEach((work, workIndex) => {
+        rows.push({
+          ...work,
+          status: v13AccountWorkStatus(account.id, work, workIndex),
+          publishedKey: v13NormalizePublishedAt(work.publishedAt),
+          accountId: account.id,
+          accountName: account.name,
+          accountMeta: `${account.city} · ${account.group}`,
+          taskValue: v13PublishTaskValue(work.taskId)
+        });
+      });
+    });
+    /* 任务时间平铺完才能定：历史批次的那一串占位 id 要先归并成一批，再取该批最早时间 */
+    const historyKey = rows.filter((work) => work.taskValue === "history").map((work) => work.publishedKey).sort()[0] || "";
+    const taskTimes = v13PublishTaskTimeMap();
+    rows.forEach((work) => { work.taskKey = taskTimes.get(work.taskValue) || historyKey || work.publishedKey; });
+    return rows;
+  }
+  function v13PublishWorkMatches(work, filter) {
+    if (filter.account !== "all" && work.accountId !== filter.account) return false;
+    if (filter.task !== "all" && work.taskValue !== filter.task) return false;
+    /* 时间范围对四种状态一视同仁：比的是任务创建时间，未完成的作品也有任务时间，不再被范围隐藏 */
+    if (filter.active && (work.taskKey.slice(0, 10) < filter.start || work.taskKey.slice(0, 10) > filter.end)) return false;
+    return true;
+  }
+  function v13PublishStatusCounts(rows) {
+    const counts = { all: rows.length };
+    V13_ACCOUNT_WORK_FILTERS.forEach((status) => { counts[status] = 0; });
+    rows.forEach((work) => { counts[work.status] = (counts[work.status] || 0) + 1; });
+    return counts;
+  }
+  function v13PublishFiltersMarkup(filter, taskOptions, counts) {
+    const s = v13State();
+    const accountOptions = V13_ACCOUNTS.map((account) => `<option value="${escapeHtml(account.id)}"${filter.account === account.id ? " selected" : ""}>${escapeHtml(account.name)}</option>`).join("");
+    const taskOptionsMarkup = taskOptions.map((option) => `<option value="${escapeHtml(option.value)}"${filter.task === option.value ? " selected" : ""}>${escapeHtml(`${option.label}（${option.note}）`)}</option>`).join("");
+    /* 状态与其他三个筛选同排同为下拉：各状态条数写进选项文案，等价于原 chips 上的计数 */
+    const statusOptions = [["all", "全部状态"], ...V13_ACCOUNT_WORK_FILTERS.map((status) => [status, status])]
+      .map(([key, label]) => `<option value="${escapeHtml(key)}"${filter.status === key ? " selected" : ""}>${escapeHtml(`${label}（${counts[key] || 0}）`)}</option>`).join("");
+    return `<div class="wjv-publish-filters">
+      <label class="wjv-publish-filter"><span>所属账号</span><select data-wjv-publish-account aria-label="按所属账号筛选"><option value="all"${filter.account === "all" ? " selected" : ""}>全部账号</option>${accountOptions}</select></label>
+      <label class="wjv-publish-filter wjv-publish-filter--task"><span>所属任务</span><select data-wjv-publish-task aria-label="按所属任务筛选"><option value="all"${filter.task === "all" ? " selected" : ""}>全部任务</option>${taskOptionsMarkup}</select></label>
+      <label class="wjv-publish-filter"><span>发布状态</span><select data-wjv-publish-status aria-label="按发布状态筛选">${statusOptions}</select></label>
+      <label class="wjv-publish-filter wjv-publish-filter--range"><span>任务时间</span><input type="date" data-wjv-publish-start value="${escapeHtml(s.publishStart || "")}" aria-label="按任务创建时间筛选，起始日期"><b aria-hidden="true">至</b><input type="date" data-wjv-publish-end value="${escapeHtml(s.publishEnd || "")}" aria-label="按任务创建时间筛选，截止日期"></label>
+      <button type="button" class="wjv-quiet" data-wjv-publish-reset>重置</button>
+    </div>${filter.active ? `<p class="wjv-publish-hint" role="status">时间范围按所属任务的创建时间筛选（历史批次按该批最早发布时间计），与发布状态无关。</p>` : ""}`;
+  }
+  function v13PublishWorkRow(row, taskIndex) {
+    const action = row.status === "待发布" ? `<button type="button" class="wjv-link is-cancel" data-wjv-cancel-account-work="${escapeHtml(row.accountId)}" data-wjv-account-work-id="${escapeHtml(row.id)}">取消发布</button>`
+      : row.status === "发布失败" ? `<button type="button" class="wjv-link is-retry" data-wjv-retry-account-work="${escapeHtml(row.accountId)}" data-wjv-account-work-id="${escapeHtml(row.id)}">重试发布</button>`
+      : row.status === "取消发布" ? `<span class="wjv-link is-muted">已取消</span>`
+      : row.link ? `<a class="wjv-link" href="${escapeHtml(row.link)}" target="_blank" rel="noopener noreferrer">打开抖音</a>`
+      : `<span class="wjv-link is-muted">链接同步中</span>`;
+    const cover = `<img class="wjv-publish-cover" src="${escapeHtml(row.cover)}" alt="${escapeHtml(row.title)}">`;
+    const task = taskIndex.get(row.taskValue) || { label: "任务 · —", note: "0 个作品" };
+    return `<tr><td>${row.link ? `<a href="${escapeHtml(row.link)}" target="_blank" rel="noopener noreferrer">${cover}</a>` : cover}</td>`
+      + `<td><strong>${escapeHtml(row.title)}</strong>${row.titleEdited ? `<em class="wjv-publish-edited">用户修改</em>` : ""}</td>`
+      + `<td class="wjv-publish-account-cell"><strong>${escapeHtml(row.accountName)}</strong><small>${escapeHtml(row.accountMeta)}</small></td>`
+      + `<td class="wjv-publish-task-cell"><strong>${escapeHtml(task.label)}</strong><small>${escapeHtml(task.note)}</small></td>`
+      + `<td>${v13PublishStatusMarkup(row.status, row.status === "发布失败" ? "发布失败，可点击右侧「重试发布」重新加入待发布" : "")}</td>`
+      + `<td>${escapeHtml(row.duration)}</td>`
+      + `<td>${escapeHtml(v13PublishStatusTime(row))}</td>`
+      + `<td>${row.plays.toLocaleString()}</td>`
+      + `<td>${row.likes.toLocaleString()}</td>`
+      + `<td>${row.comments.toLocaleString()}</td>`
+      + `<td>${row.favorites.toLocaleString()}</td>`
+      + `<td>${row.shares.toLocaleString()}</td>`
+      + `<td>${action}</td></tr>`;
+  }
+  function v13PublishPaginationMarkup(total, page, pageCount) {
+    if (pageCount <= 1) return `<p class="wjv-publish-count">共 ${total} 条作品</p>`;
+    return `<footer class="wjv-publish-pagination"><span>共 ${total} 条作品</span><div><button type="button" data-wjv-publish-page="${page - 1}"${page === 1 ? " disabled" : ""}>上一页</button><b>${page} / ${pageCount}</b><button type="button" data-wjv-publish-page="${page + 1}"${page === pageCount ? " disabled" : ""}>下一页</button></div></footer>`;
+  }
   function v13Results() {
-    const accounts = V13_ACCOUNTS;
-    const totalPublished = accounts.reduce((sum, a, i) => sum + v13Published(a, i), 0);
-    const tasks = v13State().generatedTasks || [];
-    const rows = accounts.map((a, i) => `<tr><td><strong>${escapeHtml(a.name)}</strong><small>${escapeHtml(a.group)} · ${escapeHtml(a.city)}</small></td><td class="wjv-pending-cell"><b>${v13Pending(a)}</b> 条</td><td class="wjv-published-cell"><b>${v13Published(a, i)}</b> 条</td><td><button type="button" class="wjv-link" data-wjv-view-account="${escapeHtml(a.id)}">查看作品 <span aria-hidden="true">→</span></button></td></tr>`).join("");
+    const s = v13State();
+    /* 落库的筛选值可能与当前数据不匹配（账号/任务被改名或清库），回退成"全部"避免出现"下拉显示全部、列表却是空" */
+    const accountFilter = V13_ACCOUNTS.some((account) => account.id === s.publishAccount) ? s.publishAccount : "all";
+    const allRows = v13PublishWorkRows();
+    const taskIndex = v13PublishTaskIndex(allRows);
+    const taskFilter = taskIndex.has(s.publishTask) ? s.publishTask : "all";
+    const range = v13PublishRange();
+    const filter = { account: accountFilter, task: taskFilter, start: range.start, end: range.end, active: range.active };
+    const scoped = allRows.filter((work) => v13PublishWorkMatches(work, filter)).sort((a, b) => b.publishedKey.localeCompare(a.publishedKey));
+    const counts = v13PublishStatusCounts(scoped);
+    const statusFilter = counts[s.publishStatus] === undefined ? "all" : s.publishStatus;
+    const rows = statusFilter === "all" ? scoped : scoped.filter((work) => work.status === statusFilter);
+    filter.status = statusFilter;
+    /* 页码只在渲染时收敛，不写回 state：本页每次渲染都会 persistWuJian，写回等于每次渲染都落一次盘 */
+    const pageCount = Math.max(1, Math.ceil(rows.length / V13_PUBLISH_PAGE_SIZE));
+    const page = Math.min(pageCount, Math.max(1, Number(s.publishPage) || 1));
+    const pageRows = rows.slice((page - 1) * V13_PUBLISH_PAGE_SIZE, page * V13_PUBLISH_PAGE_SIZE);
+    /* 三张卡与列表同口径：都按"当前生效的全部筛选条件（含状态）"统计，保证数字能与列表、页脚对上 */
+    const kpis = [
+      ["发布账号", `${new Set(rows.map((work) => work.accountId)).size} 个`, "当前筛选范围内的账号"],
+      ["已发布作品", `${rows.filter((work) => work.status === "发布完成").length} 条`, "当前筛选范围内发布完成的作品"],
+      /* 任务数数的是"当前范围内出现的任务"（历史批次算 1 个），否则列表里那批作品、卡片却写 0 个 */
+      ["发布任务", `${new Set(rows.map((work) => work.taskValue)).size} 个`, "当前筛选范围内的发布任务"]
+    ];
+    const emptyRow = `<tr><td colspan="13"><div class="wjv-publish-empty">暂无符合条件的作品<small>${range.active ? `默认只展示最近一个月的发布任务（当前 ${escapeHtml(range.start)} ~ ${escapeHtml(range.end)}），可把开始日期往前调或重置筛选。` : "可调整上方筛选条件后重试。"}</small><button type="button" data-wjv-publish-reset>重置筛选</button></div></td></tr>`;
     return `<div class="wjv-results">
-      ${v13Kpis([["发布账号", `${accounts.length} 个`, "已接入营销授权"], ["累计已发布", `${totalPublished} 条`, "矩阵发布总量"], ["本批发布任务", `${tasks.length} 个`, "最近生成的发布任务"]])}
-      ${v13SectionHead("发布任务", "发布结果", "按账号查看发布情况，点击进入该账号的作品列表。", `<button type="button" class="is-primary" data-wjv-new-task>＋ 创建发布任务</button>`)}
-      <div class="ai-matrix-table"><table><thead><tr><th>账号名</th><th title="该账号当前待发布的视频数量">待发布</th><th>已发布</th><th>操作</th></tr></thead><tbody>${rows}</tbody></table></div>
+      ${v13Kpis(kpis)}
+      ${v13SectionHead("发布任务", "发布结果", "矩阵账号的发布作品明细，默认展示最近一个月创建的发布任务，可按所属账号、所属任务、发布状态、任务创建时间筛选；发布失败的作品支持单条重试。", `<button type="button" class="is-primary" data-wjv-new-task>＋ 创建发布任务</button>`)}
+      ${v13PublishFiltersMarkup(filter, [...taskIndex.values()], counts)}
+      <div class="ai-matrix-table"><table><thead><tr><th>封面</th><th>作品标题</th><th>所属账号</th><th>所属任务</th><th>发布状态</th><th>时长</th><th>发布时间</th><th>播放</th><th>点赞</th><th>评论</th><th>收藏</th><th>分享</th><th>操作</th></tr></thead><tbody>${pageRows.length ? pageRows.map((row) => v13PublishWorkRow(row, taskIndex)).join("") : emptyRow}</tbody></table></div>
+      ${v13PublishPaginationMarkup(rows.length, page, pageCount)}
     </div>`;
   }
   function wujianV13PublishSection() {
@@ -3179,41 +3331,13 @@
     if (typeof showToast === "function") showToast("校验通过，已开始监控", `@${handle} 首次抓取 ${batch.accepted.length} 条作品，已进入待发布作品池`);
   }
 
-  /* ---------- 账号作品弹窗 ---------- */
-  function wujianV13AccountModal() {
-    const openId = v13State().accountWorksOpen;
-    if (!openId) return "";
-    const index = V13_ACCOUNTS.findIndex((a) => a.id === openId);
-    const account = V13_ACCOUNTS[index];
-    if (!account) return "";
-    const allRows = v13AccountWorks(account.id, index).map((work, workIndex) => ({ ...work, status: v13AccountWorkStatus(account.id, work, workIndex) }));
-    const selectedFilters = v13AccountWorkFilters();
-    const showAll = selectedFilters.includes("all") || selectedFilters.length === 0;
-    const rows = showAll ? allRows : allRows.filter((work) => selectedFilters.includes(work.status));
-    const statusFilters = [["all", "全部"], ...V13_ACCOUNT_WORK_FILTERS.map((status) => [status, status])];
-    const statusCounts = allRows.reduce((counts, work) => { counts[work.status] = (counts[work.status] || 0) + 1; return counts; }, {});
-    const completedCount = statusCounts["发布完成"] || 0;
-    const statusTime = (work) => work.status === "发布完成" ? work.publishedAt : work.status === "发布中" ? "正在发布" : work.status === "待发布" ? "待安排" : work.status === "取消发布" ? "已取消" : "发布失败";
-    const statusMarkup = (status) => `<span class="wjv-modal-status is-${v13AccountWorkStatusTone(status)}"><i></i>${escapeHtml(status)}</span>`;
-    const selectedStatusSet = new Set(selectedFilters);
-    const allChecked = showAll;
-    const filterMarkup = statusFilters.map(([key, label]) => {
-      const checked = key === "all" ? allChecked : allChecked || selectedStatusSet.has(key);
-      return `<label class="${checked ? "is-checked" : ""}"><input type="checkbox" data-wjv-account-work-filter="${escapeHtml(key)}"${checked ? " checked" : ""}><span>${escapeHtml(label)}</span><em>${key === "all" ? allRows.length : statusCounts[key] || 0}</em></label>`;
-    }).join("");
-    return `<div class="wjv-modal-backdrop" data-wjv-modal-close></div><section class="wjv-modal" role="dialog" aria-modal="true" aria-labelledby="wjv-modal-title">
-      <header><div><span>发布作品</span><h3 id="wjv-modal-title">${escapeHtml(account.name)}</h3><p>共 ${allRows.length} 条作品 · ${completedCount} 条发布完成 · ${escapeHtml(account.city)}</p></div><button type="button" data-wjv-modal-close aria-label="关闭">×</button></header>
-      <div class="wjv-modal-body"><fieldset class="wjv-modal-status-filters"><legend>筛选状态</legend>${filterMarkup}</fieldset><div class="ai-matrix-table"><table><thead><tr><th>封面</th><th>作品标题</th><th>发布状态</th><th>时长</th><th>发布时间</th><th>播放</th><th>点赞</th><th>评论</th><th>收藏</th><th>分享</th><th>操作</th></tr></thead><tbody>${rows.length ? rows.map((w) => { const action = w.status === "待发布" ? `<button type="button" class="wjv-link is-cancel" data-wjv-cancel-account-work="${escapeHtml(account.id)}" data-wjv-account-work-id="${escapeHtml(w.id)}">取消发布</button>` : w.status === "发布失败" ? `<button type="button" class="wjv-link is-retry" data-wjv-retry-account-work="${escapeHtml(account.id)}" data-wjv-account-work-id="${escapeHtml(w.id)}">重试发布</button>` : w.status === "取消发布" ? `<span class="wjv-link is-muted">已取消</span>` : w.link ? `<a class="wjv-link" href="${escapeHtml(w.link)}" target="_blank" rel="noopener noreferrer">打开抖音</a>` : `<span class="wjv-link is-muted">链接同步中</span>`; return `<tr><td>${w.link ? `<a href="${escapeHtml(w.link)}" target="_blank" rel="noopener noreferrer"><img class="wjv-modal-cover" src="${escapeHtml(w.cover)}" alt="${escapeHtml(w.title)}"></a>` : `<img class="wjv-modal-cover" src="${escapeHtml(w.cover)}" alt="${escapeHtml(w.title)}">`}</td><td><strong>${escapeHtml(w.title)}</strong>${w.titleEdited ? `<em class="wjv-modal-edited">用户修改</em>` : ""}</td><td>${statusMarkup(w.status)}</td><td>${escapeHtml(w.duration)}</td><td>${escapeHtml(statusTime(w))}</td><td>${w.plays.toLocaleString()}</td><td>${w.likes.toLocaleString()}</td><td>${w.comments.toLocaleString()}</td><td>${w.favorites.toLocaleString()}</td><td>${w.shares.toLocaleString()}</td><td>${action}</td></tr>`; }).join("") : `<tr><td colspan="11"><div class="wjv-modal-empty">暂无${showAll ? "符合条件" : escapeHtml(selectedFilters.join("、"))}作品</div></td></tr>`}</tbody></table></div></div>
-      </section>`;
-  }
-
   /* ---------- 主渲染 ---------- */
   function renderWuJianLiveWorkspace(root) {
     if (!root) return;
     clearWuJianAssetPickerPortal();
     state.selected = "ai-video";
     const activeView = root.closest(".app-view");
-    if (activeView) activeView.classList.toggle("wjv-modal-view", Boolean(v13State().accountWorksOpen || v13State().monitorAddOpen));
+    if (activeView) activeView.classList.toggle("wjv-modal-view", Boolean(v13State().monitorAddOpen));
     const section = ["overview", "publish", "library"].includes(v13State().section) ? v13State().section : "overview";
     v13Patch({ section });
     const tabs = [["publish", "发布任务"], ["overview", "总览"], ["library", "作品库"]];
@@ -3221,7 +3345,7 @@
     const workspace = root.querySelector("#demo-live-workspace") || root;
     workspace.innerHTML = `<div class="demo-wujian-live-workspace demo-wujian-matrix-workspace wjv-workspace">
       <nav class="demo-wujian-live-nav" aria-label="短视频运营专员工作区导航"><div><span>短视频运营专员</span><strong>矩阵搬运发布</strong></div><div class="demo-wujian-live-nav-tabs">${tabs.map(([key, label]) => `<button type="button" class="${section === key ? "is-active" : ""}" data-wjv-section="${key}">${escapeHtml(label)}</button>`).join("")}</div></nav>
-      <main class="demo-wujian-live-main demo-wujian-matrix-main" data-wjv-content="${escapeHtml(section)}">${content}${wujianV13AccountModal()}${wujianV13MonitorAddModal()}</main>
+      <main class="demo-wujian-live-main demo-wujian-matrix-main" data-wjv-content="${escapeHtml(section)}">${content}${wujianV13MonitorAddModal()}</main>
     </div>`;
     portalWuJianAssetPicker(workspace);
   }
@@ -4040,7 +4164,23 @@
     }
     const wjvViewAccount = event.target.closest("[data-wjv-view-account]");
     if (wjvViewAccount) {
-      v13Patch({ accountWorksOpen: wjvViewAccount.dataset.wjvViewAccount || "", accountWorksFilters: ["all"], accountWorksFilter: "all" });
+      /* 总览 wall 的"查看作品"：切到发布任务 tab 并按该账号预筛（账号作品弹窗已下线），publishView 必须一并复位 */
+      const viewRange = v13PublishDefaultRange();
+      v13Patch({ section: "publish", publishView: "results", publishAccount: wjvViewAccount.dataset.wjvViewAccount || "all", publishTask: "all", publishStart: viewRange.start, publishEnd: viewRange.end, publishStatus: "all", publishPage: 1 });
+      refreshWuJianLiveWorkspace();
+      return;
+    }
+    const wjvPublishReset = event.target.closest("[data-wjv-publish-reset]");
+    if (wjvPublishReset) {
+      /* 重置＝回到进入页面时的默认态，时间范围回落"最近一个月"，不是清空成不限 */
+      const resetRange = v13PublishDefaultRange();
+      v13Patch({ publishAccount: "all", publishTask: "all", publishStart: resetRange.start, publishEnd: resetRange.end, publishStatus: "all", publishPage: 1 });
+      refreshWuJianLiveWorkspace();
+      return;
+    }
+    const wjvPublishPage = event.target.closest("[data-wjv-publish-page]");
+    if (wjvPublishPage) {
+      v13Patch({ publishPage: Math.max(1, Number(wjvPublishPage.dataset.wjvPublishPage) || 1) });
       refreshWuJianLiveWorkspace();
       return;
     }
@@ -4049,7 +4189,8 @@
       const workId = wjvCancelAccountWork.dataset.wjvAccountWorkId || "";
       const statuses = { ...(v13State().accountWorkStatuses || {}) };
       statuses[workId] = "取消发布";
-      v13Patch({ accountWorkStatuses: statuses, accountWorksFilters: ["取消发布"], accountWorksFilter: "取消发布" });
+      /* 状态筛选跟随到"取消发布"并回到第 1 页：否则这条作品会从当前筛选里消失（且可能翻出空页） */
+      v13Patch({ accountWorkStatuses: statuses, publishStatus: "取消发布", publishPage: 1 });
       refreshWuJianLiveWorkspace();
       if (typeof showToast === "function") showToast("已取消发布", "该作品已从发布队列中取消");
       return;
@@ -4059,7 +4200,8 @@
       const workId = wjvRetryAccountWork.dataset.wjvAccountWorkId || "";
       const statuses = { ...(v13State().accountWorkStatuses || {}) };
       statuses[workId] = "待发布";
-      v13Patch({ accountWorkStatuses: statuses, accountWorksFilters: ["待发布"], accountWorksFilter: "待发布" });
+      /* 单条重试：失败作品回到"待发布"，状态筛选跟随过去，让用户看见它去哪了 */
+      v13Patch({ accountWorkStatuses: statuses, publishStatus: "待发布", publishPage: 1 });
       refreshWuJianLiveWorkspace();
       if (typeof showToast === "function") showToast("已重新加入待发布", "该作品状态已更新为待发布，可继续安排发布");
       return;
@@ -4069,12 +4211,6 @@
       const workId = wjvWorkDownload.dataset.wjvWorkDownload || "";
       const upload = (Array.isArray(v13State().worksPoolUploads) ? v13State().worksPoolUploads : []).find((item) => item.id === workId) || {};
       wuJianTriggerWorkDownload({ ...upload, title: upload.title || "待发布视频" });
-      return;
-    }
-    const wjvModalClose = event.target.closest("[data-wjv-modal-close]");
-    if (wjvModalClose) {
-      v13Patch({ accountWorksOpen: "" });
-      refreshWuJianLiveWorkspace();
       return;
     }
     const wjvBindAccount = event.target.closest("[data-wjv-bind-account]");
@@ -5062,23 +5198,33 @@
   }
 
   function handleChange(event) {
-    const wjvAccountWorkFilter = event.target.closest("[data-wjv-account-work-filter]");
-    if (wjvAccountWorkFilter) {
-      const key = wjvAccountWorkFilter.dataset.wjvAccountWorkFilter || "all";
-      const current = v13AccountWorkFilters();
-      let next;
-      if (key === "all") {
-        next = wjvAccountWorkFilter.checked ? ["all"] : [...V13_ACCOUNT_WORK_FILTERS];
-      } else if (current.includes("all")) {
-        next = wjvAccountWorkFilter.checked ? [key] : V13_ACCOUNT_WORK_FILTERS.filter((filter) => filter !== key);
-      } else {
-        const selected = new Set(current.filter((filter) => filter !== "all"));
-        if (wjvAccountWorkFilter.checked) selected.add(key); else selected.delete(key);
-        next = Array.from(selected);
-      }
-      if (!next.length) next = ["all"];
-      const legacyFilter = next.includes("all") ? "all" : next[0];
-      v13Patch({ accountWorksFilters: next, accountWorksFilter: legacyFilter });
+    const wjvPublishAccount = event.target.closest("[data-wjv-publish-account]");
+    if (wjvPublishAccount) {
+      v13Patch({ publishAccount: wjvPublishAccount.value || "all", publishPage: 1 });
+      refreshWuJianLiveWorkspace();
+      return;
+    }
+    const wjvPublishTask = event.target.closest("[data-wjv-publish-task]");
+    if (wjvPublishTask) {
+      v13Patch({ publishTask: wjvPublishTask.value || "all", publishPage: 1 });
+      refreshWuJianLiveWorkspace();
+      return;
+    }
+    const wjvPublishStatus = event.target.closest("[data-wjv-publish-status]");
+    if (wjvPublishStatus) {
+      v13Patch({ publishStatus: wjvPublishStatus.value || "all", publishPage: 1 });
+      refreshWuJianLiveWorkspace();
+      return;
+    }
+    const wjvPublishStart = event.target.closest("[data-wjv-publish-start]");
+    if (wjvPublishStart) {
+      v13Patch({ publishStart: wjvPublishStart.value || "", publishPage: 1 });
+      refreshWuJianLiveWorkspace();
+      return;
+    }
+    const wjvPublishEnd = event.target.closest("[data-wjv-publish-end]");
+    if (wjvPublishEnd) {
+      v13Patch({ publishEnd: wjvPublishEnd.value || "", publishPage: 1 });
       refreshWuJianLiveWorkspace();
       return;
     }
@@ -5678,21 +5824,21 @@
       const rangeButtons = ranges.map(function (item) {
         return '<button type="button" class="results-lead-range ' + (state.datePreset === item[0] ? "is-active" : "") + '" data-results-lead-range="' + item[0] + '">' + item[1] + '</button>';
       }).join("");
-      return '<header class="results-lead-heading">'
-        + '<div class="results-lead-heading__title"><h2>线索记录</h2><span>数据更新时间 2026-08-25 19:12:13</span></div>'
-        + '<div class="results-lead-heading__controls">'
-        + '<label class="results-lead-date-range"><span class="sr-only">开始日期</span><input type="date" data-results-filter="start" min="' + min + '" max="' + max + '" value="' + state.start + '"><b aria-hidden="true">至</b><span class="sr-only">结束日期</span><input type="date" data-results-filter="end" min="' + min + '" max="' + max + '" value="' + state.end + '"><i aria-hidden="true">▣</i></label>'
-        + '<div class="results-lead-range-group" role="group" aria-label="快捷日期范围">' + rangeButtons + '</div>'
-        + '<label class="results-lead-account"><span class="sr-only">账号</span><select data-results-lead-account aria-label="全部账号">' + accountOptions + '</select></label>'
+      return '<header class="results-lead-heading results-shared-heading">'
+        + '<div class="results-lead-heading__title results-shared-heading__title"><h1>线索记录</h1><span>数据更新时间 2026-08-25 19:12:13</span></div>'
+        + '<div class="results-lead-heading__controls results-shared-heading__controls">'
+        + '<label class="results-lead-date-range results-shared-date-range"><span class="sr-only">开始日期</span><input type="date" data-results-filter="start" min="' + min + '" max="' + max + '" value="' + state.start + '"><b aria-hidden="true">至</b><span class="sr-only">结束日期</span><input type="date" data-results-filter="end" min="' + min + '" max="' + max + '" value="' + state.end + '"><i aria-hidden="true">▣</i></label>'
+        + '<div class="results-lead-range-group results-shared-range-group" role="group" aria-label="快捷日期范围">' + rangeButtons + '</div>'
+        + '<label class="results-lead-account results-shared-account"><span class="sr-only">账号</span><select data-results-lead-account aria-label="全部账号">' + accountOptions + '</select></label>'
         + '</div></header>';
     }
     if (state.tab === "content") {
       const rows = contentRows();
       const accounts = Array.from(new Map((typeof window.aiVideoPublishResults === "function" ? window.aiVideoPublishResults() : []).map(function (item) { return [item.accountId, item]; })).values());
       const updatedAt = rows.reduce(function (latest, item) { return String(item.metricsUpdatedAt || "") > latest ? String(item.metricsUpdatedAt) : latest; }, "") || "等待首次同步";
-      return '<header class="results-content-heading"><div class="results-content-heading__title"><h2>内容效果记录</h2><span>数据更新于 ' + esc(updatedAt) + ' · 当前 ' + rows.length + ' 条</span></div>'
-        + '<div class="results-content-heading__controls"><label class="results-content-date-range"><span class="sr-only">开始日期</span><input type="date" data-results-content-filter="start" value="' + state.contentStart + '"><b aria-hidden="true">至</b><span class="sr-only">结束日期</span><input type="date" data-results-content-filter="end" value="' + state.contentEnd + '"></label>'
-        + '<label class="results-content-account"><span class="sr-only">发布账号</span><select data-results-content-account aria-label="发布账号"><option value="all" ' + (state.contentAccount === "all" ? "selected" : "") + '>全部账号</option>' + accounts.map(function (item) { return '<option value="' + esc(item.accountId) + '" ' + (state.contentAccount === item.accountId ? "selected" : "") + '>' + esc(item.accountName) + '</option>'; }).join("") + '</select></label>'
+      return '<header class="results-content-heading results-shared-heading"><div class="results-content-heading__title results-shared-heading__title"><h1>内容效果记录</h1><span>数据更新于 ' + esc(updatedAt) + ' · 当前 ' + rows.length + ' 条</span></div>'
+        + '<div class="results-content-heading__controls results-shared-heading__controls"><label class="results-content-date-range results-shared-date-range"><span class="sr-only">开始日期</span><input type="date" data-results-content-filter="start" value="' + state.contentStart + '"><b aria-hidden="true">至</b><span class="sr-only">结束日期</span><input type="date" data-results-content-filter="end" value="' + state.contentEnd + '"></label>'
+        + '<label class="results-content-account results-shared-account"><span class="sr-only">发布账号</span><select data-results-content-account aria-label="发布账号"><option value="all" ' + (state.contentAccount === "all" ? "selected" : "") + '>全部账号</option>' + accounts.map(function (item) { return '<option value="' + esc(item.accountId) + '" ' + (state.contentAccount === item.accountId ? "selected" : "") + '>' + esc(item.accountName) + '</option>'; }).join("") + '</select></label>'
         + '<label class="results-content-query"><span class="sr-only">作品名称</span><input type="search" data-results-content-query value="' + esc(state.contentQuery) + '" placeholder="搜索作品名称" aria-label="搜索作品名称"></label>'
         + '<button type="button" class="results-content-reset" data-results-content-reset>重置</button><button type="button" data-results-export ' + (!rows.length ? "disabled" : "") + '>⇩ 导出</button></div></header>';
     }
@@ -5831,6 +5977,14 @@
       }).join("") + '</div>';
   }
 
+  /* 成果中心共用指标看板：线索记录与内容效果记录使用同一套指标卡样式（4 个指标时按 4 列排布） */
+  function metricDashboardMarkup(metrics, ariaLabel, scope) {
+    return '<section class="results-prospect-dashboard live-result-funnel results-shared-dashboard' + (metrics.length === 4 ? " is-metrics-4" : "") + '" aria-label="' + esc(ariaLabel) + '" data-results-dashboard="' + esc(scope) + '">'
+      + metrics.map(function (item) {
+        return '<article class="results-prospect-dashboard__metric results-lead-metric is-' + item[3] + '" data-results-dashboard-metric="' + esc(item[0]) + '"><span>' + item[0] + '</span><strong>' + num(item[1]) + '</strong><small>' + item[2] + '</small></article>';
+      }).join("") + '</section>';
+  }
+
   function leadDashboardMarkup(rows) {
     const total = rows.length;
     const metrics = [
@@ -5840,10 +5994,22 @@
       ["客服专员", rows.filter(function (item) { return item.roleId === "service"; }).length, "形成线索", "service"],
       ["自然承接", rows.filter(function (item) { return !item.adPlan; }).length, "自然流量", "organic"]
     ];
-    return '<section class="results-lead-dashboard" aria-label="线索统计看板"><div class="results-lead-metric-grid">'
-      + metrics.map(function (item) {
-        return '<article class="results-lead-metric is-' + item[3] + '" data-results-dashboard-metric="' + esc(item[0]) + '"><span>' + item[0] + '</span><strong>' + num(item[1]) + '</strong><small>' + item[2] + '</small></article>';
-      }).join("") + '</div></section>';
+    return metricDashboardMarkup(metrics, "线索统计看板", "leads");
+  }
+
+  /* 内容效果记录综合数据看板：账号数与作品数取当前筛选范围，播放/评论为累计口径（每天抓取覆盖更新） */
+  function contentDashboardMarkup(rows) {
+    const sumOf = function (key) {
+      return rows.reduce(function (sum, item) { return sum + (Number(item[key]) || 0); }, 0);
+    };
+    const accounts = new Set(rows.map(function (item) { return item.accountId; }));
+    const metrics = [
+      ["发布账号数", accounts.size, "当前筛选范围", "accounts"],
+      ["发布作品数", rows.length, "发布完成作品", "works"],
+      ["累计播放量", sumOf("views"), "累计口径，抓取覆盖更新", "views"],
+      ["累计评论量", sumOf("comments"), "累计口径，抓取覆盖更新", "comments"]
+    ];
+    return metricDashboardMarkup(metrics, "内容效果综合数据看板", "content");
   }
 
   function ensureAdPlanTooltip() {
@@ -5925,7 +6091,7 @@
         + '<td><a class="results-content-link" href="' + esc(href) + '" target="_blank" rel="noopener noreferrer" aria-label="在抖音打开作品：' + esc(title) + '">查看作品 ↗</a></td><td>' + metric(item.views) + '</td><td>' + metric(item.likes) + '</td><td>' + metric(item.comments) + '</td><td>' + metric(item.favorites) + '</td><td>' + metric(item.shares) + '</td></tr>';
     }).join("") : '<tr><td colspan="9" class="results-content-empty"><strong>' + (allRows.length ? "当前筛选条件下暂无内容效果记录" : "暂无内容效果记录") + '</strong><small>' + (allRows.length ? "调整时间、账号或作品名称后查看结果" : "发布完成的作品将在这里展示") + '</small><button type="button" data-results-content-reset>重置筛选</button></td></tr>';
     const pagination = pageCount > 1 ? '<footer class="results-content-pagination"><span>共 ' + filteredRows.length + ' 条</span><div><button type="button" data-results-content-page="' + (state.contentPage - 1) + '" ' + (state.contentPage === 1 ? "disabled" : "") + '>上一页</button><b>' + state.contentPage + ' / ' + pageCount + '</b><button type="button" data-results-content-page="' + (state.contentPage + 1) + '" ' + (state.contentPage === pageCount ? "disabled" : "") + '>下一页</button></div></footer>' : "";
-    return '<section class="results-v12-panel results-content-panel"><div class="results-v12-table-wrap"><table class="results-v12-table results-content-table"><thead><tr><th>作品</th><th>发布时间</th><th>发布账号</th><th>抖音发布链接</th><th>播放数</th><th>点赞数</th><th>评论数</th><th>收藏数</th><th>分享数</th></tr></thead><tbody>' + body + '</tbody></table></div>' + pagination + '</section>';
+    return contentDashboardMarkup(filteredRows) + '<section class="results-v12-panel results-content-panel"><header><div><h3>内容效果列表</h3><p>当前展示 ' + filteredRows.length + ' 条</p></div></header><div class="results-v12-table-wrap"><table class="results-v12-table results-content-table"><thead><tr><th>作品</th><th>发布时间</th><th>发布账号</th><th>抖音发布链接</th><th>播放数</th><th>点赞数</th><th>评论数</th><th>收藏数</th><th>分享数</th></tr></thead><tbody>' + body + '</tbody></table></div>' + pagination + '</section>';
   }
 
   function render() {

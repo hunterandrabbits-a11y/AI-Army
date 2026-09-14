@@ -5076,7 +5076,8 @@ html[data-theme="dark"] .results-content-pagination b { color: #d9e0e7; }
   .results-lead-chart-body { justify-content: center; }
 }
 @media (max-width: 560px) {
-  .results-lead-metric-grid { grid-template-columns: 1fr; }
+  .results-lead-metric-grid,
+  .results-lead-metric-grid.is-metrics-4 { grid-template-columns: 1fr; }
   .results-lead-chart > header { align-items: flex-start; flex-direction: column; }
   .results-lead-chart-tabs { width: 100%; }
   .results-lead-chart-tabs button { flex: 1; }
@@ -5367,7 +5368,7 @@ html[data-theme="dark"] .results-prospect-panel .results-v12-legacy-table tbody 
 .wjv-ai-row-meta { display: flex; align-items: center; gap: 10px; margin: 6px 0 0 64px; color: var(--wjv-muted); font-size: 11px; }
 .wjv-ai-row-meta .is-over { color: #9f3d39; font-weight: 700; }
 .wjv-ai-error { color: #9f3d39; }
-.wjv-modal-edited { margin-left: 6px; padding: 1px 6px; border-radius: 999px; background: #fff4e5; color: #a8681a; font-size: 11px; font-style: normal; }
+.wjv-publish-edited { margin-left: 6px; padding: 1px 6px; border-radius: 999px; background: #fff4e5; color: #a8681a; font-size: 11px; font-style: normal; }
 .wjv-schedule-block label textarea { display: block; width: 100%; padding: 8px 10px; border: 1px solid var(--wjv-line); border-radius: 7px; background: var(--wjv-paper); color: var(--wjv-ink); font-size: 12px; resize: vertical; box-sizing: border-box; }
 .wjv-schedule-block label input[type="text"] { display: block; width: 100%; padding: 8px 10px; border: 1px solid var(--wjv-line); border-radius: 7px; background: var(--wjv-paper); color: var(--wjv-ink); font-size: 12px; box-sizing: border-box; }
 
@@ -5390,13 +5391,41 @@ html[data-theme="dark"] .results-prospect-panel .results-v12-legacy-table tbody 
   .wjv-dist-target { padding-top: 0; }
 }
 
-/* 发布结果 */
+/* 发布结果 · 统一作品明细列表（13 列，窄屏在 .ai-matrix-table 内横向滚动；标题列允许换行以收敛表宽） */
+.wjv-results .ai-matrix-table table { min-width: 1100px; }
+/* 13 列要挤进 1440 屏（去掉侧栏后约 1140px）不出现横向滚动：单元格左右内边距收紧到 8px */
+.wjv-results .ai-matrix-table th,
+.wjv-results .ai-matrix-table td { padding: 10px 8px; }
 .wjv-results .ai-matrix-table table td { vertical-align: middle; }
-.wjv-results .ai-matrix-table table td > b { font-size: 15px; }
-.wjv-results .ai-matrix-table table td.wjv-pending-cell > b { color: #a26325; }
-.wjv-results .ai-matrix-table table td.wjv-published-cell > b { color: var(--wjv-ink); }
-.wjv-results .ai-matrix-table table td:first-child strong { display: block; font-size: 13px; }
-.wjv-results .ai-matrix-table table td:first-child small { display: block; margin-top: 2px; color: var(--wjv-muted); font-size: 11px; }
+.wjv-results .ai-matrix-table table th:nth-child(2),
+.wjv-results .ai-matrix-table table td:nth-child(2) { width: 180px; min-width: 150px; white-space: normal; }
+.wjv-results .ai-matrix-table table td.wjv-publish-account-cell strong,
+.wjv-results .ai-matrix-table table td.wjv-publish-task-cell strong { display: block; font-size: 13px; }
+.wjv-results .ai-matrix-table table td.wjv-publish-account-cell small,
+.wjv-results .ai-matrix-table table td.wjv-publish-task-cell small { display: block; margin: 2px 0 0; color: var(--wjv-muted); font-size: 11px; }
+
+/* 筛选区：所属账号 / 所属任务 / 发布状态 / 发布时间 + 重置（四个下拉同一副外观）。父级
+   .demo-wujian-live-main 是 overflow:hidden，必须允许换行，否则 620~1400px 之间整行会被裁掉 */
+.wjv-publish-filters { margin-top: 14px; display: flex; align-items: center; flex-wrap: wrap; gap: 8px; }
+.wjv-publish-filter { min-height: 36px; padding: 0 10px; display: inline-flex; align-items: center; gap: 7px; border: 1px solid var(--wjv-line); border-radius: 8px; color: var(--wjv-muted); background: var(--wjv-paper); font-size: 12px; font-weight: 700; }
+.wjv-publish-filter:focus-within { border-color: var(--wjv-accent); box-shadow: 0 0 0 3px rgba(23, 133, 119, .12); }
+.wjv-publish-filter > span { white-space: nowrap; }
+.wjv-publish-filter select { max-width: 190px; height: 34px; padding: 0 3px; border: 0; color: var(--wjv-ink); background: transparent; font-size: 12px; font-weight: 700; outline: 0; cursor: pointer; }
+/* 任务选项文案最长（"任务 · 08-27 14:26（7 个作品）"），单独放宽，否则被原生下拉截断 */
+.wjv-publish-filter--task select { max-width: 250px; }
+.wjv-publish-filter--range { gap: 5px; }
+.wjv-publish-filter--range > b { color: var(--wjv-muted); font-weight: 400; }
+.wjv-publish-filter--range input { height: 34px; padding: 0 3px; border: 0; color: var(--wjv-ink); background: transparent; font-size: 12px; outline: 0; }
+.wjv-publish-filters > .wjv-quiet { min-height: 36px; margin-left: auto; padding: 0 12px; border: 1px solid var(--wjv-line); border-radius: 8px; color: var(--wjv-ink); background: var(--wjv-paper); font-weight: 700; }
+.wjv-publish-filters > .wjv-quiet:hover { border-color: var(--wjv-accent); color: var(--wjv-accent); }
+.wjv-publish-hint { margin: 10px 0 0; color: var(--wjv-muted); font-size: 12px; line-height: 1.5; }
+.wjv-publish-count { margin: 12px 0 0; color: var(--wjv-muted); font-size: 12px; }
+.wjv-publish-pagination { margin-top: 12px; display: flex; align-items: center; justify-content: space-between; gap: 12px; color: var(--wjv-muted); font-size: 12px; }
+.wjv-publish-pagination > div { display: inline-flex; align-items: center; gap: 8px; }
+.wjv-publish-pagination button { min-height: 30px; padding: 0 12px; border: 1px solid var(--wjv-line); border-radius: 7px; color: var(--wjv-ink); background: var(--wjv-paper); font-size: 12px; font-weight: 700; cursor: pointer; }
+.wjv-publish-pagination button:hover:not(:disabled) { border-color: var(--wjv-accent); color: var(--wjv-accent); }
+.wjv-publish-pagination button:disabled { opacity: .5; cursor: default; }
+.wjv-publish-pagination b { color: var(--wjv-ink); font-weight: 750; }
 
 /* 作品库 */
 .wjv-lib-tabs { display: flex; align-items: center; gap: 2px; margin-bottom: 12px; padding: 3px; border-radius: 8px; background: var(--wjv-canvas); width: fit-content; }
@@ -5460,31 +5489,21 @@ html[data-theme="dark"] .results-prospect-panel .results-v12-legacy-table tbody 
 .wjv-spinner { width: 12px; height: 12px; flex: none; display: inline-block; border: 2px solid currentColor; border-top-color: transparent; border-radius: 50%; animation: wjvSpin .7s linear infinite; }
 @keyframes wjvSpin { to { transform: rotate(360deg); } }
 .wjv-lib-note { margin: 12px 0 0; color: var(--wjv-muted); font-size: 12px; line-height: 1.5; }
-.wjv-modal-cover { width: 54px; height: 96px; object-fit: cover; border-radius: 6px; display: block; background: #0c1614; }
-.wjv-modal-status-tabs { margin-bottom: 14px; padding: 4px; display: flex; align-items: center; gap: 3px; overflow-x: auto; border: 1px solid var(--wjv-line); border-radius: 9px; background: var(--wjv-canvas); }
-.wjv-modal-status-tabs button { min-height: 34px; padding: 0 14px; flex: 1 0 auto; border: 0; border-radius: 7px; color: var(--wjv-muted); background: transparent; font-size: 12px; font-weight: 700; white-space: nowrap; cursor: pointer; }
-.wjv-modal-status-tabs button:hover, .wjv-modal-status-tabs button:focus-visible { color: var(--wjv-ink); background: var(--wjv-paper); outline: none; }
-.wjv-modal-status-tabs button.is-active { color: #fff; background: #111; box-shadow: 0 3px 8px rgba(17, 17, 17, .14); }
-.wjv-modal-status-tabs button em { margin-left: 5px; color: var(--wjv-muted); font-size: 11px; font-style: normal; }
-.wjv-modal-status-tabs button.is-active em { color: #d9efea; }
-.wjv-modal-status-filters { margin: 0 0 14px; padding: 10px 12px 12px; display: flex; align-items: center; flex-wrap: wrap; gap: 8px; border: 1px solid var(--wjv-line); border-radius: 9px; background: var(--wjv-canvas); }
-.wjv-modal-status-filters legend { width: 100%; margin: 0 0 2px; padding: 0; color: var(--wjv-muted); font-size: 11px; font-weight: 750; }
-.wjv-modal-status-filters label { min-height: 30px; padding: 0 9px; display: inline-flex; align-items: center; gap: 6px; border: 1px solid var(--wjv-line); border-radius: 7px; color: var(--wjv-muted); background: var(--wjv-paper); font-size: 12px; font-weight: 700; cursor: pointer; }
-.wjv-modal-status-filters label.is-checked { border-color: rgba(17, 17, 17, .2); color: var(--wjv-ink); background: #fff; box-shadow: 0 2px 6px rgba(17, 17, 17, .06); }
-.wjv-modal-status-filters label:focus-within { border-color: var(--wjv-accent); box-shadow: 0 0 0 3px rgba(23, 133, 119, .12); }
-.wjv-modal-status-filters input { width: 14px; height: 14px; margin: 0; accent-color: var(--wjv-accent); }
-.wjv-modal-status-filters em { min-width: 16px; color: var(--wjv-muted); font-size: 11px; font-style: normal; text-align: center; }
-.wjv-modal-status { min-height: 24px; padding: 0 8px; display: inline-flex; align-items: center; gap: 5px; border-radius: 999px; font-size: 11px; font-weight: 750; }
-.wjv-modal-status i { width: 6px; height: 6px; border-radius: 50%; background: currentColor; }
-.wjv-modal-status.is-pending { color: #8b6a42; background: #f5eee5; }
-.wjv-modal-status.is-publishing { color: #117c70; background: #e6f5f1; }
-.wjv-modal-status.is-complete { color: #6850a1; background: #eee9fb; }
-.wjv-modal-status.is-failed { color: #a13f3b; background: #fff0ef; }
-.wjv-modal-status.is-canceled { color: #68747b; background: #eef1f1; }
+.wjv-publish-cover { width: 44px; height: 78px; object-fit: cover; border-radius: 6px; display: block; background: #0c1614; }
+.wjv-publish-status { min-height: 24px; padding: 0 8px; display: inline-flex; align-items: center; gap: 5px; border-radius: 999px; font-size: 11px; font-weight: 750; }
+.wjv-publish-status i { width: 6px; height: 6px; border-radius: 50%; background: currentColor; }
+.wjv-publish-status.is-pending { color: #8b6a42; background: #f5eee5; }
+.wjv-publish-status.is-publishing { color: #117c70; background: #e6f5f1; }
+.wjv-publish-status.is-complete { color: #6850a1; background: #eee9fb; }
+.wjv-publish-status.is-failed { color: #a13f3b; background: #fff0ef; }
+.wjv-publish-status.is-canceled { color: #68747b; background: #eef1f1; }
 .demo-wujian-matrix-workspace .wjv-link.is-cancel { color: #68747b; }
 .demo-wujian-matrix-workspace .wjv-link.is-cancel:hover,
 .demo-wujian-matrix-workspace .wjv-link.is-cancel:focus-visible { color: #3e4b50; background: #eef1f1; }
-.wjv-modal-empty { padding: 36px 12px; color: var(--wjv-muted); text-align: center; }
+.wjv-publish-empty { padding: 36px 12px; color: var(--wjv-muted); text-align: center; }
+.wjv-publish-empty small { display: block; max-width: 460px; margin: 8px auto 0; font-size: 12px; line-height: 1.6; }
+.wjv-publish-empty button { min-height: 32px; margin-top: 14px; padding: 0 14px; border: 1px solid var(--wjv-line); border-radius: 8px; color: var(--wjv-ink); background: var(--wjv-paper); font-size: 12px; font-weight: 700; cursor: pointer; }
+.wjv-publish-empty button:hover { border-color: var(--wjv-accent); color: var(--wjv-accent); }
 
 /* V1.3 Agent 设置 · 发布策略 */
 .ai-video-strategy-grid { margin-top: 10px; display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 10px; }
@@ -5935,7 +5954,12 @@ html[data-theme="dark"] .demo-wujian-matrix-workspace .wjv-account-details > sma
   .demo-wujian-matrix-workspace .wjv-slot-row { flex-wrap: wrap; }
   .demo-wujian-matrix-workspace .wjv-slot { flex: 1 1 calc(33.333% - 4px); min-height: 44px; }
   .demo-wujian-matrix-workspace .wjv-modal > header button { width: 44px; height: 44px; }
-  .demo-wujian-matrix-workspace .wjv-modal-status-tabs button { min-height: 44px; }
+  .demo-wujian-matrix-workspace .wjv-publish-filters { align-items: stretch; }
+  .demo-wujian-matrix-workspace .wjv-publish-filter { flex: 1 1 100%; min-height: 44px; }
+  .demo-wujian-matrix-workspace .wjv-publish-filter select,
+  .demo-wujian-matrix-workspace .wjv-publish-filter--range input { flex: 1 1 auto; min-width: 0; max-width: none; height: 42px; }
+  .demo-wujian-matrix-workspace .wjv-publish-filters > .wjv-quiet { flex: 1 1 100%; min-height: 44px; margin-left: 0; }
+  .demo-wujian-matrix-workspace .wjv-publish-pagination { flex-wrap: wrap; }
 }
 
 html[data-theme="dark"] .demo-wujian-matrix-workspace .demo-wujian-live-nav-tabs,
@@ -5948,6 +5972,15 @@ html[data-theme="dark"] .demo-wujian-matrix-workspace .wjv-quiet,
 html[data-theme="dark"] .demo-wujian-matrix-workspace .wjv-link,
 html[data-theme="dark"] .demo-wujian-matrix-workspace .wjv-slot,
 html[data-theme="dark"] .demo-wujian-matrix-workspace .wjv-row-actions button { background: var(--wjv-paper); }
+html[data-theme="dark"] .demo-wujian-matrix-workspace .wjv-publish-filter,
+html[data-theme="dark"] .demo-wujian-matrix-workspace .wjv-publish-filters > .wjv-quiet,
+html[data-theme="dark"] .demo-wujian-matrix-workspace .wjv-publish-pagination button,
+html[data-theme="dark"] .demo-wujian-matrix-workspace .wjv-publish-empty button { border-color: #36423d; background: var(--wjv-paper); }
+html[data-theme="dark"] .demo-wujian-matrix-workspace .wjv-publish-status.is-pending { color: #d9b98c; background: #33291c; }
+html[data-theme="dark"] .demo-wujian-matrix-workspace .wjv-publish-status.is-publishing { color: #5fd0bb; background: #12332e; }
+html[data-theme="dark"] .demo-wujian-matrix-workspace .wjv-publish-status.is-complete { color: #b9a6f0; background: #262046; }
+html[data-theme="dark"] .demo-wujian-matrix-workspace .wjv-publish-status.is-failed { color: #f0938e; background: #3a1f1e; }
+html[data-theme="dark"] .demo-wujian-matrix-workspace .wjv-publish-status.is-canceled { color: #a6b3b8; background: #232d2b; }
 
 /* Results center: lead records redesign aligned to the reference data table. */
 body.is-results-leads .topbar { display: none; }
@@ -6033,6 +6066,7 @@ body.is-results-leads .results-v12-shell { min-height: 0; padding-bottom: 24px; 
   background: linear-gradient(102deg, #eaf1ff 0%, #f7f9ff 46%, #e7efff 100%);
 }
 .results-lead-metric-grid { display: grid; grid-template-columns: repeat(5, minmax(0, 1fr)); }
+.results-lead-metric-grid.is-metrics-4 { grid-template-columns: repeat(4, minmax(0, 1fr)); }
 .results-lead-metric {
   display: block;
   min-width: 0;
@@ -6054,6 +6088,10 @@ body.is-results-leads .results-v12-shell { min-height: 0; padding-bottom: 24px; 
 .results-lead-metric.is-sub > strong { color: #242f9b; }
 .results-lead-metric.is-service > strong { color: #2f7d75; }
 .results-lead-metric.is-organic > strong { color: #363c47; }
+.results-lead-metric.is-accounts > strong,
+.results-lead-metric.is-works > strong { color: #242f9b; }
+.results-lead-metric.is-views > strong { color: #2f7d75; }
+.results-lead-metric.is-comments > strong { color: #363c47; }
 
 .results-lead-category-tabs {
   width: fit-content;
@@ -6245,7 +6283,8 @@ body.is-results-leads .results-v12-shell { min-height: 0; padding-bottom: 24px; 
   .results-lead-range-group { width: 100%; display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); }
   .results-lead-range { min-width: 0; padding: 0 5px; }
   .results-lead-account { width: 100%; }
-  .results-lead-metric-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+  .results-lead-metric-grid,
+  .results-lead-metric-grid.is-metrics-4 { grid-template-columns: repeat(2, minmax(0, 1fr)); }
   .results-lead-metric { padding: 16px 18px; border-bottom: 1px solid rgba(121, 137, 166, .28); }
   .results-lead-metric:nth-child(2n) { border-right: 0; }
   .results-lead-metric:last-child { border-bottom: 0; }
