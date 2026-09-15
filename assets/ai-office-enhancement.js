@@ -203,7 +203,7 @@
       next: "处理待发布作品与账号待办",
       last: "3 分钟前完成一批账号的发布排期",
       greeting: "老板，今天的发布任务正在按计划执行：14 个账号中 6 个已完成发布、3 个发布中、4 个排队，1 个因营销授权过期暂停；本周已发布 535 条。我会先处理授权，再完成剩余账号发布并回收播放、互动和线索数据。",
-      cost: "¥5 / 账号 / 天", outcome: "本周已发布 535 条 · 14 个账号",
+      cost: "¥2 / 账号 / 天", outcome: "本周已发布 535 条 · 14 个账号",
       fixedFlow: ["接入账号", "确定发布计划", "准备内容", "发布", "回收效果"],
       adjustable: ["账号范围", "每周发布目标", "审核方式", "发布时段", "内容来源"],
     },
@@ -282,7 +282,7 @@
     { id: "mock-wujian-visual-style", employee: "ai-video", kind: "视频风格", text: "作者偏好真实汽车测评风：优先使用实车素材、自然光和低机位推进镜头，避免过度炫技的转场与虚构画面。", scope: "短视频运营专员 · 生成风格", date: "2026-08-11 16:20" },
     { id: "mock-wujian-hook-style", employee: "ai-video", kind: "内容节奏", text: "前 3 秒先给实测结论或反差钩子；中段用 3 个连续细节证明观点，结尾只保留一个“预约试驾”行动引导。", scope: "短视频运营专员 · 脚本偏好", date: "2026-08-11 16:28" },
     { id: "mock-wujian-generation-style", employee: "ai-video", kind: "生成规格", text: "抖音内容默认生成 9:16、30 秒、清晰女声版本；字幕使用白字配品牌绿色重点词，车型参数必须先经过车型库校验。", scope: "短视频运营专员 · 生成设置", date: "2026-08-12 11:05" },
-    { id: "mock-wujian-publish-strategy", employee: "ai-video", kind: "发布策略", text: "内容先统一进入人工审核；工作日优先在 18:30—20:30 发布，旗舰店账号首发，同城市账号间隔至少 90 分钟，次日回收播放与线索效果。", scope: "短视频运营专员 · 发布策略", date: "2026-08-12 18:42" },
+    { id: "mock-wujian-publish-strategy", employee: "ai-video", kind: "发布策略", text: "内容先统一进入人工审核；工作日优先在 18:30—20:30 发布，按账号排期执行，次日回收播放与线索效果。", scope: "短视频运营专员 · 发布策略", date: "2026-08-12 18:42" },
   ];
 
   const state = {
@@ -312,7 +312,7 @@
       assetPickerOpen: false, assetPickerTab: "history", assetPickerSelected: [],
       generationStatus: "ready", publishMode: "review", timing: "now", scheduleAt: "2026-08-10T18:30", account: "鸿途汽车官方旗舰店", publishAccountIds: [], publishSetupStep: "accounts", generatedWorkId: "", publishRoute: "", worksCreated: [], worksFilter: "all", worksSelected: [], worksBatchMode: false, worksOverrides: {},
       publishResult: "", matrixSource: "",
-      recreateWork: null, monitorTab: "accounts", monitorGroupFilter: "all", monitorAddOpen: false,
+      recreateWork: null, monitorTab: "accounts", monitorAddOpen: false,
       worksPoolAccountFilter: "all", worksPoolStatusFilter: "all", worksPoolSelected: [], worksBatchOpen: false, worksBatchMode: "cover", worksBatchRoute: "review",
       livePublishExpanded: false, livePublishAccountId: "",
       matrixDataTab: "accounts", matrixTimeRange: "week", matrixAccountId: "",
@@ -911,7 +911,7 @@
     const employee = employees[id];
     const status = getStatus(id);
     const waiting = status === "waiting" ? `<section class="ai-human-task"><span>需要你处理</span><h4>价格口径不确定，我已经暂停发送</h4><dl><div><dt>原因</dt><dd>客户要求特殊优惠承诺</dd></div><div><dt>风险</dt><dd>门店可能无法兑现未经确认的价格</dd></div><div><dt>你要做的事</dt><dd>确认一次性回复口径，或直接人工接管</dd></div></dl><div><button type="button" data-resolve-waiting>确认口径并继续</button><button type="button" data-takeover>我来接管</button></div></section>` : "";
-    const liveSnapshot = ["lead-hunter", "lead-hunter-advanced"].includes(id) ? `<div class="ai-current-task__live" aria-label="${employee.name}当前工作快照"><div class="ai-current-task__live-image"><video id="ai-current-task-live-video" src="${LIVE_VIDEO_PATH}" ${status === "working" ? "autoplay" : ""} muted loop playsinline preload="auto" aria-label="${employee.name}当前工作视频"></video><span><i></i>工作中</span></div><div class="ai-current-task__live-copy"><span>${employee.name}正在操作</span><strong data-live-snapshot-action>${snapshotFrames[state.snapshot.liveFrame].action}</strong><small data-live-snapshot-status>${status === "working" ? "正在工作" : statusMeta[status].label}</small><em data-live-snapshot-time>桌面操作 · ${snapshotFrames[state.snapshot.liveFrame].time}</em></div></div>` : id === "ai-video" ? `<button class="ai-current-task__live wujian-side-live" type="button" data-open-workspace="create" aria-label="打开短视频运营专员实时创作台"><span class="ai-current-task__live-image"><img src="${wuJianTemplate().cover}" alt="${escapeHtml(wuJianTemplate().title)}"><em><i></i>排期中</em></span><span class="ai-current-task__live-copy"><span>短视频运营专员正在操作</span><strong>按账号组推进本周发布计划</strong><small>100 个账号 · 本周已发布 224 条</small><em>旗舰店 18:30 首发 · 城市店间隔 90 分钟</em></span></button>` : "";
+      const liveSnapshot = ["lead-hunter", "lead-hunter-advanced"].includes(id) ? `<div class="ai-current-task__live" aria-label="${employee.name}当前工作快照"><div class="ai-current-task__live-image"><video id="ai-current-task-live-video" src="${LIVE_VIDEO_PATH}" ${status === "working" ? "autoplay" : ""} muted loop playsinline preload="auto" aria-label="${employee.name}当前工作视频"></video><span><i></i>工作中</span></div><div class="ai-current-task__live-copy"><span>${employee.name}正在操作</span><strong data-live-snapshot-action>${snapshotFrames[state.snapshot.liveFrame].action}</strong><small data-live-snapshot-status>${status === "working" ? "正在工作" : statusMeta[status].label}</small><em data-live-snapshot-time>桌面操作 · ${snapshotFrames[state.snapshot.liveFrame].time}</em></div></div>` : id === "ai-video" ? `<button class="ai-current-task__live wujian-side-live" type="button" data-open-workspace="create" aria-label="打开短视频运营专员实时创作台"><span class="ai-current-task__live-image"><img src="${wuJianTemplate().cover}" alt="${escapeHtml(wuJianTemplate().title)}"><em><i></i>排期中</em></span><span class="ai-current-task__live-copy"><span>短视频运营专员正在操作</span><strong>按账号范围推进本周发布计划</strong><small>100 个账号 · 本周已发布 224 条</small><em>按账号排期执行 · 次日回收播放与线索效果</em></span></button>` : "";
     const recentWork = `<section class="ai-recent-work"><header><span>最近工作状态</span><em>刚刚更新</em></header><p>${escapeHtml(employee.last)}</p></section>`;
     const greeting = `<section class="ai-side-greeting ai-side-greeting--bottom${["lead-hunter", "lead-hunter-advanced"].includes(id) ? " is-animated" : ""}" data-employee-greeting="${id}"><header><span>${employee.name}主动汇报</span><em>刚刚</em></header>${dialogueMessage(id, "agent", greetingText(id), "刚刚")}</section>`;
     return `<header class="ai-side-head"><img src="${escapeHtml(employeeImage(id))}" alt="${employee.name}"><div class="ai-side-head__identity"><strong>${digitalEmployeeLabel(employee)}</strong><small><i></i>${statusMeta[status].label}</small></div><div class="ai-side-head__actions"><button class="ai-side-icon" type="button" data-open-workspace="overview" title="展开工作区" aria-label="展开工作区"><span aria-hidden="true">⛶</span></button><button class="ai-side-icon" type="button" data-open-workspace="settings" title="Agent 设置" aria-label="Agent 设置"><span aria-hidden="true">⚙︎</span></button></div></header><div class="ai-side-scroll"><section class="ai-current-task"><header><span>当前工作</span><em>${statusMeta[status].label}</em></header>${liveSnapshot}<h4>${escapeHtml(taskText(id))}</h4><div><i><b style="width:${status === "paused" ? 0 : employee.progress}%"></b></i><strong>${status === "learning" ? "没有新任务" : employee.progress + "%"}</strong></div><dl><div><dt>工作目标</dt><dd>${employee.goal}</dd></div><div><dt>下一步</dt><dd>${employee.next}</dd></div></dl></section>${recentWork}${waiting}${pendingMemoryMarkup(id)}${messageMarkup(id)}</div>${greeting}${sideChatForm(id)}`;
@@ -1591,7 +1591,7 @@
     const generating = state.wuJian.generationStatus === "generating";
     const complete = state.wuJian.generationStatus === "complete";
     return `<div class="wujian-page wujian-create-page">
-      <section class="wujian-page-head"><div><span>汽车短视频创作台</span><h2>把一个想法，变成可发布成片</h2><p>告诉短视频运营专员你想拍什么，脚本和画面会准备好，发布前由你确认，通过后进入本周发布计划。</p></div><div class="wujian-head-metrics"><article><strong>100</strong><span>接入账号</span></article><article><strong>12</strong><span>待审核</span></article><article><strong>¥5</strong><span>每账号/天</span></article></div></section>
+      <section class="wujian-page-head"><div><span>汽车短视频创作台</span><h2>把一个想法，变成可发布成片</h2><p>告诉短视频运营专员你想拍什么，脚本和画面会准备好，发布前由你确认，通过后进入本周发布计划。</p></div><div class="wujian-head-metrics"><article><strong>100</strong><span>接入账号</span></article><article><strong>12</strong><span>待审核</span></article><article><strong>¥2</strong><span>每账号/天</span></article></div></section>
       <div class="wujian-create-layout">
         <form class="wujian-studio" id="ai-wujian-create-form">
           <section class="wujian-composer"><header><div><span class="wujian-avatar"><img src="${employeeImage("ai-video")}" alt="短视频运营专员"></span><div><strong>短视频运营专员</strong><small><i></i>在线，随时可以开始</small></div></div><em>车型信息会帮你核对</em></header><label><span>你想拍一条什么视频？</span><textarea name="prompt" rows="3" placeholder="比如：为 E7 做一条 30 秒后排空间实测，吸引家庭用户来试驾">${escapeHtml(state.wuJian.prompt)}</textarea></label><div class="wujian-composer-tools"><button type="button" data-wujian-open-picker="history">＋ 添加素材</button><button type="button" data-wujian-add-vehicle>车 引用车型</button><span>${selectedMaterials.length} 项素材已准备好</span></div></section>
@@ -1659,20 +1659,19 @@
   }
 
   // ---------- 指定账号二创：监控账号 / 作品池 / 同步任务 ----------
-  const wuJianMonitorGroups = ["品牌官方", "区域门店", "对标账号"];
   const wuJianMonitorSeeds = [
-    { id: "ma-01", handle: "hongtu_official", name: "鸿途汽车官方", group: "品牌官方", status: "监控中", autoSync: true, lastSync: "今天 09:00", works: 3 },
-    { id: "ma-02", handle: "hongtu_flagship", name: "鸿途汽车旗舰店", group: "品牌官方", status: "监控中", autoSync: true, lastSync: "今天 09:00", works: 2 },
-    { id: "ma-03", handle: "hongtu_hz_chengxi", name: "杭州城西店", group: "区域门店", status: "监控中", autoSync: true, lastSync: "昨天 18:00", works: 1 },
-    { id: "ma-04", handle: "hongtu_sz_baoan", name: "深圳宝安店", group: "区域门店", status: "监控中", autoSync: false, lastSync: "昨天 18:00", works: 0 },
-    { id: "ma-05", handle: "hongtu_sh_pudong", name: "上海浦东店", group: "区域门店", status: "监控中", autoSync: true, lastSync: "昨天 18:00", works: 2 },
-    { id: "ma-06", handle: "hongtu_cd_tianfu", name: "成都天府店", group: "区域门店", status: "暂停", autoSync: false, lastSync: "08-12 18:00", works: 1 },
-    { id: "ma-07", handle: "hongtu_bj_chaoyang", name: "北京朝阳店", group: "区域门店", status: "监控中", autoSync: true, lastSync: "今天 09:00", works: 1 },
-    { id: "ma-08", handle: "xingtu_e7_ceping", name: "星途E7测评号", group: "对标账号", status: "监控中", autoSync: true, lastSync: "今天 09:00", works: 2 },
-    { id: "ma-09", handle: "dianche_yanxuan", name: "电车严选", group: "对标账号", status: "监控中", autoSync: true, lastSync: "昨天 18:00", works: 1 },
-    { id: "ma-10", handle: "jiazheng_duibi", name: "家装车对比研究所", group: "对标账号", status: "监控中", autoSync: false, lastSync: "08-11 18:00", works: 0 },
-    { id: "ma-11", handle: "hongtu_hf_baojin", name: "合肥宝津店", group: "区域门店", status: "监控中", autoSync: true, lastSync: "昨天 18:00", works: 0 },
-    { id: "ma-12", handle: "xingtu_lingyun_vlog", name: "星途凌云日常", group: "对标账号", status: "监控中", autoSync: true, lastSync: "今天 09:00", works: 1 },
+    { id: "ma-01", handle: "hongtu_official", name: "鸿途汽车官方", status: "监控中", autoSync: true, lastSync: "今天 09:00", works: 3 },
+    { id: "ma-02", handle: "hongtu_flagship", name: "鸿途汽车旗舰店", status: "监控中", autoSync: true, lastSync: "今天 09:00", works: 2 },
+    { id: "ma-03", handle: "hongtu_hz_chengxi", name: "杭州城西店", status: "监控中", autoSync: true, lastSync: "昨天 18:00", works: 1 },
+    { id: "ma-04", handle: "hongtu_sz_baoan", name: "深圳宝安店", status: "监控中", autoSync: false, lastSync: "昨天 18:00", works: 0 },
+    { id: "ma-05", handle: "hongtu_sh_pudong", name: "上海浦东店", status: "监控中", autoSync: true, lastSync: "昨天 18:00", works: 2 },
+    { id: "ma-06", handle: "hongtu_cd_tianfu", name: "成都天府店", status: "暂停", autoSync: false, lastSync: "08-12 18:00", works: 1 },
+    { id: "ma-07", handle: "hongtu_bj_chaoyang", name: "北京朝阳店", status: "监控中", autoSync: true, lastSync: "今天 09:00", works: 1 },
+    { id: "ma-08", handle: "xingtu_e7_ceping", name: "星途E7测评号", status: "监控中", autoSync: true, lastSync: "今天 09:00", works: 2 },
+    { id: "ma-09", handle: "dianche_yanxuan", name: "电车严选", status: "监控中", autoSync: true, lastSync: "昨天 18:00", works: 1 },
+    { id: "ma-10", handle: "jiazheng_duibi", name: "家装车对比研究所", status: "监控中", autoSync: false, lastSync: "08-11 18:00", works: 0 },
+    { id: "ma-11", handle: "hongtu_hf_baojin", name: "合肥宝津店", status: "监控中", autoSync: true, lastSync: "昨天 18:00", works: 0 },
+    { id: "ma-12", handle: "xingtu_lingyun_vlog", name: "星途凌云日常", status: "监控中", autoSync: true, lastSync: "今天 09:00", works: 1 },
   ];
   const wuJianWorksPoolSeeds = [
     { id: "wp-01", title: "E7 后排空间实测", account: "ma-01", plays: "18.6万", likes: "1.2万", comments: "863", grabbedAt: "今天 09:05", status: "未处理" },
@@ -1748,7 +1747,7 @@
     const content = tab === "accounts" ? wuJianMatrixMonitorAccountsPage() : tab === "works" ? wuJianMatrixMonitorWorksPage() : wuJianMatrixMonitorSyncPage();
     return `<div class="wujian-page wujian-matrix-page">
       <button type="button" class="ai-matrix-create-back" data-wujian-matrix-source="back">← 返回创作来源</button>
-      ${wuJianMatrixKpiMarkup([["监控账号", wuJianMonitorAccounts.length, "按品牌与区域分组"], ["同步任务", wuJianSyncTasks.length, `${running} 个同步中`], ["作品池", wuJianWorksPool.length, `${pendingWorks} 条待处理`], ["待二创", pendingWorks, "可单条或批量处理"]])}
+      ${wuJianMatrixKpiMarkup([["监控账号", wuJianMonitorAccounts.length, "已接入账号"], ["同步任务", wuJianSyncTasks.length, `${running} 个同步中`], ["作品池", wuJianWorksPool.length, `${pendingWorks} 条待处理`], ["待二创", pendingWorks, "可单条或批量处理"]])}
       <section class="ai-matrix-section">
         <header class="ai-matrix-section-head"><div><span>监控与作品池</span><strong>指定账号二创</strong><small>输入要监控的抖音号，作品列表手动或每日自动更新，更新后落到作品池，再做单条或批量二创。</small></div><div class="ai-monitor-tabs">${subTabs.map(([key, label]) => `<button type="button" class="${tab === key ? "is-active" : ""}" data-wujian-monitor-tab="${key}">${escapeHtml(label)}</button>`).join("")}</div></header>
         <div class="ai-monitor-content">${content}</div>
@@ -1756,13 +1755,12 @@
     </div>`;
   }
   function wuJianMatrixMonitorAccountsPage() {
-    const filter = state.wuJian.monitorGroupFilter || "all";
-    const rows = wuJianMonitorAccounts.filter((row) => filter === "all" || row.group === filter);
+    const rows = wuJianMonitorAccounts;
     const addOpen = Boolean(state.wuJian.monitorAddOpen);
     return `<div class="ai-monitor-accounts">
-      <header class="ai-monitor-toolbar"><div class="ai-monitor-title"><span>监控账号</span><strong>${rows.length} 个</strong></div><div class="ai-matrix-group-filter">${[["all", "全部", wuJianMonitorAccounts.length], ...wuJianMonitorGroups.map((group) => [group, group, wuJianMonitorAccounts.filter((row) => row.group === group).length])].map(([key, label, count]) => `<button type="button" class="${filter === key ? "is-active" : ""}" data-wujian-monitor-group-filter="${escapeHtml(key)}">${escapeHtml(label)} <em>${count}</em></button>`).join("")}</div><button type="button" class="ai-monitor-add-btn" data-wujian-monitor-add>＋ 添加账号</button></header>
-      ${addOpen ? `<form class="ai-monitor-add-form" data-wujian-monitor-add-form><div><label><span>账号名称</span><input name="name" placeholder="例如：鸿途汽车官方" required></label><label><span>抖音号</span><input name="handle" placeholder="例如：hongtu_official" required></label><label><span>分组</span><select name="group">${wuJianMonitorGroups.map((group) => `<option>${escapeHtml(group)}</option>`).join("")}</select></label></div><footer><button type="button" class="is-primary" data-wujian-monitor-add-submit>开始监控</button><button type="button" data-wujian-monitor-add-cancel>取消</button></footer></form>` : ""}
-      <div class="ai-matrix-table"><table><thead><tr><th>账号</th><th>分组</th><th>状态</th><th>最近同步</th><th>作品</th><th>操作</th></tr></thead><tbody>${rows.map((row) => `<tr><td><strong>${escapeHtml(row.name)}</strong><small>@${escapeHtml(row.handle)}</small></td><td>${escapeHtml(row.group)}</td><td>${wuJianMonitorStatusPill(row.status)}</td><td>${escapeHtml(row.lastSync)}</td><td>${row.works} 条</td><td><div class="ai-monitor-actions">${row.status === "暂停" ? `<button type="button" data-wujian-monitor-resume="${escapeHtml(row.id)}">恢复</button>` : `<button type="button" data-wujian-monitor-pause="${escapeHtml(row.id)}">暂停</button>`}<button type="button" class="is-quiet" data-wujian-monitor-sync="${escapeHtml(row.id)}">同步</button><button type="button" class="is-danger" data-wujian-monitor-delete="${escapeHtml(row.id)}">删除</button></div></td></tr>`).join("")}</tbody></table></div>
+      <header class="ai-monitor-toolbar"><div class="ai-monitor-title"><span>监控账号</span><strong>${rows.length} 个</strong></div><button type="button" class="ai-monitor-add-btn" data-wujian-monitor-add>＋ 添加账号</button></header>
+      ${addOpen ? `<form class="ai-monitor-add-form" data-wujian-monitor-add-form><div><label><span>账号名称</span><input name="name" placeholder="例如：鸿途汽车官方" required></label><label><span>抖音号</span><input name="handle" placeholder="例如：hongtu_official" required></label></div><footer><button type="button" class="is-primary" data-wujian-monitor-add-submit>开始监控</button><button type="button" data-wujian-monitor-add-cancel>取消</button></footer></form>` : ""}
+      <div class="ai-matrix-table"><table><thead><tr><th>账号</th><th>状态</th><th>最近同步</th><th>作品</th><th>操作</th></tr></thead><tbody>${rows.map((row) => `<tr><td><strong>${escapeHtml(row.name)}</strong><small>@${escapeHtml(row.handle)}</small></td><td>${wuJianMonitorStatusPill(row.status)}</td><td>${escapeHtml(row.lastSync)}</td><td>${row.works} 条</td><td><div class="ai-monitor-actions">${row.status === "暂停" ? `<button type="button" data-wujian-monitor-resume="${escapeHtml(row.id)}">恢复</button>` : `<button type="button" data-wujian-monitor-pause="${escapeHtml(row.id)}">暂停</button>`}<button type="button" class="is-quiet" data-wujian-monitor-sync="${escapeHtml(row.id)}">同步</button><button type="button" class="is-danger" data-wujian-monitor-delete="${escapeHtml(row.id)}">删除</button></div></td></tr>`).join("")}</tbody></table></div>
     </div>`;
   }
   function wuJianMatrixMonitorWorksPage() {
@@ -1872,7 +1870,7 @@
 
   function matrixData() {
     return window.AIVideoMatrix || {
-      accounts: [], groups: [], weekTarget: 0, weekPublished: 0, weekRate: 0,
+      accounts: [], weekTarget: 0, weekPublished: 0, weekRate: 0,
       pending: [], pendingCount: 0, tasks: [], effects: [],
       statTotals: { plays: 0, interactions: 0, leads: 0 },
     };
@@ -1889,7 +1887,7 @@
     const data = matrixData();
     const target = data.accounts.reduce((sum, row) => sum + row.weeklyTarget, 0);
     const published = data.accounts.reduce((sum, row) => sum + row.publishedThisWeek, 0);
-    return { accounts: data.accounts, groups: data.groups, weekTarget: target, weekPublished: published, weekRate: target ? Math.round((published / target) * 100) : 0 };
+    return { accounts: data.accounts, weekTarget: target, weekPublished: published, weekRate: target ? Math.round((published / target) * 100) : 0 };
   }
   function wuJianMatrixKpiMarkup(kpis) {
     return `<section class="ai-matrix-kpis">${kpis.map(([label, value, note]) => `<article class="ai-matrix-kpi"><span>${escapeHtml(label)}</span><strong>${escapeHtml(value)}</strong><small>${escapeHtml(note)}</small></article>`).join("")}</section>`;
@@ -1900,12 +1898,12 @@
   }
   function wuJianLivePublishRows(data) {
     const fallback = [
-      { id: "live-001", name: "鸿途汽车·上海旗舰店", group: "旗舰店", city: "上海", status: "运营中" },
-      { id: "live-002", name: "鸿途汽车·杭州城东店", group: "城市店", city: "杭州", status: "运营中" },
-      { id: "live-003", name: "鸿途汽车·深圳体验中心", group: "专营店", city: "深圳", status: "运营中" },
-      { id: "live-004", name: "鸿途汽车·北京旗舰店", group: "旗舰店", city: "北京", status: "运营中" },
-      { id: "live-005", name: "鸿途汽车·成都城西店", group: "城市店", city: "成都", status: "运营中" },
-      { id: "live-006", name: "鸿途汽车·宁波服务店", group: "专营店", city: "宁波", status: "运营中" },
+      { id: "live-001", name: "鸿途汽车·上海旗舰店", status: "运营中" },
+      { id: "live-002", name: "鸿途汽车·上海城市店", status: "运营中" },
+      { id: "live-003", name: "鸿途汽车·深圳体验中心", status: "运营中" },
+      { id: "live-004", name: "鸿途汽车·北京旗舰店", status: "运营中" },
+      { id: "live-005", name: "鸿途汽车·成都城西店", status: "运营中" },
+      { id: "live-006", name: "鸿途汽车·宁波服务店", status: "运营中" },
     ];
     const source = (data.accounts && data.accounts.length ? data.accounts : fallback).slice(0, 6);
     const states = [
@@ -1929,7 +1927,7 @@
     const primary = rows.find((row) => row.id === state.wuJian.livePublishAccountId) || rows[0];
     if (primary && state.wuJian.livePublishAccountId !== primary.id) state.wuJian.livePublishAccountId = primary.id;
     const queued = primary?.publishLabel === "排队中";
-    const accountsMarkup = expanded ? `<div class="ai-live-publish-accounts"><div class="ai-live-publish-accounts-head"><div><span>多账号同步发布</span><strong>${rows.length} 个账号正在执行 · 点击账号切换实时状态</strong></div><button type="button" class="is-quiet" data-wujian-live-section="data">进入内容数据 <span aria-hidden="true">→</span></button></div><div class="ai-live-publish-account-grid">${rows.map((row) => `<button type="button" class="ai-live-publish-account-card${row.publishLabel === "已发布" ? " is-done" : ""}${row.id === primary.id ? " is-selected" : ""}" data-wujian-live-publish-account="${escapeHtml(row.id)}" aria-pressed="${row.id === primary.id ? "true" : "false"}" title="${row.publishLabel === "排队中" ? "任务排队中，请稍后查看" : "点击查看实时发布快照"}"><header><div><strong>${escapeHtml(row.name)}</strong><small>${escapeHtml(row.group)} · ${escapeHtml(row.city)}</small></div>${wuJianMatrixPill(row.publishLabel)}</header><div class="ai-live-publish-account-progress"><div><span>${escapeHtml(row.publishLabel)}</span><b>${row.progress}%</b></div><i><b style="width:${row.progress}%"></b></i></div><footer><span>${escapeHtml(row.eta)}</span><small>${row.publishLabel === "排队中" ? "任务排队中，请稍后查看" : "点击查看实时发布快照"}</small></footer></button>`).join("")}</div></div>` : "";
+    const accountsMarkup = expanded ? `<div class="ai-live-publish-accounts"><div class="ai-live-publish-accounts-head"><div><span>多账号同步发布</span><strong>${rows.length} 个账号正在执行 · 点击账号切换实时状态</strong></div><button type="button" class="is-quiet" data-wujian-live-section="data">进入内容数据 <span aria-hidden="true">→</span></button></div><div class="ai-live-publish-account-grid">${rows.map((row) => `<button type="button" class="ai-live-publish-account-card${row.publishLabel === "已发布" ? " is-done" : ""}${row.id === primary.id ? " is-selected" : ""}" data-wujian-live-publish-account="${escapeHtml(row.id)}" aria-pressed="${row.id === primary.id ? "true" : "false"}" title="${row.publishLabel === "排队中" ? "任务排队中，请稍后查看" : "点击查看实时发布快照"}"><header><div><strong>${escapeHtml(row.name)}</strong></div>${wuJianMatrixPill(row.publishLabel)}</header><div class="ai-live-publish-account-progress"><div><span>${escapeHtml(row.publishLabel)}</span><b>${row.progress}%</b></div><i><b style="width:${row.progress}%"></b></i></div><footer><span>${escapeHtml(row.eta)}</span><small>${row.publishLabel === "排队中" ? "任务排队中，请稍后查看" : "点击查看实时发布快照"}</small></footer></button>`).join("")}</div></div>` : "";
     return `<section class="ai-live-publish-section${expanded ? " is-expanded" : ""}">
         <header class="ai-live-publish-head">
           <div class="ai-live-publish-title"><span>实时工作</span><strong>创作中心发布</strong><small>多个抖音账号正在同时发布这条视频，进度会实时同步。</small></div>
@@ -1937,7 +1935,7 @@
         </header>
         ${accountsMarkup}
         <div class="ai-live-publish-main">
-          <div class="ai-live-publish-summary"><div class="ai-live-publish-summary-head"><span>当前发布任务</span><strong>《星途 E7 后排空间实测》</strong><small>竖版 30 秒 · 人工审核后发布</small></div><div class="ai-live-publish-summary-account"><span class="ai-live-publish-account-avatar">${escapeHtml(primary.city?.slice(0, 1) || primary.name.slice(0, 1) || "鸿")}</span><div><strong>${escapeHtml(primary.name)}</strong><small>${escapeHtml(primary.group)} · ${escapeHtml(primary.city)} · ${escapeHtml(primary.publishLabel)}</small></div><b>${primary.progress}%</b></div><div class="ai-live-publish-progress"><i><b style="width:${primary.progress}%"></b></i><span>${queued ? "任务排队中 · 请稍后查看" : `已完成 ${primary.progress}% · ${escapeHtml(primary.eta)}`}</span></div><button type="button" class="ai-live-publish-summary-action" data-wujian-live-publish-expand aria-expanded="${expanded ? "true" : "false"}">${expanded ? "收起账号列表" : `展开 ${rows.length} 个账号`}<b aria-hidden="true">${expanded ? "⌃" : "⌄"}</b></button></div>
+          <div class="ai-live-publish-summary"><div class="ai-live-publish-summary-head"><span>当前发布任务</span><strong>《星途 E7 后排空间实测》</strong><small>竖版 30 秒 · 人工审核后发布</small></div><div class="ai-live-publish-summary-account"><span class="ai-live-publish-account-avatar">${escapeHtml(primary.name.slice(0, 1) || "鸿")}</span><div><strong>${escapeHtml(primary.name)}</strong><small>${escapeHtml(primary.publishLabel)}</small></div><b>${primary.progress}%</b></div><div class="ai-live-publish-progress"><i><b style="width:${primary.progress}%"></b></i><span>${queued ? "任务排队中 · 请稍后查看" : `已完成 ${primary.progress}% · ${escapeHtml(primary.eta)}`}</span></div><button type="button" class="ai-live-publish-summary-action" data-wujian-live-publish-expand aria-expanded="${expanded ? "true" : "false"}">${expanded ? "收起账号列表" : `展开 ${rows.length} 个账号`}<b aria-hidden="true">${expanded ? "⌃" : "⌄"}</b></button></div>
           <div class="ai-live-publish-video-wrap">
             <div class="ai-live-publish-video-frame${queued ? " is-queued" : ""}"><video autoplay muted loop playsinline preload="metadata" aria-label="${escapeHtml(primary.name)}创作中心发布实时工作录屏"><source src="${WUJIAN_LIVE_VIDEO_PATH}" type="video/mp4"><source src="assets/wujian/creative-center-publish.mov" type="video/quicktime"></video><div class="ai-live-publish-video-shade"></div><div class="ai-live-publish-video-overlay"><span><i></i>${queued ? "任务排队中 · 请稍后查看" : `实时发布快照 · ${escapeHtml(primary.name)} · ${escapeHtml(primary.publishLabel)}`}</span>${queued ? "" : `<b>${primary.progress}%</b>`}</div>${queued ? `<div class="ai-live-publish-queue-notice"><strong>任务排队中</strong><span>请稍后查看</span></div>` : ""}</div>
             <div class="ai-live-publish-video-meta"><div><strong>创作中心发布</strong><small>视频录屏 · 55 秒</small></div><span>刚刚更新</span></div>
@@ -1955,23 +1953,22 @@
   }
   function wuJianMatrixAccountsPage() {
     const data = matrixData();
-    const filter = state.wuJian.matrixGroupFilter || "all";
-    const rows = data.accounts.filter((row) => filter === "all" || row.group === filter);
+    const rows = data.accounts;
     const currentTarget = rows.reduce((sum, row) => sum + row.weeklyTarget, 0);
     const currentPublished = rows.reduce((sum, row) => sum + row.publishedThisWeek, 0);
     const currentRate = currentTarget ? Math.round((currentPublished / currentTarget) * 100) : 0;
     return `<div class="wujian-page wujian-matrix-page">
-      ${wuJianMatrixKpiMarkup([["账号总数", data.accounts.length, filter === "all" ? "全部账号组" : filter], ["本周计划", currentTarget, "每周每账号 2-7 条"], ["本周已发布", currentPublished, `完成率 ${currentRate}%`], ["待人工处理", data.pendingCount, "需要你确认"]])}
+      ${wuJianMatrixKpiMarkup([["账号总数", data.accounts.length, "全部已接入账号"], ["本周计划", currentTarget, "每周每账号 2-7 条"], ["本周已发布", currentPublished, `完成率 ${currentRate}%`], ["待人工处理", data.pendingCount, "需要你确认"]])}
       <section class="ai-matrix-section">
-        <header class="ai-matrix-section-head"><div><span>账号矩阵</span><strong>发布进度</strong><small>展示全部 ${data.accounts.length} 个账号，按账号组筛选查看推进情况。</small></div><div class="ai-matrix-group-filter">${[["all", "全部", data.accounts.length], ...data.groups.map((group) => [group, group, data.accounts.filter((row) => row.group === group).length])].map(([key, label, count]) => `<button type="button" class="${filter === key ? "is-active" : ""}" data-wujian-matrix-group-filter="${escapeHtml(key)}">${escapeHtml(label)} <em>${count}</em></button>`).join("")}</div></header>
+        <header class="ai-matrix-section-head"><div><span>账号矩阵</span><strong>发布进度</strong><small>展示全部 ${data.accounts.length} 个已接入账号。</small></div></header>
         <div class="ai-matrix-table">${wuJianMatrixAccountsTable(rows)}</div>
       </section>
     </div>`;
   }
   function wuJianMatrixAccountsTable(rows) {
-    return `<table><thead><tr><th>账号</th><th>账号组</th><th>城市</th><th>本周计划</th><th>已发布</th><th>完成率</th><th>状态</th></tr></thead><tbody>${rows.map((row) => {
+    return `<table><thead><tr><th>账号</th><th>本周计划</th><th>已发布</th><th>完成率</th><th>状态</th></tr></thead><tbody>${rows.map((row) => {
       const rate = row.weeklyTarget ? Math.round((row.publishedThisWeek / row.weeklyTarget) * 100) : 0;
-      return `<tr><td><strong>${escapeHtml(row.name)}</strong><small>${escapeHtml(row.id)}</small></td><td>${escapeHtml(row.group)}</td><td>${escapeHtml(row.city)}</td><td>${row.weeklyTarget} 条</td><td>${row.publishedThisWeek} 条</td><td><span class="ai-matrix-rate"><i><b style="width:${rate}%"></b></i><em>${rate}%</em></span></td><td>${wuJianMatrixPill(row.status)}</td></tr>`;
+      return `<tr><td><strong>${escapeHtml(row.name)}</strong><small>${escapeHtml(row.id)}</small></td><td>${row.weeklyTarget} 条</td><td>${row.publishedThisWeek} 条</td><td><span class="ai-matrix-rate"><i><b style="width:${rate}%"></b></i><em>${rate}%</em></span></td><td>${wuJianMatrixPill(row.status)}</td></tr>`;
     }).join("")}</tbody></table>`;
   }
   function wuJianMatrixTasksPage() {
@@ -2096,7 +2093,7 @@
     const messages = [`<article class="ai-publish-chat-message is-agent"><div class="ai-publish-chat-author"><i>阿</i><strong>阿影 · 短视频运营专员</strong><small>刚刚</small></div><p>你好，我来帮你创建发布任务。你直接告诉我想发到哪些抖音账号，我会继续帮你把素材和发布条件确认好。</p></article>`];
     if (step >= 2 && accountText) messages.push(`<article class="ai-publish-chat-message is-user"><p>${escapeHtml(accountText)}</p></article><article class="ai-publish-chat-message is-agent"><p>收到，我记下了这 ${accounts.length} 个账号。接下来，你想用哪类素材发布？</p></article>`);
     if (step === 1) {
-      messages.push(`<article class="ai-publish-chat-attachment"><div class="ai-publish-chat-attachment-head"><span>账号范围</span><strong>先选这次要发布到哪些抖音账号</strong><small>可以直接选账号组，我会自动带入该组的账号。</small></div>${wuJianPublishTaskAccountsMarkup()}</article>`);
+          messages.push(`<article class="ai-publish-chat-attachment"><div class="ai-publish-chat-attachment-head"><span>账号范围</span><strong>先选这次要发布到哪些抖音账号</strong><small>可以直接选择账号，发布任务会按所选账号执行。</small></div>${wuJianPublishTaskAccountsMarkup()}</article>`);
     } else if (step === 2) {
       messages.push(`<article class="ai-publish-chat-attachment"><div class="ai-publish-chat-attachment-head"><span>素材来源</span><strong>你希望这次视频从哪里来？</strong><small>选好后我会继续处理素材，不需要一次填写所有条件。</small></div>${wuJianPublishTaskSourceMarkup()}<footer class="ai-publish-chat-attachment-actions"><button type="button" class="is-primary" data-wujian-publish-task-step-next>确认这个素材，继续</button></footer></article>`);
     } else {
@@ -2262,7 +2259,7 @@
     return `<table><thead><tr>${headers}</tr></thead><tbody>${rows.length ? rows.map((row) => `<tr><td><img class="ai-matrix-work-cover" src="${escapeHtml(row.cover)}" alt="${escapeHtml(row.title)}"></td><td><strong>${escapeHtml(row.title)}</strong></td><td>${escapeHtml(row.duration)}</td><td>${escapeHtml(row.account)}</td><td>${wuJianMatrixCount(row.plays)}</td><td>${wuJianMatrixCount(row.likes)}</td><td>${wuJianMatrixCount(row.comments)}</td>${includeFavorites ? `<td>${wuJianMatrixCount(row.favorites)}</td>` : ""}<td>${wuJianMatrixCount(row.shares)}</td></tr>`).join("") : `<tr><td colspan="${includeFavorites ? 9 : 8}" class="ai-matrix-empty-cell">暂无符合时间范围的已发布作品</td></tr>`}</tbody></table>`;
   }
   function wuJianMatrixAccountDataTable(rows) {
-    return `<table><thead><tr><th>账号名</th><th>预计发布数</th><th>已发布数</th><th>未发布数</th><th>发布失败数</th><th>操作</th></tr></thead><tbody>${rows.map((row) => `<tr><td><strong>${escapeHtml(row.name)}</strong><small>${escapeHtml(row.group)} · ${escapeHtml(row.city)}</small></td><td>${row.expected}</td><td>${row.published}</td><td>${row.unpublished}</td><td>${row.failed ? `<span class="ai-matrix-number is-danger">${row.failed}</span>` : "0"}</td><td><button type="button" class="is-quiet ai-matrix-data-action" data-wujian-matrix-account="${escapeHtml(row.id)}">查看已发布作品数据 <span aria-hidden="true">→</span></button></td></tr>`).join("")}</tbody></table>`;
+    return `<table><thead><tr><th>账号名</th><th>预计发布数</th><th>已发布数</th><th>未发布数</th><th>发布失败数</th><th>操作</th></tr></thead><tbody>${rows.map((row) => `<tr><td><strong>${escapeHtml(row.name)}</strong><small>${escapeHtml(row.id)}</small></td><td>${row.expected}</td><td>${row.published}</td><td>${row.unpublished}</td><td>${row.failed ? `<span class="ai-matrix-number is-danger">${row.failed}</span>` : "0"}</td><td><button type="button" class="is-quiet ai-matrix-data-action" data-wujian-matrix-account="${escapeHtml(row.id)}">查看已发布作品数据 <span aria-hidden="true">→</span></button></td></tr>`).join("")}</tbody></table>`;
   }
   function wuJianMatrixDataPage() {
     const data = matrixData();
@@ -2477,7 +2474,7 @@
     const addOpen = Boolean(state.wuJian.monitorAddOpen);
     const rows = wuJianMonitorAccounts;
     return `<section class="ai-works-library-panel"><header class="ai-works-library-panel__head"><div><span>监控抖音账号</span><strong>周期性获取可二创素材</strong><small>添加要监控的抖音号，系统会按每日周期抓取最新作品并放入二创作品池。</small></div><div class="ai-works-library-head-actions"><span class="ai-works-library-count">${rows.length} 个账号</span><button type="button" class="is-primary" data-wujian-monitor-add>＋ 添加抖音账号</button></div></header>${wuJianLibraryPoolSubTabs("monitor")}
-      ${addOpen ? `<form class="ai-works-library-add-form" data-wujian-monitor-add-form><label><span>账号名称</span><input name="name" placeholder="例如：鸿途汽车官方" required></label><label><span>抖音号</span><input name="handle" placeholder="例如：hongtu_official" required></label><label><span>分组</span><select name="group">${wuJianMonitorGroups.map((group) => `<option>${escapeHtml(group)}</option>`).join("")}</select></label><footer><button type="button" class="is-primary" data-wujian-monitor-add-submit>开始监控</button><button type="button" data-wujian-monitor-add-cancel>取消</button></footer></form>` : ""}
+      ${addOpen ? `<form class="ai-works-library-add-form" data-wujian-monitor-add-form><label><span>账号名称</span><input name="name" placeholder="例如：鸿途汽车官方" required></label><label><span>抖音号</span><input name="handle" placeholder="例如：hongtu_official" required></label><footer><button type="button" class="is-primary" data-wujian-monitor-add-submit>开始监控</button><button type="button" data-wujian-monitor-add-cancel>取消</button></footer></form>` : ""}
       <div class="ai-works-library-monitor-table-wrap"><table class="ai-works-library-monitor-table"><thead><tr><th>抖音账号名称</th><th>抖音账号</th><th>已获取作品数</th><th>最近同步时间</th><th>每日自动获取</th><th>操作</th></tr></thead><tbody>${rows.length ? rows.map((account) => `<tr><td><strong>${escapeHtml(account.name)}</strong></td><td><span class="ai-works-library-monitor-handle">@${escapeHtml(account.handle)}</span></td><td><strong class="ai-works-library-monitor-number">${escapeHtml(account.works)} 条</strong></td><td>${escapeHtml(account.lastSync)}</td><td><button type="button" class="ai-works-library-switch${account.autoSync ? " is-on" : ""}" data-wujian-monitor-auto="${escapeHtml(account.id)}" aria-label="${account.autoSync ? "关闭" : "开启"} ${escapeHtml(account.name)} 每日自动获取" aria-pressed="${account.autoSync ? "true" : "false"}"><i></i></button><span class="ai-works-library-auto-label">${account.autoSync ? "开启" : "关闭"}</span></td><td><div class="ai-works-library-monitor-actions"><button type="button" data-wujian-monitor-sync="${escapeHtml(account.id)}">手动同步</button><button type="button" class="is-danger" data-wujian-monitor-delete="${escapeHtml(account.id)}">删除</button></div></td></tr>`).join("") : `<tr><td colspan="6" class="ai-works-library-monitor-empty">暂无监控账号，点击右上角添加抖音账号。</td></tr>`}</tbody></table></div></section>`;
   }
 
@@ -2510,20 +2507,20 @@
     "assets/wujian/cases/car-case-03.mp4",
   ];
   const V13_ACCOUNTS = [
-    { id: "acc-001", name: "鸿途汽车·上海旗舰店", group: "旗舰店", city: "上海", enabled: true, status: "正在发布", progress: 82, time: "预计 08:42 完成", pending: 5, published: 46 },
-    { id: "acc-002", name: "鸿途汽车·上海城市店", group: "城市店", city: "上海", enabled: true, status: "排队中", progress: 18, time: "预计 09:10 发布", pending: 8, published: 38 },
-    { id: "acc-003", name: "鸿途汽车·杭州城东店", group: "城市店", city: "杭州", enabled: true, status: "已发布", progress: 100, time: "08:35 已发布", publishedAt: "2026-08-27T08:35:00+08:00", pending: 3, published: 52 },
-    { id: "acc-004", name: "鸿途汽车·深圳体验中心", group: "专营店", city: "深圳", enabled: true, status: "已发布", progress: 100, time: "08:12 已发布", publishedAt: "2026-08-26T08:12:00+08:00", pending: 4, published: 41 },
-    { id: "acc-005", name: "鸿途汽车·北京旗舰店", group: "旗舰店", city: "北京", enabled: true, status: "正在发布", progress: 61, time: "预计 08:56 完成", pending: 6, published: 60 },
-    { id: "acc-006", name: "鸿途汽车·成都城西店", group: "城市店", city: "成都", enabled: true, status: "排队中", progress: 8, time: "预计 09:24 发布", pending: 7, published: 33 },
-    { id: "acc-007", name: "鸿途汽车·宁波服务店", group: "专营店", city: "宁波", enabled: true, status: "已发布", progress: 100, time: "07:50 已发布", publishedAt: "2026-08-27T07:50:00+08:00", pending: 2, published: 29 },
-    { id: "acc-008", name: "鸿途汽车·武汉光谷店", group: "城市店", city: "武汉", enabled: true, status: "发布异常", progress: 0, time: "营销未授权", pending: 4, published: 35, failureType: "marketing", error: "抖音营销授权已过期，请完成授权后继续发布" },
-    { id: "acc-009", name: "鸿途汽车·重庆旗舰店", group: "旗舰店", city: "重庆", enabled: true, status: "已发布", progress: 100, time: "08:20 已发布", publishedAt: "2026-08-26T08:20:00+08:00", pending: 5, published: 44 },
-    { id: "acc-010", name: "鸿途汽车·合肥包河店", group: "城市店", city: "合肥", enabled: true, status: "排队中", progress: 35, time: "预计 09:05 发布", pending: 6, published: 27 },
-    { id: "acc-011", name: "鸿途汽车·苏州新区店", group: "城市店", city: "苏州", enabled: true, status: "已发布", progress: 100, time: "08:05 已发布", publishedAt: "2026-08-26T08:05:00+08:00", pending: 4, published: 39 },
-    { id: "acc-012", name: "鸿途汽车·西安雁塔店", group: "城市店", city: "西安", enabled: true, status: "正在发布", progress: 47, time: "预计 08:51 完成", pending: 5, published: 31 },
-    { id: "acc-013", name: "鸿途汽车·南京栖霞店", group: "城市店", city: "南京", enabled: true, status: "已发布", progress: 100, time: "08:28 已发布", publishedAt: "2026-08-27T08:28:00+08:00", pending: 3, published: 36 },
-    { id: "acc-014", name: "鸿途汽车·长沙芙蓉店", group: "城市店", city: "长沙", enabled: true, status: "发布异常", progress: 0, time: "发布失败", pending: 2, published: 24, failureType: "rpa", error: "发布失败，请点击重新发布" },
+    { id: "acc-001", name: "鸿途汽车·上海旗舰店", enabled: true, status: "正在发布", progress: 82, time: "预计 08:42 完成", pending: 5, published: 46 },
+    { id: "acc-002", name: "鸿途汽车·上海城市店", enabled: true, status: "排队中", progress: 18, time: "预计 09:10 发布", pending: 8, published: 38 },
+    { id: "acc-003", name: "鸿途汽车·杭州城东店", enabled: true, status: "已发布", progress: 100, time: "08:35 已发布", publishedAt: "2026-08-27T08:35:00+08:00", pending: 3, published: 52 },
+    { id: "acc-004", name: "鸿途汽车·深圳体验中心", enabled: true, status: "已发布", progress: 100, time: "08:12 已发布", publishedAt: "2026-08-26T08:12:00+08:00", pending: 4, published: 41 },
+    { id: "acc-005", name: "鸿途汽车·北京旗舰店", enabled: true, status: "正在发布", progress: 61, time: "预计 08:56 完成", pending: 6, published: 60 },
+    { id: "acc-006", name: "鸿途汽车·成都城西店", enabled: true, status: "排队中", progress: 8, time: "预计 09:24 发布", pending: 7, published: 33 },
+    { id: "acc-007", name: "鸿途汽车·宁波服务店", enabled: true, status: "已发布", progress: 100, time: "07:50 已发布", publishedAt: "2026-08-27T07:50:00+08:00", pending: 2, published: 29 },
+    { id: "acc-008", name: "鸿途汽车·武汉光谷店", enabled: true, status: "发布异常", progress: 0, time: "营销未授权", pending: 4, published: 35, failureType: "marketing", error: "抖音营销授权已过期，请完成授权后继续发布" },
+    { id: "acc-009", name: "鸿途汽车·重庆旗舰店", enabled: true, status: "已发布", progress: 100, time: "08:20 已发布", publishedAt: "2026-08-26T08:20:00+08:00", pending: 5, published: 44 },
+    { id: "acc-010", name: "鸿途汽车·合肥包河店", enabled: true, status: "排队中", progress: 35, time: "预计 09:05 发布", pending: 6, published: 27 },
+    { id: "acc-011", name: "鸿途汽车·苏州新区店", enabled: true, status: "已发布", progress: 100, time: "08:05 已发布", publishedAt: "2026-08-26T08:05:00+08:00", pending: 4, published: 39 },
+    { id: "acc-012", name: "鸿途汽车·西安雁塔店", enabled: true, status: "正在发布", progress: 47, time: "预计 08:51 完成", pending: 5, published: 31 },
+    { id: "acc-013", name: "鸿途汽车·南京栖霞店", enabled: true, status: "已发布", progress: 100, time: "08:28 已发布", publishedAt: "2026-08-27T08:28:00+08:00", pending: 3, published: 36 },
+    { id: "acc-014", name: "鸿途汽车·长沙芙蓉店", enabled: true, status: "发布异常", progress: 0, time: "发布失败", pending: 2, published: 24, failureType: "rpa", error: "发布失败，请点击重新发布" },
   ];
   const V13_MONITORS = [
     { id: "ma-001", name: "鸿途汽车官方", handle: "hongtu_official", auto: true, lastSync: "今天 09:00", works: 12 },
@@ -2683,7 +2680,8 @@
       const douyinWorkId = `740123456789${String(accountIndex).padStart(2, "0")}${String(i).padStart(2, "0")}`;
       rows.push({
         id: `${accountId}-work-${i}`,
-        taskId: `task-history-${String(accountIndex + 1).padStart(2, "0")}`,
+        taskId: `task-seed-${String(accountIndex + 1).padStart(2, "0")}`,
+        taskCreatedAt: `2026-08-${String(21 + (accountIndex % 7)).padStart(2, "0")} 08:00`,
         materialId: `material-${String(accountIndex + 1).padStart(2, "0")}-${i + 1}`,
         materialTitle: title,
         publishedTitle: title,
@@ -2714,7 +2712,7 @@
         const record = (task.titles || []).find((item) => item.workId === assignedWork.workId);
         const taskCompleted = task.status === "已完成";
         const douyinWorkId = taskCompleted ? `741987654321${String(accountIndex).padStart(2, "0")}${String(gi).padStart(2, "0")}${String(wi).padStart(2, "0")}` : "";
-        rows.unshift({ id: `${accountId}-${task.id || `task-${gi}`}-work-${wi}`, taskId: task.id || `task-${gi}`, materialId: assignedWork.workId, materialTitle: record ? record.materialTitle : title, publishedTitle: title, title, topicTags: record ? (record.tags || []).slice() : [], titleEdited: Boolean(record?.edited), cover: v13Cover(accountIndex + gi + wi + 2), duration: "00:30", publishedAt: task.publishedAt || task.createdAt || task.time, plays: taskCompleted ? 5200 + gi * 640 + wi * 210 : 0, likes: taskCompleted ? 310 + gi * 55 : 0, comments: taskCompleted ? 24 + wi * 6 : 0, favorites: taskCompleted ? 96 + gi * 12 : 0, shares: taskCompleted ? 41 + wi * 3 : 0, status: taskCompleted ? "发布完成" : "发布中", douyinWorkId, link: taskCompleted ? `https://www.douyin.com/video/${douyinWorkId}` : "" });
+        rows.unshift({ id: `${accountId}-${task.id || `task-${gi}`}-work-${wi}`, taskId: task.id || `task-${gi}`, taskCreatedAt: task.createdAt || task.time, materialId: assignedWork.workId, materialTitle: record ? record.materialTitle : title, publishedTitle: title, title, topicTags: record ? (record.tags || []).slice() : [], titleEdited: Boolean(record?.edited), cover: v13Cover(accountIndex + gi + wi + 2), duration: "00:30", publishedAt: task.publishedAt || task.createdAt || task.time, plays: taskCompleted ? 5200 + gi * 640 + wi * 210 : 0, likes: taskCompleted ? 310 + gi * 55 : 0, comments: taskCompleted ? 24 + wi * 6 : 0, favorites: taskCompleted ? 96 + gi * 12 : 0, shares: taskCompleted ? 41 + wi * 3 : 0, status: taskCompleted ? "发布完成" : "发布中", douyinWorkId, link: taskCompleted ? `https://www.douyin.com/video/${douyinWorkId}` : "" });
       });
     });
     return rows;
@@ -2765,7 +2763,7 @@
         const douyinWorkId = work.douyinWorkId || `740123456789${String(accountIndex).padStart(2, "0")}${String(workIndex).padStart(2, "0")}`;
         rows.push({
           publishResultId: `result-${work.id}`,
-          taskId: work.taskId || `task-history-${accountIndex + 1}`,
+          taskId: work.taskId || `task-seed-${String(accountIndex + 1).padStart(2, "0")}`,
           materialId: work.materialId || work.id,
           materialTitle: work.materialTitle || work.title,
           publishedTitle: work.publishedTitle || work.title,
@@ -2833,8 +2831,8 @@
     const mediaTime = done ? v13WallTime(account) : account.time;
     const action = errored
       ? account.failureType === "marketing" ? `<button type="button" class="wjv-wall-link is-primary" data-wjv-account-todo="${escapeHtml(account.id)}" data-wjv-account-name="${escapeHtml(account.name)}">去处理</button>` : `<button type="button" class="wjv-wall-link is-primary" data-wjv-republish-account="${escapeHtml(account.id)}">重新发布</button>`
-      : `<button type="button" class="wjv-wall-link" data-wjv-view-account="${escapeHtml(account.id)}">查看作品</button>`;
-    return `<article class="wjv-wall-card is-${errored ? "error" : publishing ? "live" : queued ? "queue" : "done"}">
+      : "";
+    return `<article class="wjv-wall-card is-${errored ? "error" : publishing ? "live" : queued ? "queue" : "done"}" data-wjv-view-account="${escapeHtml(account.id)}" role="link" tabindex="0" aria-label="查看${escapeHtml(account.name)}发布结果">
       <div class="wjv-wall-media">${media}${stateTag}${mediaTime ? `<span class="wjv-wall-time">${escapeHtml(mediaTime)}</span>` : ""}</div>
       <div class="wjv-wall-body">
         <header><div><strong>${escapeHtml(account.name)}</strong></div>${v13Pill(account.status)}</header>
@@ -2877,7 +2875,7 @@
           <div class="wjv-account-selected-count" aria-live="polite"><b>${selected.size}</b><span>/${V13_ACCOUNTS.length} 个账号</span></div>
         </div>
         <div class="wjv-account-toolbar"><span>已接入 ${V13_ACCOUNTS.length} 个账号</span><button type="button" class="wjv-quiet" data-wjv-account-all>${allChecked ? "取消全选" : "全选账号"}</button></div>
-        <div class="wjv-account-grid">${V13_ACCOUNTS.map((a) => { const groupClass = a.group === "旗舰店" ? "is-flagship" : a.group === "城市店" ? "is-city" : "is-franchise"; const isSelected = selected.has(a.id); return `<label class="wjv-account-option${isSelected ? " is-selected" : ""}"><input type="checkbox" data-wjv-account="${escapeHtml(a.id)}" aria-label="选择${escapeHtml(a.name)}" ${isSelected ? "checked" : ""}><span class="wjv-account-avatar ${groupClass}" aria-hidden="true">${escapeHtml(a.city.slice(0, 1))}</span><span class="wjv-account-details"><strong>${escapeHtml(a.name)}</strong><small><em>${escapeHtml(a.group)}</em><span>${escapeHtml(a.city)}</span></small></span><span class="wjv-account-check" aria-hidden="true">${isSelected ? "✓" : ""}</span></label>`; }).join("")}</div>
+        <div class="wjv-account-grid">${V13_ACCOUNTS.map((a) => { const isSelected = selected.has(a.id); return `<label class="wjv-account-option${isSelected ? " is-selected" : ""}"><input type="checkbox" data-wjv-account="${escapeHtml(a.id)}" aria-label="选择${escapeHtml(a.name)}" ${isSelected ? "checked" : ""}><span class="wjv-account-avatar" aria-hidden="true">${escapeHtml(a.name.slice(0, 1))}</span><span class="wjv-account-details"><strong>${escapeHtml(a.name)}</strong></span><span class="wjv-account-check" aria-hidden="true">${isSelected ? "✓" : ""}</span></label>`; }).join("")}</div>
         <p class="wjv-step-count"><b>${selected.size}</b> 个账号已选</p>
       </div>
       <footer class="wjv-step-actions"><button type="button" class="is-primary" data-wjv-step-next>下一步 · 选择素材 <span aria-hidden="true">→</span></button></footer>
@@ -2903,9 +2901,8 @@
       <footer class="wjv-step-actions"><button type="button" class="wjv-quiet" data-wjv-step-back>上一步</button><button type="button" class="is-primary" ${nextDisabled ? "disabled" : ""} data-wjv-step-next>下一步 · 选择发布方式 <span aria-hidden="true">→</span></button></footer>
     </section>`;
   }
-  /* ---------- AI 拓展：标题与话题标签（确认页可编辑，见 PRD 4.5.2） ---------- */
+  /* ---------- AI 拓展：合并发布标题（确认页可编辑，见 PRD 4.5.2） ---------- */
   const V13_TITLE_MAX = 55;
-  const V13_TAG_MAX = 3;
   const V13_AI_TITLE_PATTERNS = [
     (core) => `${core}，看完这条再决定`,
     (core) => `为什么大家都在聊${core}`,
@@ -2921,21 +2918,28 @@
     const tokens = String(core || "").split(/[，,。！!？?、\s｜|：:；;""'']+/).filter((token) => token.length >= 2);
     const tags = [];
     tokens.forEach((token) => {
-      if (tags.length >= V13_TAG_MAX) return;
       const tag = `#${token.slice(0, 10)}`;
       if (!tags.includes(tag)) tags.push(tag);
     });
     return tags;
   }
+  function v13ExtractTopicTags(title) {
+    return String(title || "").match(/#[^\s#，,。！!？?、；;：:]+/g) || [];
+  }
   function v13TitleText(record) {
-    const title = String(record?.title || "");
+    if (!record) return "";
+    const title = String(record.title || "");
     const tags = Array.isArray(record?.tags) ? record.tags.filter(Boolean) : [];
-    return tags.length ? `${title} ${tags.join(" ")}` : title;
+    if (!tags.length || tags.every((tag) => title.includes(tag))) return title;
+    return `${title} ${tags.filter((tag) => !title.includes(tag)).join(" ")}`.trim();
+  }
+  function v13NormalizeTitleRecord(record) {
+    const title = v13TitleText(record);
+    return { title, tags: v13ExtractTopicTags(title), edited: Boolean(record?.edited) };
   }
   function v13TitleIssue(record) {
     if (!record) return "";
-    if (!String(record.title || "").trim()) return "标题正文不能为空";
-    if ((record.tags || []).length > V13_TAG_MAX) return `最多添加 ${V13_TAG_MAX} 个话题标签`;
+    if (!v13TitleText(record).trim()) return "发布标题不能为空";
     if (v13TitleText(record).length > V13_TITLE_MAX) return `发布标题不能超过 ${V13_TITLE_MAX} 个字符`;
     return "";
   }
@@ -2949,7 +2953,7 @@
       const record = { title: pattern(core), tags: tags.slice(), edited: false };
       while (v13TitleText(record).length > V13_TITLE_MAX && record.tags.length) record.tags.pop();
       if (v13TitleText(record).length > V13_TITLE_MAX) record.title = record.title.slice(0, V13_TITLE_MAX);
-      map[work.id] = record;
+      map[work.id] = v13NormalizeTitleRecord(record);
     });
     return map;
   }
@@ -2959,7 +2963,10 @@
     const works = v13Works().filter((w) => (s.taskWorks || []).includes(w.id));
     const stored = s.taskTitles && typeof s.taskTitles === "object" ? s.taskTitles : {};
     const signature = `${String(s.taskTitleCopy || "").trim()}|${works.map((w) => w.id).join(",")}`;
-    if (s.taskTitlesSignature === signature && works.length && works.every((w) => stored[w.id])) return stored;
+    if (s.taskTitlesSignature === signature && works.length && works.every((w) => stored[w.id])) {
+      works.forEach((work) => { stored[work.id] = v13NormalizeTitleRecord(stored[work.id]); });
+      return stored;
+    }
     const generated = v13AiTitleSet(s.taskTitleCopy, works);
     const next = v13State();
     next.taskTitles = generated;
@@ -2972,48 +2979,24 @@
     next.taskTitles = {};
     next.taskTitlesSignature = "";
   }
-  /* 新增话题标签：自动补 #、最多 3 个、同条不重复、拼接后不得超过 55 个字符 */
-  function v13AddAiTag(workId, rowId) {
-    const record = v13State().taskTitles?.[workId];
-    if (!record) return;
-    const tags = Array.isArray(record.tags) ? record.tags : [];
-    if (tags.length >= V13_TAG_MAX) { if (typeof showToast === "function") showToast(`最多添加 ${V13_TAG_MAX} 个话题标签`, "先删除不需要的标签再添加"); return; }
-    const row = rowId ? document.querySelector(`[data-wjv-ai-row="${rowId}"]`) : null;
-    const input = row ? row.querySelector("[data-wjv-ai-tag-input]") : null;
-    const raw = String(input?.value || "").trim();
-    if (!raw) return;
-    const tag = raw.startsWith("#") ? raw : `#${raw}`;
-    if (tag === "#" || tag.length < 2) { if (typeof showToast === "function") showToast("话题标签无效", "话题标签不能为空，请重新输入"); return; }
-    if (tags.includes(tag)) { if (typeof showToast === "function") showToast("该话题标签已存在", "同一条发布标题内话题标签不重复"); return; }
-    const next = { title: record.title, tags: [...tags, tag], edited: true };
-    if (v13TitleText(next).length > V13_TITLE_MAX) { if (typeof showToast === "function") showToast("发布标题不能超过 55 个字符", "请先精简标题正文或删除其他话题标签"); return; }
-    record.tags = next.tags;
-    record.edited = true;
-    persistWuJian();
-    refreshWuJianLiveWorkspace();
-    const focus = document.querySelector(`[data-wjv-ai-row="${workId}"] [data-wjv-ai-tag-input]`);
-    if (focus) focus.focus();
-  }
-  /* 确认页统一行：素材 → 目标账号 → 发布标题（AI 拓展模式下标题与话题标签可编辑） */
+  /* 确认页统一行：素材 → 目标账号 → 发布标题（正文与话题合并为一个可编辑字段） */
   function v13DistRow(work, coverIndex, account, record, mode, fixedCopy) {
     const headMarkup = (edited) => `<div class="wjv-ai-row-head"><img src="${v13Cover(coverIndex)}" alt="${escapeHtml(work.title)}"><span><strong>${escapeHtml(work.title)}</strong><small>${escapeHtml(work.duration)} · ${escapeHtml(work.source)}</small></span>${edited ? `<em class="wjv-ai-edited">用户修改</em>` : ""}</div>`;
     const head = headMarkup(false);
-    const target = `<div class="wjv-dist-target"><small>分配给</small><strong>${escapeHtml(account?.name || "待分配")}</strong><em>${escapeHtml(account?.city || "")}</em></div>`;
+    const target = `<div class="wjv-dist-target"><small>分配给</small><strong>${escapeHtml(account?.name || "待分配")}</strong></div>`;
     if (mode !== "ai-expand") {
       const plain = mode === "fixed"
         ? `<p class="wjv-dist-plain">${escapeHtml(fixedCopy || "—")}</p><small class="wjv-dist-note">固定文案 · 本次所有素材统一使用，如需修改请返回上一步</small>`
         : `<p class="wjv-dist-plain is-empty">—（无标题）</p><small class="wjv-dist-note">无标题发布 · 发布时文案为空</small>`;
       return `<li class="wjv-ai-row wjv-dist-row" data-wjv-dist-row="${escapeHtml(work.id)}">${head}${target}<div class="wjv-dist-publish">${plain}</div></li>`;
     }
-    const tags = Array.isArray(record.tags) ? record.tags : [];
     const issue = v13TitleIssue(record);
     const length = v13TitleText(record).length;
     return `<li class="wjv-ai-row wjv-dist-row" data-wjv-ai-row="${escapeHtml(work.id)}" data-wjv-dist-row="${escapeHtml(work.id)}">
       ${headMarkup(record.edited)}
       ${target}
       <div class="wjv-dist-publish">
-        <label class="wjv-ai-title-input"><span>标题正文</span><input type="text" data-wjv-ai-title="${escapeHtml(work.id)}" value="${escapeHtml(record.title)}" placeholder="标题正文，不能为空"></label>
-        <div class="wjv-ai-tags"><span class="wjv-ai-tag-label">话题标签</span>${tags.map((tag) => `<span class="wjv-ai-tag">${escapeHtml(tag)}<button type="button" data-wjv-ai-tag-remove="${escapeHtml(work.id)}" data-wjv-ai-tag="${escapeHtml(tag)}" aria-label="删除话题标签 ${escapeHtml(tag)}">×</button></span>`).join("")}${tags.length >= V13_TAG_MAX ? `<em class="wjv-ai-tag-full">最多 ${V13_TAG_MAX} 个</em>` : ""}<input type="text" class="wjv-ai-tag-input" data-wjv-ai-tag-input="${escapeHtml(work.id)}" placeholder="${tags.length >= V13_TAG_MAX ? "已达上限" : "+ 添加话题"}" ${tags.length >= V13_TAG_MAX ? "disabled" : ""}><button type="button" class="wjv-ai-tag-add" data-wjv-ai-tag-add="${escapeHtml(work.id)}" data-wjv-ai-title-row="${escapeHtml(work.id)}">添加</button></div>
+        <label class="wjv-ai-title-input"><span>发布标题</span><input type="text" data-wjv-ai-title="${escapeHtml(work.id)}" value="${escapeHtml(v13TitleText(record))}" placeholder="正文内容  #话题  #话题2"></label>
         <p class="wjv-ai-row-meta"><span data-wjv-ai-count="${escapeHtml(work.id)}" class="${length > V13_TITLE_MAX ? "is-over" : ""}">${length}/${V13_TITLE_MAX}</span><span class="wjv-ai-error" data-wjv-ai-error="${escapeHtml(work.id)}">${escapeHtml(issue)}</span></p>
       </div>
     </li>`;
@@ -3057,17 +3040,16 @@
     const titleCopy = s.taskTitleCopy || "";
     /* 摘要行只给结论值，标题与分发的细节在下方「分发预览」逐条呈现 */
     const titleLabels = { none: "无标题发布", fixed: "固定文案", "ai-expand": "AI 拓展" };
-    const total = works.length;
     const dist = v13ComputeDistribution(accounts, works);
-    const distMarkup = dist.map((row) => `<div class="wjv-dist-row"><strong>${escapeHtml(row.account.name)}</strong><span>${escapeHtml(row.account.city)}</span><ul>${row.works.map((w) => `<li>${escapeHtml(w.title)}<em>${escapeHtml(w.duration)}</em></li>`).join("")}</ul></div>`).join("");
+    const distMarkup = dist.map((row) => `<div class="wjv-dist-row"><strong>${escapeHtml(row.account.name)}</strong><ul>${row.works.map((w) => `<li>${escapeHtml(w.title)}<em>${escapeHtml(w.duration)}</em></li>`).join("")}</ul></div>`).join("");
     const aiTitles = titleMode === "ai-expand" ? v13TaskTitleRecords() : {};
     const accountOf = {};
     dist.forEach((row) => row.works.forEach((w) => { accountOf[w.id] = row.account; }));
     const aiIssues = titleMode === "ai-expand" ? works.filter((w) => v13TitleIssue(aiTitles[w.id])).length : 0;
     const aiEdited = titleMode === "ai-expand" ? works.filter((w) => aiTitles[w.id]?.edited).length : 0;
-    const distTitles = `<div class="wjv-dist-preview"><p class="wjv-setting-label">分发预览<small>逐条确认「素材 → 目标账号 → 发布标题」${titleMode === "ai-expand" ? "；标题正文与话题标签可直接修改" : "（按选择顺序轮询分配，不可调整）"}</small></p>
+    const distTitles = `<div class="wjv-dist-preview"><p class="wjv-setting-label">分发预览<small>逐条确认「素材 → 目标账号 → 发布标题」${titleMode === "ai-expand" ? "；正文与话题合并后可直接修改" : "（按选择顺序轮询分配，不可调整）"}</small></p>
         <ul class="wjv-dist-title-list">${works.map((w) => v13DistRow(w, v13Works().indexOf(w) + 1, accountOf[w.id], aiTitles[w.id] || { title: titleCopy, tags: [], edited: false }, titleMode, titleCopy)).join("")}</ul>
-        ${titleMode === "ai-expand" ? `<p class="wjv-step-hint">${aiEdited ? `已修改 ${aiEdited} 条，` : ""}共 ${works.length} 条标题，仅基于核心文案生成，每条素材使用各自唯一的标题与话题组合。</p>` : ""}
+        ${titleMode === "ai-expand" ? `<p class="wjv-step-hint">${aiEdited ? `已修改 ${aiEdited} 条，` : ""}共 ${works.length} 条标题，仅基于核心文案生成，每条素材使用各自唯一的合并发布标题。</p>` : ""}
       </div>`;
     return `<section class="wjv-step">
       <div class="wjv-step-options wjv-confirm">
@@ -3076,7 +3058,6 @@
           <div><dt>发布素材</dt><dd>${works.length} 条</dd></div>
           <div><dt>发布方式</dt><dd>${escapeHtml(timing)}</dd></div>
           <div><dt>标题策略</dt><dd>${escapeHtml(titleLabels[titleMode] || "无标题发布")}</dd></div>
-          <div><dt>预计发布</dt><dd>${total} 条</dd></div>
         </dl>
         ${dist.length ? distTitles : ""}
         <p class="wjv-confirm-note">确认后系统将校验账号授权，通过后立即锁定素材并创建任务。各账号并行发布，同一账号内素材串行执行。</p>
@@ -3098,30 +3079,37 @@
   /* ---------- 发布结果 · 统一作品明细列表 ---------- */
   const V13_PUBLISH_PAGE_SIZE = 20;
 
-  /* 历史作品的任务号是每个账号一个的占位（task-history-01..14），筛选时归并成同一个批次 */
+  /* 所有作品都归属于已创建任务；种子作品使用稳定的任务 ID 作为既有任务示例 */
   function v13PublishTaskValue(taskId) {
-    const text = String(taskId || "");
-    return text.startsWith("task-history") ? "history" : text;
+    return String(taskId || "");
   }
-  /* 所属任务统一用"时间 + 作品数量"标识：生成任务取 createdAt，历史批次取该批最早的发布时间（不再出现"历史发布任务"文案） */
+  function v13TaskTimeLabel(value) {
+    const text = String(value || "").replace("T", " ");
+    return text.length >= 16 ? text.slice(5, 16).replace("-", "/") : text;
+  }
+  /* 所属任务统一用"任务创建时间 + 作品数量"标识 */
   function v13PublishTaskIndex(rows) {
     const index = new Map();
     (v13State().generatedTasks || []).forEach((task) => {
-      if (task.id) index.set(task.id, { value: task.id, label: `任务 · ${String(task.createdAt || task.time || "").replace("T", " ")}`, note: `${task.workCount || 0} 个作品` });
+      if (task.id) index.set(task.id, { value: task.id, label: `任务 · ${v13TaskTimeLabel(v13NormalizePublishedAt(task.createdAt || task.time))}`, note: `${task.workCount || 0} 个作品` });
     });
-    const history = (rows || v13PublishWorkRows()).filter((work) => !index.has(work.taskValue));
-    if (history.length) {
-      const earliest = history.map((work) => work.publishedKey).sort()[0];
-      index.set("history", { value: "history", label: `任务 · ${earliest.slice(5, 16).replace("-", "/")}`, note: `${history.length} 个作品` });
-    }
+    const grouped = new Map();
+    (rows || v13PublishWorkRows()).forEach((work) => {
+      if (index.has(work.taskValue) || !work.taskValue) return;
+      const group = grouped.get(work.taskValue) || { count: 0, time: work.taskCreatedAt || work.publishedKey };
+      group.count += 1;
+      if (work.taskCreatedAt && (!group.time || work.taskCreatedAt < group.time)) group.time = work.taskCreatedAt;
+      grouped.set(work.taskValue, group);
+    });
+    grouped.forEach((group, value) => index.set(value, { value, label: `任务 · ${v13TaskTimeLabel(v13NormalizePublishedAt(group.time))}`, note: `${group.count} 个作品` }));
     return index;
   }
-  /* 生成任务在前、历史批次在后（Map 保序），调用方直接用 [...v13PublishTaskIndex(rows).values()] */
-  /* 时间筛选取"任务创建时间"：生成任务取任务自身的时间，历史批次整批取该批最早的发布时间（与"所属任务"列展示的时间同源） */
+  /* 生成任务在前、既有已创建任务在后（Map 保序），调用方直接用 [...v13PublishTaskIndex(rows).values()] */
+  /* 时间筛选只取已创建任务的创建时间；种子任务使用既有任务的创建时间示例 */
   function v13PublishTaskTimeMap() {
     const map = new Map();
     (v13State().generatedTasks || []).forEach((task) => {
-      if (task.id) map.set(task.id, v13NormalizePublishedAt(task.publishedAt || task.createdAt || task.time));
+      if (task.id) map.set(task.id, v13NormalizePublishedAt(task.createdAt || task.time));
     });
     return map;
   }
@@ -3147,15 +3135,12 @@
           publishedKey: v13NormalizePublishedAt(work.publishedAt),
           accountId: account.id,
           accountName: account.name,
-          accountMeta: `${account.city} · ${account.group}`,
           taskValue: v13PublishTaskValue(work.taskId)
         });
       });
     });
-    /* 任务时间平铺完才能定：历史批次的那一串占位 id 要先归并成一批，再取该批最早时间 */
-    const historyKey = rows.filter((work) => work.taskValue === "history").map((work) => work.publishedKey).sort()[0] || "";
     const taskTimes = v13PublishTaskTimeMap();
-    rows.forEach((work) => { work.taskKey = taskTimes.get(work.taskValue) || historyKey || work.publishedKey; });
+    rows.forEach((work) => { work.taskKey = taskTimes.get(work.taskValue) || v13NormalizePublishedAt(work.taskCreatedAt || work.publishedKey); });
     return rows;
   }
   function v13PublishWorkMatches(work, filter) {
@@ -3184,19 +3169,20 @@
       <label class="wjv-publish-filter"><span>发布状态</span><select data-wjv-publish-status aria-label="按发布状态筛选">${statusOptions}</select></label>
       <label class="wjv-publish-filter wjv-publish-filter--range"><span>任务时间</span><input type="date" data-wjv-publish-start value="${escapeHtml(s.publishStart || "")}" aria-label="按任务创建时间筛选，起始日期"><b aria-hidden="true">至</b><input type="date" data-wjv-publish-end value="${escapeHtml(s.publishEnd || "")}" aria-label="按任务创建时间筛选，截止日期"></label>
       <button type="button" class="wjv-quiet" data-wjv-publish-reset>重置</button>
-    </div>${filter.active ? `<p class="wjv-publish-hint" role="status">时间范围按所属任务的创建时间筛选（历史批次按该批最早发布时间计），与发布状态无关。</p>` : ""}`;
+    </div>${filter.active ? `<p class="wjv-publish-hint" role="status">时间范围按所属任务的创建时间筛选，与发布状态无关。</p>` : ""}`;
   }
   function v13PublishWorkRow(row, taskIndex) {
-    const action = row.status === "待发布" ? `<button type="button" class="wjv-link is-cancel" data-wjv-cancel-account-work="${escapeHtml(row.accountId)}" data-wjv-account-work-id="${escapeHtml(row.id)}">取消发布</button>`
+    const action = row.status === "发布中" ? ""
+      : row.status === "待发布" ? `<button type="button" class="wjv-link is-cancel" data-wjv-cancel-account-work="${escapeHtml(row.accountId)}" data-wjv-account-work-id="${escapeHtml(row.id)}">取消发布</button>`
       : row.status === "发布失败" ? `<button type="button" class="wjv-link is-retry" data-wjv-retry-account-work="${escapeHtml(row.accountId)}" data-wjv-account-work-id="${escapeHtml(row.id)}">重试发布</button>`
       : row.status === "取消发布" ? `<span class="wjv-link is-muted">已取消</span>`
       : row.link ? `<a class="wjv-link" href="${escapeHtml(row.link)}" target="_blank" rel="noopener noreferrer">打开抖音</a>`
-      : `<span class="wjv-link is-muted">链接同步中</span>`;
+      : "";
     const cover = `<img class="wjv-publish-cover" src="${escapeHtml(row.cover)}" alt="${escapeHtml(row.title)}">`;
     const task = taskIndex.get(row.taskValue) || { label: "任务 · —", note: "0 个作品" };
     return `<tr><td>${row.link ? `<a href="${escapeHtml(row.link)}" target="_blank" rel="noopener noreferrer">${cover}</a>` : cover}</td>`
       + `<td><strong>${escapeHtml(row.title)}</strong>${row.titleEdited ? `<em class="wjv-publish-edited">用户修改</em>` : ""}</td>`
-      + `<td class="wjv-publish-account-cell"><strong>${escapeHtml(row.accountName)}</strong><small>${escapeHtml(row.accountMeta)}</small></td>`
+      + `<td class="wjv-publish-account-cell"><strong>${escapeHtml(row.accountName)}</strong></td>`
       + `<td class="wjv-publish-task-cell"><strong>${escapeHtml(task.label)}</strong><small>${escapeHtml(task.note)}</small></td>`
       + `<td>${v13PublishStatusMarkup(row.status, row.status === "发布失败" ? "发布失败，可点击右侧「重试发布」重新加入待发布" : "")}</td>`
       + `<td>${escapeHtml(row.duration)}</td>`
@@ -3234,7 +3220,7 @@
     const kpis = [
       ["发布账号", `${new Set(rows.map((work) => work.accountId)).size} 个`, "当前筛选范围内的账号"],
       ["已发布作品", `${rows.filter((work) => work.status === "发布完成").length} 条`, "当前筛选范围内发布完成的作品"],
-      /* 任务数数的是"当前范围内出现的任务"（历史批次算 1 个），否则列表里那批作品、卡片却写 0 个 */
+      /* 任务数是当前范围内出现的已创建任务去重数 */
       ["发布任务", `${new Set(rows.map((work) => work.taskValue)).size} 个`, "当前筛选范围内的发布任务"]
     ];
     const emptyRow = `<tr><td colspan="13"><div class="wjv-publish-empty">暂无符合条件的作品<small>${range.active ? `默认只展示最近一个月的发布任务（当前 ${escapeHtml(range.start)} ~ ${escapeHtml(range.end)}），可把开始日期往前调或重置筛选。` : "可调整上方筛选条件后重试。"}</small><button type="button" data-wjv-publish-reset>重置筛选</button></div></td></tr>`;
@@ -3630,7 +3616,7 @@
           <label class="ai-video-strategy-field"><span>默认发布时段</span><select name="defaultSlot">${slotOptions}</select><small>可配置多个时间点错峰发布</small></label>
         </div>
         <div class="ai-video-strategy-field"><span>审核发布方式</span><div class="ai-publish-mode-options" role="radiogroup" aria-label="审核发布方式"><label class="${publishMode === "review" ? "is-selected" : ""}"><input type="radio" name="publishMode" value="review" ${publishMode === "review" ? "checked" : ""}><span>人工审核后发布</span></label><label class="${publishMode === "auto" ? "is-selected" : ""}"><input type="radio" name="publishMode" value="auto" ${publishMode === "auto" ? "checked" : ""}><span>自动发布</span></label></div><small>人工审核模式下，内容先进入待审核，确认后按排期发布。</small></div>
-        <div class="ai-strategy-pricing"><span>计费口径</span><strong>¥5 / 账号 / 天</strong><small>当日开启即产生当日费用，次日扣费</small></div>
+        <div class="ai-strategy-pricing"><span>计费口径</span><strong>¥2 / 账号 / 天</strong><small>当日开启即产生当日费用，次日扣费</small></div>
       </div>`;
     }
     if (!["lead-hunter", "lead-hunter-advanced"].includes(id)) return `<div class="ai-strategy-static"><i>→</i><div><strong>按来访账号原路回复</strong><small>客户从哪个账号发起私信，就由该账号承接，当前岗位不发起主动触达。</small></div><em>固定</em></div>`;
@@ -3669,7 +3655,7 @@
     const selectedEnabled = Array.isArray(values.accountEnabled) ? values.accountEnabled : defaultEnabled;
     const permissionRows = accounts.map((item) => {
       const canUse = Boolean(item.canTouch);
-      return `<article class="ai-permission-row ${canUse ? "" : "is-unavailable"}"><div class="ai-permission-account"><i>${escapeHtml(item.nickname.slice(0, 1))}</i><span><strong>${escapeHtml(item.nickname)}</strong><small>${escapeHtml(item.account)}</small></span></div><span class="ai-permission-auth ${canUse ? "is-ready" : "is-pending"}"><i>${canUse ? "✓" : "!"}</i>${escapeHtml(item.authCopy)}</span><label class="ai-permission-check ai-permission-check--account"><input type="checkbox" name="accountEnabled" value="${escapeHtml(item.id)}" ${selectedEnabled.includes(item.id) ? "checked" : ""} ${canUse ? "" : "disabled"}><span>启用账号</span></label></article>`;
+      return `<article class="ai-permission-row ${canUse ? "" : "is-unavailable"}"><div class="ai-permission-account"><i>${escapeHtml(item.nickname.slice(0, 1))}</i><span><strong>${escapeHtml(item.nickname)}</strong><small>${escapeHtml(item.account)}</small></span></div><span class="ai-permission-auth ${canUse ? "is-ready" : "is-pending"}"><i>${canUse ? "✓" : "!"}</i>${escapeHtml(item.authCopy)}</span><label class="ai-switch ai-permission-switch"><input type="checkbox" name="accountEnabled" value="${escapeHtml(item.id)}" ${selectedEnabled.includes(item.id) ? "checked" : ""} ${canUse ? "" : "disabled"}><i></i><span>${selectedEnabled.includes(item.id) ? "已开启" : "已关闭"}</span></label></article>`;
     }).join("");
     return `<form class="ai-settings-form ai-settings-form--restructured" id="ai-settings-form" data-settings-employee="${id}"><section class="ai-config-section ai-config-identity"><header><span class="ai-config-index">01</span><div><h3>身份</h3><p>定义 Agent 的称呼、头像、人设和说话风格。</p></div></header><div class="ai-identity-layout"><label class="ai-avatar-picker"><img src="${escapeHtml(employeeImage(id))}" alt="${escapeHtml(employee.name)}头像" data-agent-avatar-preview><span>更换头像</span><small>JPG、PNG，建议正方形</small><input type="file" accept="image/png,image/jpeg,image/webp" data-agent-avatar-input></label><div class="ai-identity-fields"><label><span>Agent 称呼</span><input type="text" name="displayName" maxlength="12" value="${escapeHtml(values.displayName || employee.name)}"></label><label><span>说话风格</span><select name="tone"><option value="professional" ${values.tone === "professional" ? "selected" : ""}>专业清晰</option><option value="friendly" ${values.tone === "friendly" ? "selected" : ""}>亲切自然</option><option value="clear" ${values.tone === "clear" ? "selected" : ""}>先结论后依据</option><option value="concise" ${values.tone === "concise" ? "selected" : ""}>简短克制</option></select></label><label class="is-full"><span>Agent 人设</span><textarea name="persona" maxlength="160">${escapeHtml(values.persona || "")}</textarea><small>人设影响表达方式，不会改变能力和权限。</small></label></div></div></section><section class="ai-config-section ai-config-skills"><header><span class="ai-config-index">02</span><div><h3>技能</h3><p>这些是 Agent 的固定能力，当前不支持添加、删除或调整。</p></div><em class="ai-readonly-badge">固定 · 不可更改</em></header><div class="ai-fixed-skills">${fixedSkills.map((skill, index) => `<span><i>✓</i><b>${index + 1}</b><strong>${skill}</strong></span>`).join("")}</div></section><section class="ai-config-section ai-config-permissions"><header><span class="ai-config-index">03</span><div><h3>权限</h3><p>只有已完成抖音营销授权的账号可以参与发布。</p></div><button type="button" data-settings-accounts>管理账号授权 ↗</button></header><div class="ai-permission-table"><div class="ai-permission-head"><span>账号</span><span>授权状态</span><span>是否启用</span></div>${permissionRows || `<div class="ai-empty-copy">还没有可用的授权账号。</div>`}</div></section><footer class="ai-settings-footer"><span>保存后，身份和账号范围将在下一次发布任务中生效。</span><button type="submit">保存设置</button></footer></form>`;
   }
@@ -3684,7 +3670,7 @@
     const defaultTouch = accounts.filter((item) => item.enabled && item.canTouch).map((item) => item.id);
     const selectedLead = Array.isArray(values.accountEnabled) ? values.accountEnabled : (Array.isArray(values.accountLead) ? values.accountLead : defaultLead);
     const selectedTouch = selectedLead;
-    const permissionRows = accounts.map((item) => { const canUse = id === "ai-video" ? item.canTouch : item.canDiscover; return `<article class="ai-permission-row ${canUse ? "" : "is-unavailable"}"><div class="ai-permission-account"><i>${escapeHtml(item.nickname.slice(0, 1))}</i><span><strong>${escapeHtml(item.nickname)}</strong><small>${escapeHtml(item.account)}</small></span></div><span class="ai-permission-auth ${canUse ? "is-ready" : "is-pending"}"><i>${canUse ? "✓" : "!"}</i>${escapeHtml(item.authCopy)}</span><label class="ai-permission-check ai-permission-check--account"><input type="checkbox" name="accountEnabled" value="${escapeHtml(item.id)}" ${selectedLead.includes(item.id) ? "checked" : ""} ${canUse ? "" : "disabled"}><span>启用账号</span></label></article>`; }).join("");
+    const permissionRows = accounts.map((item) => { const canUse = id === "ai-video" ? item.canTouch : item.canDiscover; return `<article class="ai-permission-row ${canUse ? "" : "is-unavailable"}"><div class="ai-permission-account"><i>${escapeHtml(item.nickname.slice(0, 1))}</i><span><strong>${escapeHtml(item.nickname)}</strong><small>${escapeHtml(item.account)}</small></span></div><span class="ai-permission-auth ${canUse ? "is-ready" : "is-pending"}"><i>${canUse ? "✓" : "!"}</i>${escapeHtml(item.authCopy)}</span><label class="ai-switch ai-permission-switch"><input type="checkbox" name="accountEnabled" value="${escapeHtml(item.id)}" ${selectedLead.includes(item.id) ? "checked" : ""} ${canUse ? "" : "disabled"}><i></i><span>${selectedLead.includes(item.id) ? "已开启" : "已关闭"}</span></label></article>`; }).join("");
     const humanSection = id === "smart-reply" ? humanCollaborationSettings(values) : "";
     const memoryIndex = id === "smart-reply" ? "07" : "06";
     return `<form class="ai-settings-form ai-settings-form--restructured" id="ai-settings-form" data-settings-employee="${id}"><section class="ai-config-section ai-config-identity"><header><span class="ai-config-index">01</span><div><h3>身份</h3><p>定义 Agent 的称呼、头像、人设和说话风格。</p></div></header><div class="ai-identity-layout"><label class="ai-avatar-picker"><img src="${escapeHtml(employeeImage(id))}" alt="${escapeHtml(employee.name)}头像" data-agent-avatar-preview><span>更换头像</span><small>JPG、PNG，建议正方形</small><input type="file" accept="image/png,image/jpeg,image/webp" data-agent-avatar-input></label><div class="ai-identity-fields"><label><span>Agent 称呼</span><input type="text" name="displayName" maxlength="12" value="${escapeHtml(values.displayName || employee.name)}"></label><label><span>说话风格</span><select name="tone"><option value="professional" ${values.tone === "professional" ? "selected" : ""}>专业清晰</option><option value="friendly" ${values.tone === "friendly" ? "selected" : ""}>亲切自然</option><option value="clear" ${values.tone === "clear" ? "selected" : ""}>先结论后依据</option><option value="concise" ${values.tone === "concise" ? "selected" : ""}>简短克制</option></select></label><label class="is-full"><span>Agent 人设</span><textarea name="persona" maxlength="160">${escapeHtml(values.persona || "")}</textarea><small>人设影响表达方式，不会改变能力和权限。</small></label></div></div></section><section class="ai-config-section ai-config-knowledge"><header><span class="ai-config-index">02</span><div><h3>知识库</h3><p>展示当前关联的知识类型，内容需到对应知识库中修改。</p></div></header><div class="ai-knowledge-links"><button type="button" data-settings-knowledge="dialog"><i>${id === "ai-video" ? "稿" : "话"}</i><span><strong>${id === "ai-video" ? "视频内容规则" : "对话策略"}</strong><small>${id === "ai-video" ? "品牌口径、文案规范、禁用表达" : "人设、工作时间、标准回复、门店问答"}</small></span><em>已关联 <b>↗</b></em></button><button type="button" data-settings-knowledge="vehicles"><i>车</i><span><strong>车型库</strong><small>${id === "ai-video" ? "在售车型、配置参数、素材与版权" : "在售车型、门店价、优惠和补贴政策"}</small></span><em>已关联 <b>↗</b></em></button></div></section><section class="ai-config-section ai-config-skills"><header><span class="ai-config-index">03</span><div><h3>技能</h3><p>这些是 Agent 的固定能力，当前不支持添加、删除或调整。</p></div><em class="ai-readonly-badge">固定 · 不可更改</em></header><div class="ai-fixed-skills">${fixedSkills.map((skill, index) => `<span><i>✓</i><b>${index + 1}</b><strong>${skill}</strong></span>`).join("")}</div></section><section class="ai-config-section ai-config-permissions"><header><span class="ai-config-index">04</span><div><h3>权限</h3><p>只有已完成授权的账号可以被选择，按账号决定 Agent 执行。</p></div><button type="button" data-settings-accounts>管理账号授权 ↗</button></header><div class="ai-permission-table"><div class="ai-permission-head"><span>账号</span><span>授权状态</span><span>是否启用</span></div>${permissionRows || `<div class="ai-empty-copy">还没有可用的授权账号。</div>`}</div></section><section class="ai-config-section ai-config-strategy"><header><span class="ai-config-index">05</span><div><h3>策略</h3><p>${id === "ai-video" ? "设置每周发布目标、默认发布时段与审核发布方式，任务创建页可覆盖默认值。" : "配置账号分别触达，或按主副号分工挖掘与触达。"}</p></div></header>${settingsStrategy(id, values, accounts, selectedTouch)}</section>${humanSection}<section class="ai-config-section ai-config-memory"><header><span class="ai-config-index">${memoryIndex}</span><div><h3>记忆</h3><p>${id === "ai-video" ? "短视频运营专员会从发布对话中，沉淀稳定的发布策略并作用于后续任务。" : "已确认的长期规则会持久保留，也可通过 Agent 对话补充或撤销。"}</p></div><button type="button" data-settings-chat>与 ${escapeHtml(employee.name)} 对话添加</button></header><div class="ai-memory-examples"><span>${id === "ai-video" ? "发布策略" : "潜客意向"}</span><span>${id === "ai-video" ? "发布时段" : "触达话术"}</span><span>${id === "ai-video" ? "账号范围" : "人工确认"}</span><span>${id === "ai-video" ? "错峰间隔" : "报告规则"}</span></div><div class="ai-memory-list">${settingsMemoryRows(id)}</div></section><footer class="ai-settings-footer"><span>保存后，身份、账号范围和发布策略将在下一次任务中生效。</span><button type="submit">保存设置</button></footer></form>`;
@@ -3757,7 +3743,7 @@
     "data-cleaner": { fixed: "读取记录 → 去重 → 补全 → 质量校验", adjust: "字段规则、异常阈值和输出格式", boundary: "删除记录、覆盖原数据和异常批次需人工确认" },
     "wecom-marketing": { fixed: "客户分层 → 生成内容 → 企微触达 → 提醒销售", adjust: "触达节奏、内容风格和客户分组", boundary: "批量触达、敏感客户和退订处理需人工确认" },
     "xhs-notes": { fixed: "选题 → 写作 → 配图建议 → 发布回收", adjust: "内容重点、平台语气和发布时间", boundary: "品牌敏感词、对外发布和素材版权需人工确认" },
-    "ai-video": { fixed: "接入账号 → 发布计划 → 审核排期 → 发布 → 效果回收", adjust: "账号组、每周发布目标、审核方式、发布时段、内容来源", boundary: "车型事实、素材版权、公开承诺和发布动作需人工确认" },
+    "ai-video": { fixed: "接入账号 → 发布计划 → 审核排期 → 发布 → 效果回收", adjust: "账号范围、每周发布目标、审核方式、发布时段、内容来源", boundary: "车型事实、素材版权、公开承诺和发布动作需人工确认" },
     "content-distribution": { fixed: "读取原稿 → 平台改写 → 排期 → 回收数据", adjust: "平台版本、发布时间和分发范围", boundary: "品牌口径、批量发布和异常账号需人工确认" },
     "platform-report": { fixed: "汇总数据 → 对齐口径 → 发现异常 → 生成日报", adjust: "统计维度、提醒阈值和日报重点", boundary: "修改原始数据、异常结论和对外报告需人工确认" },
     "xhs-customer-search": { fixed: "搜索笔记 → 判断需求 → 合规触达 → 回传线索", adjust: "搜索范围、意向标准和触达话术", boundary: "主动私信、个人信息和批量触达需人工确认" },
@@ -3792,7 +3778,7 @@
       { id: "lead-hunter", name: "主号获客专家", role: "主号获客专家", description: "从抖音弹幕、评论和关注信号中发现潜客，完成意向判断、首轮触达和结果回传。", fixed: "获取 → 判断 → 触达 → 留资", adjust: "意向判断、话术内容和风格", boundary: "优惠承诺和批量发送前请你确认", price: "¥7 / 有效线索" },
       { id: "lead-hunter-advanced", name: "副号获客专家", role: "副号获客专家", description: "一个账号池专门找客，另一个账号池接力跟进，线索不混淆、每条都有承接。", fixed: "获取 → 判断 → 触达 → 留资", adjust: "意向判断、话术内容和风格", boundary: "优惠承诺和批量发送前请你确认", price: "¥7 / 有效线索" },
       { id: "smart-reply", name: "客服专员", role: "客服专员", description: "接住抖音、快手和小红书私信，引用门店知识回复，遇到特殊承诺交给人工。", fixed: "接收 → 理解 → 查知识 → 回复/转人工", adjust: "回复风格、判断和转人工规则", boundary: "价格承诺、低置信度和敏感内容请你确认", price: "¥5 / 天" },
-      { id: "ai-video", name: "短视频运营专员", role: "短视频运营专员", description: "统一管理客户在抖音的账号矩阵，按每周发布计划持续排期与发布，并回收播放、互动和线索效果。", fixed: "接入账号 → 发布计划 → 审核排期 → 发布 → 效果回收", adjust: "账号组、每周发布目标、审核方式、发布时段、内容来源", boundary: "车型事实、素材版权、公开承诺和发布动作需人工确认", price: "¥5 / 账号 / 天", image: employeeImage("ai-video") },
+      { id: "ai-video", name: "短视频运营专员", role: "短视频运营专员", description: "统一管理客户在抖音的账号矩阵，按每周发布计划持续排期与发布，并回收播放、互动和线索效果。", fixed: "接入账号 → 发布计划 → 审核排期 → 发布 → 效果回收", adjust: "账号范围、每周发布目标、审核方式、发布时段、内容来源", boundary: "车型事实、素材版权、公开承诺和发布动作需人工确认", price: "¥2 / 账号 / 天", image: employeeImage("ai-video") },
     ];
     return active.concat(legacyTalentIds.map(legacyTalentData));
   }
@@ -4047,24 +4033,6 @@
       refreshWuJianLiveWorkspace();
       return;
     }
-    const wjvAiTagRemove = event.target.closest("[data-wjv-ai-tag-remove]");
-    if (wjvAiTagRemove) {
-      const workId = wjvAiTagRemove.dataset.wjvAiTagRemove || "";
-      const tag = wjvAiTagRemove.dataset.wjvAiTag || "";
-      const record = v13State().taskTitles?.[workId];
-      if (record) {
-        record.tags = (record.tags || []).filter((item) => item !== tag);
-        record.edited = true;
-        persistWuJian();
-      }
-      refreshWuJianLiveWorkspace();
-      return;
-    }
-    const wjvAiTagAdd = event.target.closest("[data-wjv-ai-tag-add]");
-    if (wjvAiTagAdd) {
-      v13AddAiTag(wjvAiTagAdd.dataset.wjvAiTagAdd || "", wjvAiTagAdd.dataset.wjvAiTitleRow || "");
-      return;
-    }
     const wjvStepBack = event.target.closest("[data-wjv-step-back]");
     if (wjvStepBack) {
       v13Patch({ taskStep: Math.max(1, (Number(v13State().taskStep) || 1) - 1) });
@@ -4136,7 +4104,7 @@
       const invalid = works.filter((w) => v13TitleIssue(records[w.id]));
       if (invalid.length) { if (typeof showToast === "function") showToast("标题待调整", `${invalid.length} 条素材的发布标题不合规，请修正后再提交`); return; }
       const titles = titleMode === "ai-expand"
-        ? works.map((w) => { const record = records[w.id]; return { workId: w.id, materialTitle: w.title, title: record.title, tags: (record.tags || []).slice(), edited: Boolean(record.edited), publishedTitle: v13TitleText(record) }; })
+        ? works.map((w) => { const record = records[w.id]; const publishedTitle = v13TitleText(record); return { workId: w.id, materialTitle: w.title, title: publishedTitle, tags: v13ExtractTopicTags(publishedTitle), edited: Boolean(record.edited), publishedTitle }; })
         : [];
       const editedCount = titles.filter((item) => item.edited).length;
       const titleLabel = titleMode === "fixed" ? `固定文案` : titleMode === "ai-expand" ? `AI 拓展（${works.length} 条${editedCount ? `，含 ${editedCount} 条用户修改` : ""}）` : "无标题";
@@ -4163,8 +4131,8 @@
       return;
     }
     const wjvViewAccount = event.target.closest("[data-wjv-view-account]");
-    if (wjvViewAccount) {
-      /* 总览 wall 的"查看作品"：切到发布任务 tab 并按该账号预筛（账号作品弹窗已下线），publishView 必须一并复位 */
+    if (wjvViewAccount && !event.target.closest("[data-wjv-account-todo], [data-wjv-republish-account]")) {
+      /* 总览 wall 的账号卡片：切到发布任务 tab 并按该账号预筛，publishView 必须一并复位 */
       const viewRange = v13PublishDefaultRange();
       v13Patch({ section: "publish", publishView: "results", publishAccount: wjvViewAccount.dataset.wjvViewAccount || "all", publishTask: "all", publishStart: viewRange.start, publishEnd: viewRange.end, publishStatus: "all", publishPage: 1 });
       refreshWuJianLiveWorkspace();
@@ -4697,13 +4665,6 @@
       refreshWuJianLiveWorkspace();
       return;
     }
-    const matrixGroupFilter = event.target.closest("[data-wujian-matrix-group-filter]");
-    if (matrixGroupFilter) {
-      state.wuJian.matrixGroupFilter = matrixGroupFilter.dataset.wujianMatrixGroupFilter || "all";
-      persistWuJian();
-      refreshWuJianLiveWorkspace();
-      return;
-    }
     const matrixEffect = event.target.closest("[data-wujian-matrix-effect]");
     if (matrixEffect) {
       state.wuJian.matrixEffectId = state.wuJian.matrixEffectId === matrixEffect.dataset.wujianMatrixEffect ? "" : matrixEffect.dataset.wujianMatrixEffect;
@@ -4751,13 +4712,6 @@
       refreshWuJianLiveWorkspace();
       return;
     }
-    const monitorGroupFilter = event.target.closest("[data-wujian-monitor-group-filter]");
-    if (monitorGroupFilter) {
-      state.wuJian.monitorGroupFilter = monitorGroupFilter.dataset.wujianMonitorGroupFilter || "all";
-      persistWuJian();
-      refreshWuJianLiveWorkspace();
-      return;
-    }
     const monitorAdd = event.target.closest("[data-wujian-monitor-add]");
     if (monitorAdd) {
       state.wuJian.monitorAddOpen = !state.wuJian.monitorAddOpen;
@@ -4779,9 +4733,8 @@
         const data = new FormData(form);
         const name = String(data.get("name") || "").trim();
         const handle = String(data.get("handle") || "").trim();
-        const group = String(data.get("group") || "品牌官方");
         if (name && handle) {
-          wuJianMonitorAccounts.push({ id: `ma-${Date.now()}`, handle, name, group, status: "监控中", autoSync: false, lastSync: "尚未同步", works: 0 });
+          wuJianMonitorAccounts.push({ id: `ma-${Date.now()}`, handle, name, status: "监控中", autoSync: false, lastSync: "尚未同步", works: 0 });
           state.wuJian.monitorAddOpen = false;
           persistWuJian();
           refreshWuJianLiveWorkspace();
@@ -5462,7 +5415,7 @@
     }
   }
 
-  /* 标题正文就地编辑：不整体重渲染，避免输入过程中失焦 */
+  /* 合并发布标题就地编辑：不整体重渲染，避免输入过程中失焦 */
   function handleInput(event) {
     const copyField = event.target.closest("[data-wjv-title-copy]");
     if (copyField) {
@@ -5477,6 +5430,7 @@
     const record = v13State().taskTitles?.[workId];
     if (!record) return;
     record.title = titleInput.value;
+    record.tags = v13ExtractTopicTags(record.title);
     record.edited = true;
     persistWuJian();
     const row = titleInput.closest(".wjv-ai-row");
@@ -5498,9 +5452,10 @@
   }
 
   function handleKeydown(event) {
-    if (event.key === "Enter" && event.target.closest("[data-wjv-ai-tag-input]")) {
+    const wjvViewAccount = event.target.closest("[data-wjv-view-account]");
+    if (wjvViewAccount && (event.key === "Enter" || event.key === " ") && !event.target.closest("[data-wjv-account-todo], [data-wjv-republish-account]")) {
       event.preventDefault();
-      v13AddAiTag(event.target.dataset.wjvAiTagInput || "", event.target.dataset.wjvAiTagInput || "");
+      wjvViewAccount.click();
       return;
     }
     if (event.key === "Enter" && !event.shiftKey && event.target.closest("[data-wujian-publish-chat-input]")) {
