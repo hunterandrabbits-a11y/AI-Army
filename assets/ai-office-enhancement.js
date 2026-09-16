@@ -203,7 +203,7 @@
       next: "处理待发布作品与账号待办",
       last: "3 分钟前完成一批账号的发布排期",
       greeting: "老板，今天的发布任务正在按计划执行：14 个账号中 6 个已完成发布、3 个发布中、4 个排队，1 个因营销授权过期暂停；本周已发布 535 条。我会先处理授权，再完成剩余账号发布并回收播放、互动和线索数据。",
-      cost: "¥2 / 账号 / 天", outcome: "本周已发布 535 条 · 14 个账号",
+      cost: "¥2 / 次发布", outcome: "本周已发布 535 条 · 14 个账号",
       fixedFlow: ["接入账号", "确定发布计划", "准备内容", "发布", "回收效果"],
       adjustable: ["账号范围", "每周发布目标", "审核方式", "发布时段", "内容来源"],
     },
@@ -1591,7 +1591,7 @@
     const generating = state.wuJian.generationStatus === "generating";
     const complete = state.wuJian.generationStatus === "complete";
     return `<div class="wujian-page wujian-create-page">
-      <section class="wujian-page-head"><div><span>汽车短视频创作台</span><h2>把一个想法，变成可发布成片</h2><p>告诉短视频运营专员你想拍什么，脚本和画面会准备好，发布前由你确认，通过后进入本周发布计划。</p></div><div class="wujian-head-metrics"><article><strong>100</strong><span>接入账号</span></article><article><strong>12</strong><span>待审核</span></article><article><strong>¥2</strong><span>每账号/天</span></article></div></section>
+      <section class="wujian-page-head"><div><span>汽车短视频创作台</span><h2>把一个想法，变成可发布成片</h2><p>告诉短视频运营专员你想拍什么，脚本和画面会准备好，发布前由你确认，通过后进入本周发布计划。</p></div><div class="wujian-head-metrics"><article><strong>100</strong><span>接入账号</span></article><article><strong>12</strong><span>待审核</span></article><article><strong>¥2</strong><span>每次发布</span></article></div></section>
       <div class="wujian-create-layout">
         <form class="wujian-studio" id="ai-wujian-create-form">
           <section class="wujian-composer"><header><div><span class="wujian-avatar"><img src="${employeeImage("ai-video")}" alt="短视频运营专员"></span><div><strong>短视频运营专员</strong><small><i></i>在线，随时可以开始</small></div></div><em>车型信息会帮你核对</em></header><label><span>你想拍一条什么视频？</span><textarea name="prompt" rows="3" placeholder="比如：为 E7 做一条 30 秒后排空间实测，吸引家庭用户来试驾">${escapeHtml(state.wuJian.prompt)}</textarea></label><div class="wujian-composer-tools"><button type="button" data-wujian-open-picker="history">＋ 添加素材</button><button type="button" data-wujian-add-vehicle>车 引用车型</button><span>${selectedMaterials.length} 项素材已准备好</span></div></section>
@@ -1599,7 +1599,7 @@
             <section class="wujian-material-panel"><header><div><span>01</span><strong>参考素材</strong></div><button type="button" data-wujian-open-picker="history">挑选素材</button></header><div class="wujian-selected-assets">${selectedMaterials.map((item) => `<article><img src="${escapeHtml(item.cover)}" alt="${escapeHtml(item.name)}"><div><strong>${escapeHtml(item.name)}</strong><small>${escapeHtml(item.type)} · ${escapeHtml(item.meta)}</small></div><button type="button" data-wujian-remove-material="${item.id}" aria-label="移除${escapeHtml(item.name)}">×</button></article>`).join("") || `<div class="wujian-empty"><span>＋</span><strong>先挑几张喜欢的画面</strong><small>可以从上传记录、出镜角色或车型里选择</small></div>`}</div></section>
             <section class="wujian-script-panel"><header><div><span>02</span><strong>视频脚本</strong></div><em>已加入车型 · ${escapeHtml(template.vehicle)}</em></header><label><span>镜头、口播和字幕</span><textarea name="script" rows="10">${escapeHtml(state.wuJian.script)}</textarea></label><footer><span>车型名称、公开参数和行动引导已帮你核对</span><button type="button" data-wujian-polish>帮我润色</button></footer></section>
           </div>
-          <section class="wujian-config-panel"><header><div><span>03</span><strong>视频设置</strong></div><em>按你的发布场景来选</em></header><div class="wujian-config-grid"><label><span>生成模型</span><select name="model"><option ${state.wuJian.model === "Seedance 2.5" ? "selected" : ""}>Seedance 2.5</option><option ${state.wuJian.model === "MiniMax H3" ? "selected" : ""}>MiniMax H3</option><option ${state.wuJian.model === "Seedance 2.0 Mini" ? "selected" : ""}>Seedance 2.0 Mini</option></select><small>适合连续镜头和精准节奏</small></label><label><span>画面比例</span><select name="ratio"><option ${state.wuJian.ratio === "9:16" ? "selected" : ""}>9:16</option><option ${state.wuJian.ratio === "16:9" ? "selected" : ""}>16:9</option><option ${state.wuJian.ratio === "1:1" ? "selected" : ""}>1:1</option></select><small>短视频推荐 9:16</small></label><label><span>视频时长</span><select name="duration"><option ${state.wuJian.duration === "20 秒" ? "selected" : ""}>20 秒</option><option ${state.wuJian.duration === "30 秒" ? "selected" : ""}>30 秒</option><option ${state.wuJian.duration === "45 秒" ? "selected" : ""}>45 秒</option><option ${state.wuJian.duration === "60 秒" ? "selected" : ""}>60 秒</option></select><small>当前脚本适配 ${escapeHtml(state.wuJian.duration)}</small></label><label><span>创意风格</span><select name="style"><option ${state.wuJian.style === "真实测评" ? "selected" : ""}>真实测评</option><option ${state.wuJian.style === "顾问口播" ? "selected" : ""}>顾问口播</option><option ${state.wuJian.style === "纪录片感" ? "selected" : ""}>纪录片感</option><option ${state.wuJian.style === "科技感 TVC" ? "selected" : ""}>科技感 TVC</option></select><small>会影响镜头、字幕和配乐节奏</small></label><label><span>口播角色</span><select name="voice"><option>短视频运营专员 · 清晰女声</option><option>林顾问 · 专业男声</option><option>纯字幕 · 无口播</option></select><small>可从角色库里更换</small></label></div><footer><div><strong>按账号月度托管</strong><small>发布排期与效果回收已包含</small></div><button class="wujian-generate" type="submit" ${generating ? "disabled" : ""}>${generating ? "正在生成 76%" : complete ? "再生成一个版本" : "生成脚本"}<span>→</span></button></footer></section>
+          <section class="wujian-config-panel"><header><div><span>03</span><strong>视频设置</strong></div><em>按你的发布场景来选</em></header><div class="wujian-config-grid"><label><span>生成模型</span><select name="model"><option ${state.wuJian.model === "Seedance 2.5" ? "selected" : ""}>Seedance 2.5</option><option ${state.wuJian.model === "MiniMax H3" ? "selected" : ""}>MiniMax H3</option><option ${state.wuJian.model === "Seedance 2.0 Mini" ? "selected" : ""}>Seedance 2.0 Mini</option></select><small>适合连续镜头和精准节奏</small></label><label><span>画面比例</span><select name="ratio"><option ${state.wuJian.ratio === "9:16" ? "selected" : ""}>9:16</option><option ${state.wuJian.ratio === "16:9" ? "selected" : ""}>16:9</option><option ${state.wuJian.ratio === "1:1" ? "selected" : ""}>1:1</option></select><small>短视频推荐 9:16</small></label><label><span>视频时长</span><select name="duration"><option ${state.wuJian.duration === "20 秒" ? "selected" : ""}>20 秒</option><option ${state.wuJian.duration === "30 秒" ? "selected" : ""}>30 秒</option><option ${state.wuJian.duration === "45 秒" ? "selected" : ""}>45 秒</option><option ${state.wuJian.duration === "60 秒" ? "selected" : ""}>60 秒</option></select><small>当前脚本适配 ${escapeHtml(state.wuJian.duration)}</small></label><label><span>创意风格</span><select name="style"><option ${state.wuJian.style === "真实测评" ? "selected" : ""}>真实测评</option><option ${state.wuJian.style === "顾问口播" ? "selected" : ""}>顾问口播</option><option ${state.wuJian.style === "纪录片感" ? "selected" : ""}>纪录片感</option><option ${state.wuJian.style === "科技感 TVC" ? "selected" : ""}>科技感 TVC</option></select><small>会影响镜头、字幕和配乐节奏</small></label><label><span>口播角色</span><select name="voice"><option>短视频运营专员 · 清晰女声</option><option>林顾问 · 专业男声</option><option>纯字幕 · 无口播</option></select><small>可从角色库里更换</small></label></div><footer><div><strong>按发布结果计费</strong><small>按发布任务批量发布，发布成功才扣费</small></div><button class="wujian-generate" type="submit" ${generating ? "disabled" : ""}>${generating ? "正在生成 76%" : complete ? "再生成一个版本" : "生成脚本"}<span>→</span></button></footer></section>
         </form>
         <aside class="wujian-preview"><header><span>制作进度</span><em><i></i>${generating ? "正在生成" : complete ? "成片已完成" : "准备好了"}</em></header><div class="wujian-preview-screen"><img src="${escapeHtml(template.cover)}" alt="${escapeHtml(template.title)}"><span class="wujian-preview-play">▶</span><div><strong>${escapeHtml(template.title)}</strong><small>${escapeHtml(state.wuJian.ratio)} · ${escapeHtml(state.wuJian.duration)}</small></div></div><ol class="wujian-progress-list">${[["整理素材",100],["生成脚本",100],["核对车型信息",100],["合成视频",generating ? 76 : complete ? 100 : 0],["配字幕和封面",complete ? 100 : 0]].map((row, index) => `<li class="${row[1] === 100 ? "is-done" : row[1] > 0 ? "is-active" : ""}"><i>${row[1] === 100 ? "✓" : index + 1}</i><div><strong>${row[0]}</strong><span><b style="width:${row[1]}%"></b></span></div><em>${row[1]}%</em></li>`).join("")}</ol>${complete ? `<div class="wujian-complete"><strong>成片已放进作品库</strong><small>发布前会按你设置的账号规则执行</small><button type="button" data-workspace-tab="settings">查看发布设置</button></div>` : `<div class="wujian-preview-note"><span>发布前提醒</span><p>车型信息、音乐版权和公开发布，都会在最后一步请你确认。</p></div>`}</aside>
       </div>
@@ -1947,7 +1947,7 @@
     const matrix = wuJianMatrixAccountRows();
     const data = matrixData();
     return `<div class="wujian-page wujian-matrix-page ai-matrix-overview">
-      ${wuJianMatrixKpiMarkup([["计入账号", matrix.accounts.length || 100, "按账号按日计费"], ["本周发布数", matrix.weekPublished || 224, "已发布内容"], ["待人工处理", data.pendingCount || 24, "需要你确认"]])}
+      ${wuJianMatrixKpiMarkup([["计入账号", matrix.accounts.length || 100, "按发布结果计费"], ["本周发布数", matrix.weekPublished || 224, "已发布内容"], ["待人工处理", data.pendingCount || 24, "需要你确认"]])}
       ${wuJianLivePublishMarkup(data)}
     </div>`;
   }
@@ -2181,7 +2181,7 @@
     const data = matrixData();
     const openId = state.wuJian.matrixEffectId || "";
     return `<div class="wujian-page wujian-matrix-page">
-      ${wuJianMatrixKpiMarkup([["累计播放", wuJianMatrixCount(data.statTotals.plays), "本周已发布内容"], ["互动总数", wuJianMatrixCount(data.statTotals.interactions), "赞、评、藏、转"], ["线索", data.statTotals.leads, "可继续跟进"], ["接入账号", data.accounts.length, "按账号按日计费"]])}
+      ${wuJianMatrixKpiMarkup([["累计播放", wuJianMatrixCount(data.statTotals.plays), "本周已发布内容"], ["互动总数", wuJianMatrixCount(data.statTotals.interactions), "赞、评、藏、转"], ["线索", data.statTotals.leads, "可继续跟进"], ["接入账号", data.accounts.length, "按发布结果计费"]])}
       <section class="ai-matrix-section">
         <header class="ai-matrix-section-head"><div><span>内容效果</span><strong>每条内容的播放、互动与线索</strong><small>点击内容查看详情与账号表现。</small></div></header>
         <div class="ai-matrix-table">${wuJianMatrixEffectsTable(data.effects, openId)}</div>
@@ -2272,7 +2272,7 @@
     const detail = selected ? `<button type="button" class="ai-matrix-data-back" data-wujian-matrix-account-back>← 返回按账号</button><div class="ai-matrix-data-detail-title"><div><span>账号作品列表</span><strong>${escapeHtml(selected.name)}</strong><small>${wuJianMatrixTimeLabel(range)} · 已发布作品互动数据</small></div><em>${workRows.length} 条作品</em></div>` : "";
     const body = selected ? wuJianMatrixWorksTable(workRows, true) : tab === "accounts" ? wuJianMatrixAccountDataTable(accountRows) : wuJianMatrixWorksTable(workRows, false);
     return `<div class="wujian-page wujian-matrix-page ai-matrix-data-page">
-      ${wuJianMatrixKpiMarkup([["计入账号", data.accounts.length || 100, "按账号按日计费"], ["本周发布数", data.weekPublished || 224, "已发布内容"], ["待人工处理", data.pendingCount || 24, "需要你确认"]])}
+      ${wuJianMatrixKpiMarkup([["计入账号", data.accounts.length || 100, "按发布结果计费"], ["本周发布数", data.weekPublished || 224, "已发布内容"], ["待人工处理", data.pendingCount || 24, "需要你确认"]])}
       <section class="ai-matrix-section ai-matrix-data-section">
         <header class="ai-matrix-section-head ai-matrix-data-head"><div><span>内容数据</span><strong>${selected ? "已发布作品数据" : "按账号与作品查看发布效果"}</strong><small>${selected ? "查看该账号作品发布后的播放、点赞、评论、收藏与分享数据。" : "按照发布时间筛选发布计划、发布结果和作品互动效果。"}</small></div><div class="ai-matrix-data-toolbar"><div class="ai-matrix-time-filter" aria-label="按发布时间筛选"><span>按发布时间</span>${wuJianMatrixRangeOptions()}</div>${!selected ? wuJianMatrixDataTabMarkup() : ""}</div></header>
         <div class="ai-matrix-data-body">${detail}<div class="ai-matrix-table ai-matrix-data-table">${body}</div></div>
@@ -2848,9 +2848,9 @@
     const errored = accounts.filter((a) => a.status === "发布异常").length;
     const weekPublished = accounts.reduce((sum, a) => sum + v13Published(a, accounts.indexOf(a)), 0);
     const pendingWorks = v13Works().length;
-    const wall = accounts.map(v13WallCard).join("") + `<button type="button" class="wjv-wall-card wjv-wall-add" data-wjv-bind-account aria-label="绑定新的抖音账号"><span class="wjv-wall-add__icon" aria-hidden="true">＋</span><span class="wjv-wall-add__eyebrow">账号管理</span><strong>绑定新的抖音账号</strong><small>完成营销授权后加入矩阵发布，按账号按日计费。</small><span class="wjv-wall-add__action">去绑定账号 <b aria-hidden="true">→</b></span></button>`;
+    const wall = accounts.map(v13WallCard).join("") + `<button type="button" class="wjv-wall-card wjv-wall-add" data-wjv-bind-account aria-label="绑定新的抖音账号"><span class="wjv-wall-add__icon" aria-hidden="true">＋</span><span class="wjv-wall-add__eyebrow">账号管理</span><strong>绑定新的抖音账号</strong><small>完成营销授权后加入矩阵发布，按发布结果计费。</small><span class="wjv-wall-add__action">去绑定账号 <b aria-hidden="true">→</b></span></button>`;
     return `<div class="wujian-page wujian-matrix-page wjv-page">
-      ${v13Kpis([["接入账号", `${accounts.length} 个`, "按账号按日计费"], ["本周已发布", weekPublished, "矩阵累计发布"], ["实时状态", `${publishing} 正在发布 · ${queued} 排队 · ${errored} 发布异常`, "发布进度实时更新"]])}
+      ${v13Kpis([["接入账号", `${accounts.length} 个`, "按发布结果计费"], ["本周已发布", weekPublished, "矩阵累计发布"], ["实时状态", `${publishing} 正在发布 · ${queued} 排队 · ${errored} 发布异常`, "发布进度实时更新"]])}
       ${v13SectionHead("总览", "账号发布状态", "每个账号展示当前状态；已完成发布的账号展示最近一次发布视频，账号发布节奏一目了然。", `<div class="wjv-wall-legend"><span class="is-live"><i></i>正在发布</span><span class="is-queue"><i></i>排队中</span><span class="is-done"><i></i>已发布</span><span class="is-error"><i></i>发布异常</span></div>`)}
       <div class="wjv-wall">${wall}</div>
     </div>`;
@@ -3616,7 +3616,7 @@
           <label class="ai-video-strategy-field"><span>默认发布时段</span><select name="defaultSlot">${slotOptions}</select><small>可配置多个时间点错峰发布</small></label>
         </div>
         <div class="ai-video-strategy-field"><span>审核发布方式</span><div class="ai-publish-mode-options" role="radiogroup" aria-label="审核发布方式"><label class="${publishMode === "review" ? "is-selected" : ""}"><input type="radio" name="publishMode" value="review" ${publishMode === "review" ? "checked" : ""}><span>人工审核后发布</span></label><label class="${publishMode === "auto" ? "is-selected" : ""}"><input type="radio" name="publishMode" value="auto" ${publishMode === "auto" ? "checked" : ""}><span>自动发布</span></label></div><small>人工审核模式下，内容先进入待审核，确认后按排期发布。</small></div>
-        <div class="ai-strategy-pricing"><span>计费口径</span><strong>¥2 / 账号 / 天</strong><small>当日开启即产生当日费用，次日扣费</small></div>
+        <div class="ai-strategy-pricing"><span>计费口径</span><strong>¥2 / 次发布</strong><small>发布成功才扣费，发布失败不计费</small></div>
       </div>`;
     }
     if (!["lead-hunter", "lead-hunter-advanced"].includes(id)) return `<div class="ai-strategy-static"><i>→</i><div><strong>按来访账号原路回复</strong><small>客户从哪个账号发起私信，就由该账号承接，当前岗位不发起主动触达。</small></div><em>固定</em></div>`;
@@ -3778,7 +3778,7 @@
       { id: "lead-hunter", name: "主号获客专家", role: "主号获客专家", description: "从抖音弹幕、评论和关注信号中发现潜客，完成意向判断、首轮触达和结果回传。", fixed: "获取 → 判断 → 触达 → 留资", adjust: "意向判断、话术内容和风格", boundary: "优惠承诺和批量发送前请你确认", price: "¥7 / 有效线索" },
       { id: "lead-hunter-advanced", name: "副号获客专家", role: "副号获客专家", description: "一个账号池专门找客，另一个账号池接力跟进，线索不混淆、每条都有承接。", fixed: "获取 → 判断 → 触达 → 留资", adjust: "意向判断、话术内容和风格", boundary: "优惠承诺和批量发送前请你确认", price: "¥7 / 有效线索" },
       { id: "smart-reply", name: "客服专员", role: "客服专员", description: "接住抖音、快手和小红书私信，引用门店知识回复，遇到特殊承诺交给人工。", fixed: "接收 → 理解 → 查知识 → 回复/转人工", adjust: "回复风格、判断和转人工规则", boundary: "价格承诺、低置信度和敏感内容请你确认", price: "¥5 / 天" },
-      { id: "ai-video", name: "短视频运营专员", role: "短视频运营专员", description: "统一管理客户在抖音的账号矩阵，按每周发布计划持续排期与发布，并回收播放、互动和线索效果。", fixed: "接入账号 → 发布计划 → 审核排期 → 发布 → 效果回收", adjust: "账号范围、每周发布目标、审核方式、发布时段、内容来源", boundary: "车型事实、素材版权、公开承诺和发布动作需人工确认", price: "¥2 / 账号 / 天", image: employeeImage("ai-video") },
+      { id: "ai-video", name: "短视频运营专员", role: "短视频运营专员", description: "统一管理客户在抖音的账号矩阵，按每周发布计划持续排期与发布，并回收播放、互动和线索效果。", fixed: "接入账号 → 发布计划 → 审核排期 → 发布 → 效果回收", adjust: "账号范围、每周发布目标、审核方式、发布时段、内容来源", boundary: "车型事实、素材版权、公开承诺和发布动作需人工确认", price: "¥2 / 次发布", image: employeeImage("ai-video") },
     ];
     return active.concat(legacyTalentIds.map(legacyTalentData));
   }
