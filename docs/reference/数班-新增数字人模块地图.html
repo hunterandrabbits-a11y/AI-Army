@@ -1,0 +1,474 @@
+<title>新增数字人模块地图</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Noto+Sans+SC:wght@400;500;700&family=JetBrains+Mono:wght@500&display=swap">
+<style>
+:root{
+  --canvas:#F6F7F7;
+  --surface:#FFFFFF;
+  --surface-2:#FBFBFA;
+  --ink:#171717;
+  --ink-2:#687076;
+  --line:#E2E5E5;
+  --line-strong:#CBD1D1;
+  --reuse:#2F8F62;      --reuse-bg:#EDF6F1;
+  --adapt:#3269C8;      --adapt-bg:#EDF2FC;
+  --new:#765F43;        --new-bg:#F7F3EE;
+  --ai:#7359B5;         --ai-bg:#F2EFFA;
+  --shadow:0 8px 24px rgba(17,17,17,.07);
+}
+@media (prefers-color-scheme: dark){
+  :root:not([data-theme="light"]){
+    --canvas:#131414;
+    --surface:#1B1D1D;
+    --surface-2:#202323;
+    --ink:#ECEEEE;
+    --ink-2:#9AA2A6;
+    --line:#2C3030;
+    --line-strong:#3E4545;
+    --reuse:#5CBE90;    --reuse-bg:#17261F;
+    --adapt:#7CA6EA;    --adapt-bg:#18202E;
+    --new:#C9A87C;      --new-bg:#2A2520;
+    --ai:#A692E2;       --ai-bg:#241F33;
+    --shadow:0 8px 24px rgba(0,0,0,.4);
+  }
+}
+:root[data-theme="dark"]{
+  --canvas:#131414;
+  --surface:#1B1D1D;
+  --surface-2:#202323;
+  --ink:#ECEEEE;
+  --ink-2:#9AA2A6;
+  --line:#2C3030;
+  --line-strong:#3E4545;
+  --reuse:#5CBE90;    --reuse-bg:#17261F;
+  --adapt:#7CA6EA;    --adapt-bg:#18202E;
+  --new:#C9A87C;      --new-bg:#2A2520;
+  --ai:#A692E2;       --ai-bg:#241F33;
+  --shadow:0 8px 24px rgba(0,0,0,.4);
+}
+
+*{box-sizing:border-box;}
+body{
+  margin:0;
+  background:var(--canvas);
+  color:var(--ink);
+  font-family:"Noto Sans SC", system-ui, -apple-system, "PingFang SC", "Microsoft YaHei", sans-serif;
+  font-size:14px;
+  line-height:1.6;
+  -webkit-font-smoothing:antialiased;
+}
+.page{
+  max-width:1140px;
+  margin:0 auto;
+  padding-inline:32px;
+  padding-block:44px 80px;
+}
+@media (max-width:640px){
+  .page{padding-inline:16px;padding-block:28px 56px;}
+}
+
+/* ---------- masthead ---------- */
+.eyebrow{
+  font-family:"JetBrains Mono", ui-monospace, SFMono-Regular, Menlo, monospace;
+  font-size:12px;font-weight:500;letter-spacing:.14em;text-transform:uppercase;
+  color:var(--ink-2);margin:0 0 14px;
+}
+h1{
+  font-size:clamp(26px,4.4vw,34px);font-weight:700;line-height:1.2;
+  margin:0 0 18px;text-wrap:balance;letter-spacing:0;
+}
+.lede{
+  font-size:14px;line-height:1.75;color:var(--ink-2);
+  max-width:62ch;margin:0 0 26px;
+}
+.lede strong{color:var(--ink);font-weight:500;}
+
+.legend{display:flex;flex-wrap:wrap;gap:8px;list-style:none;padding:0;margin:0 0 18px;}
+.legend li{
+  display:inline-flex;align-items:center;gap:7px;
+  font-size:12px;color:var(--ink-2);
+  background:var(--surface);border:1px solid var(--line);
+  border-radius:999px;padding:5px 13px;
+}
+.dot{width:8px;height:8px;border-radius:50%;flex:none;}
+.dot.reuse{background:var(--reuse);}
+.dot.adapt{background:var(--adapt);}
+.dot.new{background:var(--new);}
+
+.tally{
+  display:flex;flex-wrap:wrap;gap:10px 28px;
+  padding:16px 20px;margin:0 0 44px;
+  background:var(--surface-2);border:1px solid var(--line);border-radius:8px;
+}
+.tally div{display:flex;align-items:baseline;gap:8px;}
+.tally b{
+  font-family:"JetBrains Mono", ui-monospace, monospace;
+  font-size:20px;font-weight:500;font-variant-numeric:tabular-nums;
+}
+.tally span{font-size:12px;color:var(--ink-2);}
+
+/* ---------- lifecycle figure ---------- */
+figure{margin:0 0 48px;}
+.fig-scroll{
+  overflow-x:auto;
+  background:var(--surface);
+  border:1px solid var(--line);
+  border-radius:12px;
+  padding:14px 10px;
+}
+.fig-scroll svg{display:block;width:100%;min-width:700px;height:auto;}
+figcaption{font-size:12px;line-height:1.7;color:var(--ink-2);margin-top:12px;max-width:72ch;}
+
+.fig-box{fill:var(--surface-2);stroke:var(--line-strong);stroke-width:1.5;}
+.fig-name{fill:var(--ink);font-size:16px;font-weight:700;}
+.fig-sub{fill:var(--ink-2);font-size:12.5px;}
+.fig-arrow{stroke:var(--line-strong);stroke-width:1.5;}
+.fig-arrowhead{fill:var(--line-strong);}
+.fig-arrowlabel{fill:var(--ink-2);font-size:12px;}
+.fig-band{fill:none;stroke:var(--line-strong);stroke-width:1.5;stroke-dasharray:6 5;}
+.fig-band-name{fill:var(--ink);font-size:14.5px;font-weight:700;}
+.fig-band-sub{fill:var(--ink-2);font-size:12.5px;}
+.fig-base{fill:var(--surface-2);stroke:var(--line-strong);stroke-width:1.5;}
+.fig-mark{fill:var(--ai);}
+
+/* ---------- map ---------- */
+.map{display:grid;grid-template-columns:212px 1fr;align-items:start;}
+
+.root{position:sticky;top:28px;padding-right:30px;}
+.root-card{
+  position:relative;
+  background:var(--surface);
+  border:1px solid var(--line);
+  border-left:3px solid var(--ai);
+  border-radius:8px;
+  padding:20px 20px 22px;
+  box-shadow:var(--shadow);
+}
+.root-card::after{
+  content:"";position:absolute;top:50%;right:-30px;width:30px;height:2px;
+  background:var(--line-strong);
+}
+.root-tag{
+  display:inline-block;font-family:"JetBrains Mono", ui-monospace, monospace;
+  font-size:11px;letter-spacing:.1em;text-transform:uppercase;
+  color:var(--ai);background:var(--ai-bg);
+  border-radius:4px;padding:3px 7px;margin-bottom:12px;
+}
+.root-card h2{font-size:19px;font-weight:700;line-height:1.35;margin:0 0 10px;}
+.root-card p{font-size:12.5px;line-height:1.7;color:var(--ink-2);margin:0;}
+
+.branches{
+  list-style:none;margin:0;padding:0 0 0 30px;
+  border-left:2px solid var(--line-strong);
+  display:flex;flex-direction:column;gap:14px;
+}
+
+.branch{
+  --kind:var(--reuse);--kind-bg:var(--reuse-bg);
+  position:relative;
+  background:var(--surface);
+  border:1px solid var(--line);
+  border-radius:12px;
+  padding:20px 24px 6px;
+}
+.branch[data-kind="new"]{--kind:var(--new);--kind-bg:var(--new-bg);}
+.branch[data-kind="adapt"]{--kind:var(--adapt);--kind-bg:var(--adapt-bg);}
+.branch::before{
+  content:"";position:absolute;left:-30px;top:27px;width:30px;height:2px;
+  background:var(--line-strong);
+}
+.branch::after{
+  content:"";position:absolute;left:-38px;top:22px;width:11px;height:11px;
+  border-radius:50%;background:var(--kind);box-sizing:border-box;
+}
+
+.branch-head{display:flex;align-items:center;gap:11px;flex-wrap:wrap;margin-bottom:9px;}
+.idx{
+  font-family:"JetBrains Mono", ui-monospace, monospace;
+  font-size:11.5px;font-weight:500;letter-spacing:.08em;color:var(--ink-2);
+  border:1px solid var(--line);border-radius:5px;padding:3px 7px;line-height:1.2;
+}
+.branch-head h3{font-size:17px;font-weight:700;line-height:1.35;margin:0;}
+.pill{
+  font-size:11.5px;font-weight:500;line-height:1.4;
+  color:var(--kind);background:var(--kind-bg);
+  border-radius:999px;padding:3px 10px;
+}
+.branch-note{font-size:12.5px;line-height:1.7;color:var(--ink-2);margin:0 0 6px;}
+
+.leaves{list-style:none;margin:0;padding:0;}
+.leaves li{
+  display:grid;grid-template-columns:minmax(130px,196px) 1fr;
+  gap:2px 20px;padding:11px 0;border-top:1px solid var(--line);
+}
+.leaf-name{font-size:13.5px;font-weight:500;color:var(--ink);line-height:1.55;}
+.leaf-note{font-size:13px;color:var(--ink-2);line-height:1.65;}
+.leaf-note code{
+  font-family:"JetBrains Mono", ui-monospace, monospace;
+  font-size:12px;background:var(--surface-2);
+  border:1px solid var(--line);border-radius:4px;padding:1px 5px;
+}
+
+@media (max-width:840px){
+  .map{grid-template-columns:1fr;}
+  .root{position:static;padding-right:0;margin-bottom:22px;}
+  .root-card::after{display:none;}
+  .branches{padding-left:0;border-left:0;}
+  .branch::before,.branch::after{display:none;}
+}
+@media (max-width:560px){
+  .leaves li{grid-template-columns:1fr;gap:4px;}
+  .branch{padding:18px 18px 4px;}
+}
+
+footer{
+  margin-top:48px;padding-top:22px;border-top:1px solid var(--line);
+  font-size:12px;line-height:1.8;color:var(--ink-2);max-width:72ch;
+}
+footer b{color:var(--ink);font-weight:500;}
+</style>
+
+<main class="page">
+
+  <header>
+    <p class="eyebrow">AI数班 · 数字员工上架</p>
+    <h1>新增一个数字人，要动数班的哪些模块</h1>
+    <p class="lede">
+      新岗位不是新建一套后台。数班已经把数字员工的公共链路搭好了：<strong>人才广场</strong>负责雇佣，
+      <strong>数字办公室</strong>负责形象与汇报，<strong>Agent 设置</strong>负责身份与账号范围，
+      <strong>实时工作</strong>负责执行，<strong>成果中心</strong>负责沉淀。
+      新增一个数字人，就是在这条链路的每个环节各接一次，再补上岗位专属的工作台与对话口径。
+    </p>
+    <ul class="legend">
+      <li><span class="dot reuse"></span>复用：平台已有，直接接</li>
+      <li><span class="dot adapt"></span>改造：公共模块要扩展</li>
+      <li><span class="dot new"></span>新增：新岗位要新建</li>
+    </ul>
+    <div class="tally">
+      <div><b>8</b><span>个一级模块</span></div>
+      <div><b>47</b><span>个接入点</span></div>
+      <div><b>4</b><span>个模块需要新增内容（A / D / E / F）</span></div>
+    </div>
+  </header>
+
+  <figure>
+    <div class="fig-scroll">
+      <svg viewBox="0 0 960 300" role="img"
+           aria-label="数字员工生命周期：人才广场雇佣后进入数字办公室，在实时工作执行，结果沉淀到成果中心；对话能力与计费消耗贯穿全程，抖音营销授权、云电脑、待办与审计构成平台底座。">
+        <!-- row 1 : lifecycle -->
+        <rect class="fig-box" x="36"  y="44" width="168" height="64" rx="8"/>
+        <rect class="fig-box" x="276" y="44" width="168" height="64" rx="8"/>
+        <rect class="fig-box" x="516" y="44" width="168" height="64" rx="8"/>
+        <rect class="fig-box" x="756" y="44" width="168" height="64" rx="8"/>
+
+        <text class="fig-name" x="52"  y="73">人才广场</text>
+        <text class="fig-sub"  x="52"  y="94">选岗位 · 校验依赖 · 雇佣</text>
+        <text class="fig-name" x="292" y="73">数字办公室</text>
+        <text class="fig-sub"  x="292" y="94">员工形象 · 状态 · 侧栏</text>
+        <text class="fig-name" x="532" y="73">实时工作</text>
+        <text class="fig-sub"  x="532" y="94">岗位专属工作台</text>
+        <text class="fig-name" x="772" y="73">成果中心</text>
+        <text class="fig-sub"  x="772" y="94">只读结果与效果记录</text>
+
+        <line class="fig-arrow" x1="204" y1="76" x2="266" y2="76"/>
+        <polygon class="fig-arrowhead" points="276,76 265,71 265,81"/>
+        <text class="fig-arrowlabel" x="240" y="62" text-anchor="middle">创建员工</text>
+
+        <line class="fig-arrow" x1="444" y1="76" x2="506" y2="76"/>
+        <polygon class="fig-arrowhead" points="516,76 505,71 505,81"/>
+        <text class="fig-arrowlabel" x="480" y="62" text-anchor="middle">进入工作台</text>
+
+        <line class="fig-arrow" x1="684" y1="76" x2="746" y2="76"/>
+        <polygon class="fig-arrowhead" points="756,76 745,71 745,81"/>
+        <text class="fig-arrowlabel" x="720" y="62" text-anchor="middle">结果落库</text>
+
+        <!-- row 2 : cross-cutting -->
+        <rect class="fig-band" x="36" y="148" width="432" height="50" rx="8"/>
+        <text class="fig-band-name" x="56" y="170">对话能力</text>
+        <text class="fig-band-sub"  x="140" y="170">贯穿全链路</text>
+        <text class="fig-band-sub"  x="56" y="188">按账号 + 时间范围答问，主动汇报，分段回复</text>
+
+        <rect class="fig-band" x="492" y="148" width="432" height="50" rx="8"/>
+        <text class="fig-band-name" x="512" y="170">计费与消耗</text>
+        <text class="fig-band-sub"  x="596" y="170">贯穿全链路</text>
+        <text class="fig-band-sub"  x="512" y="188">按次或按日口径，发布完成即时扣费</text>
+
+        <!-- row 3 : base -->
+        <rect class="fig-base" x="36" y="222" width="888" height="50" rx="8"/>
+        <rect class="fig-mark" x="36" y="222" width="3" height="50" rx="1.5"/>
+        <text class="fig-band-name" x="56" y="244">平台底座</text>
+        <text class="fig-band-sub"  x="140" y="244">新岗位不自建</text>
+        <text class="fig-band-sub"  x="56" y="262">抖音营销授权 · 云电脑 RPA · 小班待办 · 权限与审计</text>
+      </svg>
+    </div>
+    <figcaption>
+      一个新岗位要在这条链路的每个环节各接一次；对话与计费不是独立页面，而是横切在四个环节上；
+      授权、云电脑、待办与审计是平台底座，新岗位沿用而不是重建。
+    </figcaption>
+  </figure>
+
+  <div class="map">
+
+    <div class="root">
+      <div class="root-card">
+        <span class="root-tag">根节点</span>
+        <h2>新增一个数字人</h2>
+        <p>8 个一级模块、47 个接入点，其中 4 个模块需要新岗位自己填内容。</p>
+      </div>
+    </div>
+
+    <ol class="branches">
+
+      <!-- A -->
+      <li class="branch" data-kind="new">
+        <div class="branch-head">
+          <span class="idx">A</span>
+          <h3>人才广场</h3>
+          <span class="pill">新增内容</span>
+        </div>
+        <p class="branch-note">岗位在这里被看见、被雇佣。卡片机制是平台已有的，新岗位填的是卡片内容和确认弹窗。</p>
+        <ul class="leaves">
+          <li><span class="leaf-name">岗位卡与岗位详情</span><span class="leaf-note">岗位名、人设、形象图、计费口径</span></li>
+          <li><span class="leaf-name">雇佣确认弹窗</span><span class="leaf-note">单页完成雇佣，不再分步</span></li>
+          <li><span class="leaf-name">核心依赖检查</span><span class="leaf-note">余额 ≥ 1 次发布单价；至少 1 个账号营销授权有效</span></li>
+          <li><span class="leaf-name">账号启用开关</span><span class="leaf-note">开关即工作范围，已完成授权的账号默认开启</span></li>
+          <li><span class="leaf-name">计费透出</span><span class="leaf-note">展示实际生效单价与计费规则，不展示"当日预计费用"</span></li>
+          <li><span class="leaf-name">雇佣后态</span><span class="leaf-note">岗位卡转"已雇佣 / 查看工作"，员工状态更新为"工作中"</span></li>
+        </ul>
+      </li>
+
+      <!-- B -->
+      <li class="branch" data-kind="new">
+        <div class="branch-head">
+          <span class="idx">B</span>
+          <h3>数字办公室</h3>
+          <span class="pill">新增形象</span>
+        </div>
+        <p class="branch-note">员工在这里"被看见"。侧栏结构可整体沿用已有岗位，新岗位补的是形象图和汇报口径。</p>
+        <ul class="leaves">
+          <li><span class="leaf-name">员工形象</span><span class="leaf-note">所有数字员工角色均带形象图，区分雇佣前后</span></li>
+          <li><span class="leaf-name">员工状态</span><span class="leaf-note">可雇佣 / 工作中 / 空闲中 / 待处理 / 已暂停</span></li>
+          <li><span class="leaf-name">侧栏 · 身份头部</span><span class="leaf-note">头像 + 自定义昵称 + 岗位 + 状态 + 管辖账号数</span></li>
+          <li><span class="leaf-name">侧栏 · 工作界面</span><span class="leaf-note">云电脑操作录屏为主视觉，横屏不拉伸</span></li>
+          <li><span class="leaf-name">侧栏 · 主动汇报</span><span class="leaf-note">"向老板汇报"口径，须标注统计周期、账号范围、更新时间</span></li>
+          <li><span class="leaf-name">侧栏 · 对话区</span><span class="leaf-note">文字输入 + 发送，含进入实时工作与 Agent 设置入口</span></li>
+          <li><span class="leaf-name">多员工共存</span><span class="leaf-note">与已有岗位共用同一个数字办公室入口</span></li>
+        </ul>
+      </li>
+
+      <!-- C -->
+      <li class="branch" data-kind="reuse">
+        <div class="branch-head">
+          <span class="idx">C</span>
+          <h3>Agent 设置</h3>
+          <span class="pill">复用</span>
+        </div>
+        <p class="branch-note">独立工作区，三要素固定为身份 / 技能 / 权限。这是公共组件，新岗位只需填入自己的技能与账号口径。</p>
+        <ul class="leaves">
+          <li><span class="leaf-name">入口</span><span class="leaf-note">数字办公室侧栏身份头部、实时工作员工操作菜单</span></li>
+          <li><span class="leaf-name">身份区域</span><span class="leaf-note">Agent 称呼 + 人设，只影响表达方式，不改能力与权限</span></li>
+          <li><span class="leaf-name">权限区域</span><span class="leaf-note">账号范围：账号名 + 营销授权 + 启用开关 + 最近检查时间</span></li>
+          <li><span class="leaf-name">技能区域</span><span class="leaf-note">固定技能表，标"固定 · 由系统维护"</span></li>
+          <li><span class="leaf-name">生效规则</span><span class="leaf-note">身份下次任务生效；账号范围保存后生效；执行中任务沿用启动时版本</span></li>
+        </ul>
+      </li>
+
+      <!-- D -->
+      <li class="branch" data-kind="new">
+        <div class="branch-head">
+          <span class="idx">D</span>
+          <h3>实时工作</h3>
+          <span class="pill">新增</span>
+        </div>
+        <p class="branch-note">一级页面与导航框架复用，岗位专属的工作台在这里新建 —— 这是工作量最大的一块。</p>
+        <ul class="leaves">
+          <li><span class="leaf-name">模块导航</span><span class="leaf-note">Tab 按岗位定义，顺序贴合该岗位的实际工作流</span></li>
+          <li><span class="leaf-name">发布任务</span><span class="leaf-note">四步：选账号 → 选素材 → 发布方式 + 标题策略 → 确认发布</span></li>
+          <li><span class="leaf-name">分发与锁定</span><span class="leaf-note">轮询去重分发，一条素材对一个账号；确认时才锁定</span></li>
+          <li><span class="leaf-name">执行模型</span><span class="leaf-note">一账号一台云电脑：账号间并行、账号内串行、同账号多任务排队</span></li>
+          <li><span class="leaf-name">失败与重试</span><span class="leaf-note">RPA 异常自动重试 3 次；授权 / 文件 / 风控转人工处理</span></li>
+          <li><span class="leaf-name">发布结果</span><span class="leaf-note">统一作品明细 13 列 + 四个筛选 + 顶部看板</span></li>
+          <li><span class="leaf-name">总览</span><span class="leaf-note">账号卡片一行 5 个平铺；已发布展示最近一次发布视频</span></li>
+          <li><span class="leaf-name">作品库</span><span class="leaf-note">两个来源 + 三种素材状态 + 监控账号配置 + 上传校验</span></li>
+          <li><span class="leaf-name">规模适配</span><span class="leaf-note">5 / 20 / 50 / 100 账号各自的展示策略</span></li>
+        </ul>
+      </li>
+
+      <!-- E -->
+      <li class="branch" data-kind="adapt">
+        <div class="branch-head">
+          <span class="idx">E</span>
+          <h3>成果中心</h3>
+          <span class="pill">按需新增</span>
+        </div>
+        <p class="branch-note">结果沉淀页。做与不做都能成立，取决于该岗位的结果是否需要长期沉淀。</p>
+        <ul class="leaves">
+          <li><span class="leaf-name">内容效果记录</span><span class="leaf-note">只读；一条作品 × 一个账号 = 一条记录</span></li>
+          <li><span class="leaf-name">综合数据看板</span><span class="leaf-note">发布账号数 / 发布作品数 / 累计播放量 / 累计评论量</span></li>
+          <li><span class="leaf-name">筛选</span><span class="leaf-note">时间 + 发布账号 + 作品名称，默认最近 30 天</span></li>
+          <li><span class="leaf-name">导出</span><span class="leaf-note">14 个字段的 <code>.xlsx</code>，覆盖全部分页</span></li>
+          <li><span class="leaf-name">也可以不做</span><span class="leaf-note">不在成果中心新增入口、报表或记录，也是一种成立的边界</span></li>
+        </ul>
+      </li>
+
+      <!-- F -->
+      <li class="branch" data-kind="adapt">
+        <div class="branch-head">
+          <span class="idx">F</span>
+          <h3>对话能力</h3>
+          <span class="pill">新增口径</span>
+        </div>
+        <p class="branch-note">对话框架复用，新岗位要定义的是"能问什么"—— 可查询的数据范围与统计口径。</p>
+        <ul class="leaves">
+          <li><span class="leaf-name">数据查询</span><span class="leaf-note">按账号 + 时间范围查发布情况与内容效果</span></li>
+          <li><span class="leaf-name">统计口径</span><span class="leaf-note">完成率、状态分布、效果排名等预计算指标</span></li>
+          <li><span class="leaf-name">主动汇报</span><span class="leaf-note">触发条件沿用数字员工统一规则</span></li>
+          <li><span class="leaf-name">分段回复</span><span class="leaf-note">查询范围 → 查询结果 → 下一步建议</span></li>
+          <li><span class="leaf-name">对话形态二选一</span><span class="leaf-note">员工本人 ／ 岗位组长聚合多账号（一对多账号时用组长）</span></li>
+        </ul>
+      </li>
+
+      <!-- G -->
+      <li class="branch" data-kind="reuse">
+        <div class="branch-head">
+          <span class="idx">G</span>
+          <h3>计费与消耗</h3>
+          <span class="pill">复用</span>
+        </div>
+        <p class="branch-note">平台通用能力。新岗位通常只需要选定计费口径，不重定义单价与结算规则。</p>
+        <ul class="leaves">
+          <li><span class="leaf-name">计费口径</span><span class="leaf-note">按次（例如 ¥2 / 次发布）／ 按日（例如客服专员），两者互不换算</span></li>
+          <li><span class="leaf-name">计费单位</span><span class="leaf-note">一次发布 = 一个账号成功发布一条作品；账号数与开启时长不计费</span></li>
+          <li><span class="leaf-name">扣费时点</span><span class="leaf-note">发布完成即时扣减；失败不计费，重试成功只计一次</span></li>
+          <li><span class="leaf-name">幂等键</span><span class="leaf-note">员工 ID + 账号 ID + 作品标识</span></li>
+          <li><span class="leaf-name">消耗明细</span><span class="leaf-note">扣费时间 / 扣费账号 / 发布作品 / 电力值 / 扣费备注</span></li>
+          <li><span class="leaf-name">余额不足</span><span class="leaf-note">任务转"待处理"、不执行发布、因此不产生费用</span></li>
+        </ul>
+      </li>
+
+      <!-- H -->
+      <li class="branch" data-kind="reuse">
+        <div class="branch-head">
+          <span class="idx">H</span>
+          <h3>底座与外部依赖</h3>
+          <span class="pill">复用</span>
+        </div>
+        <p class="branch-note">岗位不自建，全部沿用平台。这一层如果缺，新岗位是跑不起来的 —— 属于开工前的确认项。</p>
+        <ul class="leaves">
+          <li><span class="leaf-name">抖音营销授权</span><span class="leaf-note">发布的前置条件，由账号绑定模块承载</span></li>
+          <li><span class="leaf-name">云电脑 / RPA</span><span class="leaf-note">一个账号一台，是并行 / 串行规则的物理依据</span></li>
+          <li><span class="leaf-name">小班待办</span><span class="leaf-note">失败、授权异常、余额不足的通知落点</span></li>
+          <li><span class="leaf-name">权限与审计</span><span class="leaf-note">记录 Agent、修改人、时间、修改项、账号范围、生效范围</span></li>
+        </ul>
+      </li>
+
+    </ol>
+  </div>
+
+  <footer>
+    <b>怎么用</b>：A / D / E / F 四个模块需要为新岗位填内容，是排期的起点；
+    B / C / G / H 是平台已有能力，逐条确认"接得上"即可。
+  </footer>
+
+</main>

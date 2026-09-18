@@ -6,14 +6,25 @@ This file provides guidance to Codex (Codex.ai/code) when working with code in t
 
 AI数班 — an automotive industry digital employee management console prototype. The deliverable is a self-contained single-page HTML demo (~25k lines) served via a local HTTP server, with external JS/CSS modules in `assets/`.
 
+## Directory Layout
+
+| Path | Contents |
+|------|----------|
+| `app/` | The runnable deliverable — HTML prototypes plus every runtime asset they load |
+| `docs/prd/` | Product requirement documents |
+| `docs/reviews/` | Review and meeting notes. `转写稿` = raw recording transcript, `总结` = written summary |
+| `docs/reference/` | Standalone reference pages (message types, module map) |
+| `design-system/` | Design tokens (`MASTER.md`) and per-page specs |
+| `archive/` | Superseded snapshots kept for reference. Nothing here is loaded at runtime |
+
 ## Running the Demo
 
 ```bash
-python3 -m http.server 4175
-# Then open: http://127.0.0.1:4175/AI数班-汽车数字员工后台Demo-20260717-v73.html#dashboard
+cd app && python3 -m http.server 4175
+# Then open: http://127.0.0.1:4175/AI数班-AI军团原型.html#dashboard
 ```
 
-The HTML file must stay in the same directory as `assets/` — it references resources by relative path. No build step, no bundler, no package manager.
+The HTML file must stay in the same directory as `assets/` — it references resources by relative path. Both live in `app/`, so they move together. No build step, no bundler, no package manager.
 
 ## Architecture
 
@@ -25,13 +36,15 @@ Hash-based SPA routing (`#dashboard`, `#plaza`, `#conversation`, `#live`, `#resu
 
 | File | Role |
 |------|------|
-| `AI数班-…-v73.html` | Main app: all markup, inline styles (~7k lines CSS), inline scripts for routing/dashboard/conversation/results/live |
-| `assets/ai-office-enhancement.js` | Digital office scene: chibi employee rendering, status management, hiring state, onboarding, side-panel interactions |
-| `assets/ai-office-enhancement.css` | Styles for the enhanced office scene |
-| `assets/ai-office-visual-system.css` | Design token overrides for the office module |
-| `assets/ai-office-chibi.bundle.js` | Chibi character sprite/animation engine |
-| `assets/results-prospect-dashboard.js/css` | Results center (成果中心) prospect dashboard module |
-| `assets/demo-v57-legacy-*` | Older demo versions embedded as iframes for backward-compatible views |
+| `app/AI数班-AI军团原型.html` | Main app: all markup, inline styles (~7k lines CSS), inline scripts for routing/dashboard/conversation/results/live |
+| `app/AI数班-V1.4-直播场控专家-原型.html` | Standalone live-control (直播场控专家) prototype page |
+| `app/assets/ai-office-enhancement.js` | Digital office scene: chibi employee rendering, status management, hiring state, onboarding, side-panel interactions |
+| `app/assets/ai-office-enhancement.css` | Styles for the enhanced office scene |
+| `app/assets/ai-office-visual-system.css` | Design token overrides for the office module |
+| `app/assets/ai-office-chibi.bundle.js` | Chibi character sprite/animation engine |
+| `app/assets/results-prospect-dashboard.js/css` | Results center (成果中心) prospect dashboard module |
+| `app/assets/demo-v57-legacy-v40-v66/` | Older demo version embedded as an iframe for the backward-compatible live view |
+| `app/数班-用户服务协议.md`, `app/数班-隐私政策.md` | Legal pages, linked from the login/registration screen via relative `href` |
 
 ### State Management
 
@@ -72,6 +85,6 @@ Canonical reference: `design-system/MASTER.md`. Key rules:
 ## Working with the Codebase
 
 - The main HTML file is large. When editing, target specific sections by searching for route names or section headings.
-- Enhancement modules in `assets/` are IIFEs that attach to the global scope — they expect the main HTML's DOM structure and global functions to exist.
+- Enhancement modules in `app/assets/` are IIFEs that attach to the global scope — they expect the main HTML's DOM structure and global functions to exist.
 - All PRD and design documents are in Chinese (Markdown). The current product version focus is the results center refactor and talent plaza.
 - Commit messages use conventional commits in English (`feat:`, `fix:`, `chore:`, `style:`).
