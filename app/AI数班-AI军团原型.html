@@ -1,5 +1,5 @@
 <!doctype html>
-<!-- 数班 · v66 · 充值记录删除「转账凭证号」：记录项与登记表单同步下架，客户侧三列不变 -->
+<!-- 数班 · v67 · 低消卡片底部补出周期文案「本周期 起 ~ 止 · 剩余 N 天」：客户侧可见周期起止与剩余天数（PRD-v1.4 ㉚） -->
 <html lang="zh-CN">
   <head>
     <meta charset="UTF-8" />
@@ -9874,6 +9874,8 @@ html[data-theme="dark"] .demo-bubble--customer { color: #f2cf93; background: #38
       .consumption-progress i { display: block; width: 0; height: 100%; border-radius: inherit; background: linear-gradient(90deg, #4a7fb5, #2f5d8a); }
       .consumption-progress.is-complete i { background: linear-gradient(90deg, #3f9e73, #2c7d59); }
       html[data-theme="dark"] .consumption-progress { background: rgba(255,255,255,.12); }
+      /* 周期文案：低消卡片底部一行，展示本周期起止与剩余天数（PRD-v1.4 §4.1 / §6.4） */
+      .consumption-cycle-range { margin-top: 6px; color: var(--muted); font-size: 12px; }
       /* 进度值：小字行两端对齐，左为最低消耗、右为完成百分比 */
       .consumption-minimum-meta { margin-top: 7px; display: flex; align-items: baseline; justify-content: space-between; gap: 10px; }
       .consumption-minimum-meta small { color: var(--muted); font-size: 13px; }
@@ -10843,7 +10845,7 @@ html[data-theme="dark"] .demo-bubble--customer { color: #f2cf93; background: #38
       <div class="consumption-content">
         <section class="consumption-summary" aria-label="电力账户总览">
           <article class="consumption-summary-card is-balance"><span>可用电力值</span><strong class="power-value-line"><i class="power-token" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M12 2.8 19.4 7v10L12 21.2 4.6 17V7Z"/><path d="m13.5 6.2-3.1 5h2.6l-1.4 5.1 3.2-5.2h-2.5Z"/></svg></i><b id="consumption-balance">6,800</b></strong></article>
-          <article class="consumption-summary-card is-minimum"><span>本周期已消耗</span><strong class="power-value-line"><i class="power-token" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M12 2.8 19.4 7v10L12 21.2 4.6 17V7Z"/><path d="m13.5 6.2-3.1 5h2.6l-1.4 5.1 3.2-5.2h-2.5Z"/></svg></i><b id="consumption-cycle-consumed">1,000</b></strong><div class="consumption-progress" id="consumption-progress" role="progressbar" aria-valuemin="0" aria-valuemax="1200" aria-valuenow="1000" aria-label="本周期消耗完成情况"><i id="consumption-progress-bar"></i></div><div class="consumption-minimum-meta"><small id="consumption-minimum-hint">本期最低消耗 1,200</small><b id="consumption-minimum-percent">已完成 83%</b></div></article>
+          <article class="consumption-summary-card is-minimum"><span>本周期已消耗</span><strong class="power-value-line"><i class="power-token" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M12 2.8 19.4 7v10L12 21.2 4.6 17V7Z"/><path d="m13.5 6.2-3.1 5h2.6l-1.4 5.1 3.2-5.2h-2.5Z"/></svg></i><b id="consumption-cycle-consumed">1,000</b></strong><div class="consumption-progress" id="consumption-progress" role="progressbar" aria-valuemin="0" aria-valuemax="1200" aria-valuenow="1000" aria-label="本周期消耗完成情况"><i id="consumption-progress-bar"></i></div><div class="consumption-minimum-meta"><small id="consumption-minimum-hint">本期最低消耗 1,200</small><b id="consumption-minimum-percent">已完成 83%</b></div><div class="consumption-cycle-range" id="consumption-cycle-range">本周期 2026-07-28 ~ 2026-08-27 · 剩余 0 天</div></article>
           <p class="consumption-validity">有效期至 <b id="consumption-service-end">2027-06-15</b></p>
         </section>
         <nav class="consumption-ledger-tabs" role="tablist" aria-label="账户账目切换">
@@ -13553,13 +13555,14 @@ function consumptionCycleConsumed() {
 }
 
 /* 低消进度：主数字展示本周期已消耗（随明细数据动态变化），小字标注本期最低消耗，缺口由进度条长度呈现。
-   客户侧既不展示周期日期，也不展示"还差多少"的补扣预告（见 PRD-v1.4 §6.4） */
+   卡片底部另有一行周期文案，展示本周期起止与剩余天数；客户侧仍不展示"还差多少"的补扣预告（见 PRD-v1.4 §4.1 / §6.4） */
 function renderConsumptionMinimumProgress() {
   const track = document.getElementById("consumption-progress");
   const bar = document.getElementById("consumption-progress-bar");
   const hint = document.getElementById("consumption-minimum-hint");
   const percentNode = document.getElementById("consumption-minimum-percent");
   const consumedNode = document.getElementById("consumption-cycle-consumed");
+  const cycleNode = document.getElementById("consumption-cycle-range");
   if (!track || !bar || !hint) return;
   const minimum = accountPower.monthlyMinimum;
   const consumed = consumptionCycleConsumed();
@@ -13574,6 +13577,8 @@ function renderConsumptionMinimumProgress() {
   track.classList.toggle("is-complete", consumed >= minimum);
   hint.textContent = `本期最低消耗 ${formatPower(minimum)}`;
   if (percentNode) percentNode.textContent = `已完成 ${percent}%`;
+  /* 周期起止与剩余天数：客户据此自行判断周期还剩多久（PRD-v1.4 §4.1 双向可见） */
+  if (cycleNode) cycleNode.textContent = `本周期 ${accountPower.cycleStartAt} ~ ${accountPower.cycleEndAt} · 剩余 ${accountPower.cycleRemainingDays} 天`;
 }
 
 function renderConsumptionTable() {
