@@ -1,5 +1,5 @@
 <!doctype html>
-<!-- 数班 · v64 · 低消卡片补进度值：进度条下方右端展示「已完成 N%」，与进度条同源截断 -->
+<!-- 数班 · v65 · 月最低消耗改为必配项：删除低消「未设置」空态，进度条与完成百分比恒展示 -->
 <html lang="zh-CN">
   <head>
     <meta charset="UTF-8" />
@@ -13564,12 +13564,7 @@ function renderConsumptionMinimumProgress() {
   const minimum = accountPower.monthlyMinimum;
   const consumed = consumptionCycleConsumed();
   if (consumedNode) consumedNode.textContent = formatPower(consumed);
-  if (!minimum) {
-    track.hidden = true;
-    if (percentNode) percentNode.hidden = true;
-    hint.textContent = "本账户未设置月最低消耗";
-    return;
-  }
+  /* 月最低消耗是行业消耗模版的必配项，恒有值，不设"未设置"空态（PRD-v1.4 §2.4 / §6.4） */
   track.hidden = false;
   /* 进度值与进度条同源，一并截断到 100%：超额消耗时条已填满，读数不再超过 100% */
   const percent = Math.min(100, Math.round((consumed / minimum) * 100));
@@ -13578,7 +13573,7 @@ function renderConsumptionMinimumProgress() {
   track.setAttribute("aria-valuenow", String(consumed));
   track.classList.toggle("is-complete", consumed >= minimum);
   hint.textContent = `本期最低消耗 ${formatPower(minimum)}`;
-  if (percentNode) { percentNode.hidden = false; percentNode.textContent = `已完成 ${percent}%`; }
+  if (percentNode) percentNode.textContent = `已完成 ${percent}%`;
 }
 
 function renderConsumptionTable() {
