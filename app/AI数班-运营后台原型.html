@@ -1,0 +1,1722 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>AI数班 · 运营后台</title>
+<!-- 运营后台原型 · 对齐 PRD-v1.4-计费规则 §10 -->
+<style>
+:root{
+  --primary:#409eff; --primary-hover:#66b1ff; --primary-active:#3a8ee6;
+  --success:#67c23a; --warning:#e6a23c; --danger:#f56c6c; --info:#909399;
+  --text-1:#303133; --text-2:#606266; --text-3:#909399; --text-4:#c0c4cc;
+  --border:#dcdfe6; --border-light:#ebeef5; --border-lighter:#f2f6fc;
+  --bg-page:#f0f2f5; --bg-th:#f5f7fa; --bg-active:#ecf5ff;
+  --radius:4px; --shadow:0 2px 12px 0 rgba(0,0,0,.06);
+  --shadow-modal:0 12px 32px 4px rgba(0,0,0,.1),0 8px 20px rgba(0,0,0,.08);
+}
+*{box-sizing:border-box;margin:0;padding:0}
+html,body{height:100%}
+body{
+  font-family:-apple-system,BlinkMacSystemFont,"PingFang SC","Hiragino Sans GB","Microsoft YaHei",Arial,sans-serif;
+  font-size:14px;line-height:1.5;color:var(--text-1);background:var(--bg-page);
+  -webkit-font-smoothing:antialiased;
+}
+a{color:var(--primary);text-decoration:none}
+button{font-family:inherit;font-size:inherit;cursor:pointer;border:none;background:none;color:inherit}
+input,select{font-family:inherit;font-size:inherit;color:inherit}
+::-webkit-scrollbar{width:6px;height:6px}
+::-webkit-scrollbar-thumb{background:#c8ccd4;border-radius:3px}
+::-webkit-scrollbar-track{background:transparent}
+
+/* ---------- 布局 ---------- */
+.app{display:flex;height:100vh;overflow:hidden}
+.sidebar{
+  width:220px;flex:0 0 220px;background:#fff;border-right:1px solid var(--border-light);
+  display:flex;flex-direction:column;transition:flex-basis .2s,width .2s;
+}
+.sidebar.is-collapsed{width:64px;flex-basis:64px}
+.brand{height:60px;display:flex;align-items:center;gap:10px;padding:0 16px;flex:0 0 60px}
+.brand-logo{
+  width:34px;height:34px;flex:0 0 34px;border-radius:8px;
+  background:conic-gradient(from 210deg,#8fd14f,#4fc3f7,#b388ff,#ffcc80,#8fd14f);
+  display:flex;align-items:center;justify-content:center;
+  font-size:17px;font-weight:700;color:#fff;text-shadow:0 1px 2px rgba(0,0,0,.18);
+}
+.brand-name{font-size:15px;font-weight:600;white-space:nowrap;overflow:hidden}
+.sidebar.is-collapsed .brand-name,.sidebar.is-collapsed .nav-label,
+.sidebar.is-collapsed .nav-arrow,.sidebar.is-collapsed .nav-sub{display:none}
+.nav{flex:1;overflow-y:auto;padding:6px 0 24px}
+.nav-group{user-select:none}
+.nav-item{
+  display:flex;align-items:center;gap:10px;height:44px;padding:0 16px;
+  color:var(--text-2);cursor:pointer;position:relative;
+}
+.nav-item:hover{background:#f5f7fa}
+.nav-item.is-open,.nav-item.is-active{color:var(--primary)}
+.nav-item.is-active{background:var(--bg-active);font-weight:500}
+.nav-dot{
+  width:8px;height:8px;flex:0 0 8px;border-radius:50%;border:2px solid currentColor;
+  color:var(--info);
+}
+.nav-item.is-open .nav-dot,.nav-item.is-active .nav-dot{color:var(--primary)}
+.nav-label{flex:1;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.nav-arrow{font-size:10px;color:var(--text-4);transition:transform .2s}
+.nav-item.is-open .nav-arrow{transform:rotate(90deg)}
+.nav-sub{display:none;background:#fff}
+.nav-item.is-open + .nav-sub{display:block}
+.nav-sub .nav-item{height:40px;padding-left:44px;font-size:13px;color:var(--text-2)}
+.nav-sub .nav-item:hover{color:var(--primary)}
+.nav-sub .nav-item.is-active{background:var(--bg-active);color:var(--primary);font-weight:500}
+.nav-collapse{
+  height:40px;flex:0 0 40px;border-top:1px solid var(--border-light);
+  display:flex;align-items:center;justify-content:center;color:var(--text-3);
+}
+.nav-collapse:hover{color:var(--primary)}
+
+.main{flex:1;display:flex;flex-direction:column;min-width:0}
+.topbar{
+  height:50px;flex:0 0 50px;background:#fff;border-bottom:1px solid var(--border-light);
+  display:flex;align-items:center;padding:0 20px;gap:8px;
+}
+.crumb{color:var(--text-3);font-size:14px}
+.crumb-sep{color:var(--text-4);margin:0 2px}
+.crumb-current{color:var(--text-1)}
+.content{flex:1;overflow-y:auto;padding:20px}
+.page{display:none}
+.page.is-active{display:block}
+
+/* ---------- 卡片 ---------- */
+.card{background:#fff;border-radius:var(--radius);box-shadow:var(--shadow);padding:20px;margin-bottom:20px}
+.card:last-child{margin-bottom:0}
+.card--flush{padding:0}
+.card-head{
+  display:flex;align-items:center;justify-content:space-between;gap:12px;
+  padding:16px 20px;border-bottom:1px solid var(--border-light);
+}
+.card-title{font-size:16px;font-weight:600;color:var(--text-1)}
+.card-title small,.form-block-title small{font-size:12px;font-weight:400;color:var(--text-3);margin-left:8px}
+.card-body{padding:20px}
+.card-actions{display:flex;gap:8px;flex-wrap:wrap}
+
+/* ---------- 表单 ---------- */
+.field{display:flex;align-items:center;gap:8px}
+.field-label{color:var(--text-2);white-space:nowrap;font-size:14px}
+.field-label.is-required::before{content:"*";color:var(--danger);margin-right:4px}
+.filter-bar{display:flex;flex-wrap:wrap;gap:20px 24px;align-items:center}
+.filter-bar .field{margin:0}
+.filter-actions{display:flex;gap:10px;margin-left:auto}
+
+.input,.select{
+  height:32px;padding:0 10px;border:1px solid var(--border);border-radius:var(--radius);
+  background:#fff;color:var(--text-1);outline:none;transition:border-color .2s;width:180px;
+}
+.input::placeholder{color:var(--text-4)}
+.input:hover,.select:hover{border-color:var(--text-4)}
+.input:focus,.select:focus{border-color:var(--primary)}
+.input[readonly],.input:disabled,.select:disabled{background:#f5f7fa;color:var(--text-3);cursor:not-allowed}
+.input--sm{width:120px}
+.input--lg{width:240px}
+.input--block{width:100%}
+.select{
+  appearance:none;padding-right:26px;cursor:pointer;
+  background-image:url("data:image/svg+xml;charset=utf8,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 12 12'%3E%3Cpath d='M2 4.5 6 8.5 10 4.5' fill='none' stroke='%23c0c4cc' stroke-width='1.4' stroke-linecap='round'/%3E%3C/svg%3E");
+  background-repeat:no-repeat;background-position:right 8px center;background-size:12px;
+}
+.select--block{width:100%}
+textarea.input{height:auto;padding:6px 10px;resize:vertical;line-height:1.5}
+.field-hint{font-size:12px;color:var(--text-3);line-height:1.5}
+
+/* ---------- 按钮 ---------- */
+.btn{
+  display:inline-flex;align-items:center;justify-content:center;gap:6px;
+  height:32px;padding:0 16px;border-radius:var(--radius);border:1px solid var(--border);
+  background:#fff;color:var(--text-2);white-space:nowrap;transition:all .2s;font-size:14px;
+}
+.btn:hover{color:var(--primary);border-color:#c6e2ff;background:#ecf5ff}
+.btn--primary{background:var(--primary);border-color:var(--primary);color:#fff}
+.btn--primary:hover{background:var(--primary-hover);border-color:var(--primary-hover);color:#fff}
+.btn--primary:active{background:var(--primary-active);border-color:var(--primary-active)}
+.btn--lg{height:36px;padding:0 20px}
+.btn--sm{height:28px;padding:0 12px;font-size:12px}
+.btn:disabled,.btn.is-disabled{
+  background:#fff;border-color:var(--border-light);color:var(--text-4);cursor:not-allowed;
+}
+.btn:disabled:hover,.btn.is-disabled:hover{background:#fff;border-color:var(--border-light);color:var(--text-4)}
+.btn--text{border:none;background:none;height:auto;padding:0;color:var(--primary)}
+.btn--text:hover{background:none;color:var(--primary-hover);text-decoration:none}
+.btn--danger-text{color:var(--danger)}
+.btn--danger-text:hover{color:#f78989}
+.btn--danger{background:var(--danger);border-color:var(--danger);color:#fff}
+.btn--danger:hover{background:#f78989;border-color:#f78989;color:#fff}
+
+/* ---------- 链接与文本 ---------- */
+.link{color:var(--primary);cursor:pointer}
+.link:hover{color:var(--primary-hover)}
+.link--danger{color:var(--danger)}
+.link--danger:hover{color:#f78989}
+.link + .link{margin-left:14px}
+.text-3{color:var(--text-3)}
+.text-danger{color:var(--danger)}
+.text-success{color:var(--success)}
+.mono{font-family:ui-monospace,SFMono-Regular,Menlo,Consolas,monospace;font-size:13px}
+.ellipsis{overflow:hidden;text-overflow:ellipsis;white-space:nowrap;display:block}
+
+/* ---------- 表格 ---------- */
+.table-wrap{overflow-x:auto}
+.table{width:100%;border-collapse:separate;border-spacing:0;font-size:14px}
+.table th{
+  background:var(--bg-th);color:var(--text-3);font-weight:500;text-align:left;
+  padding:12px 12px;white-space:nowrap;border-bottom:1px solid var(--border-light);
+}
+.table th:first-child{border-top-left-radius:var(--radius)}
+.table th:last-child{border-top-right-radius:var(--radius)}
+.table td{
+  padding:14px 12px;border-bottom:1px solid var(--border-light);
+  color:var(--text-2);vertical-align:middle;
+}
+.table tbody tr:hover td{background:#fafcff}
+.table tbody tr:last-child td{border-bottom:none}
+.table .cell-strong{color:var(--text-1);font-weight:500}
+/* 数值与时间列不折行：右侧抽屉变窄后，「50 电力值」「2026-09-24 14:35:00」容易被拆成两行 */
+.table .cell-num{font-variant-numeric:tabular-nums;white-space:nowrap}
+.table .cell-sub{font-size:12px;color:var(--text-3);line-height:1.5}
+.table .cell-note{font-size:12px;color:var(--text-3);line-height:1.5;min-width:230px;max-width:320px}
+.table--fixed{table-layout:fixed}
+/* 门店行「···」下拉：挂在 #menuRoot 上做浮层，避免被表格横向滚动裁掉 */
+.row-menu{position:fixed;min-width:152px;background:#fff;border:1px solid var(--border-light);
+  border-radius:var(--radius);box-shadow:0 6px 20px rgba(0,0,0,.12);padding:6px 0;z-index:60}
+.row-menu-item{padding:9px 18px;font-size:14px;color:var(--text-2);cursor:pointer;white-space:nowrap}
+.row-menu-item:hover{background:var(--bg-active);color:var(--primary)}
+.col-check{width:44px}
+.col-op{white-space:nowrap}
+.col-op .link{margin-right:12px}
+.col-op .link:last-child{margin-right:0}
+.nw{white-space:nowrap}
+
+/* ---------- 标签 ---------- */
+.tag{
+  display:inline-flex;align-items:center;height:24px;padding:0 9px;border-radius:var(--radius);
+  font-size:12px;line-height:1;border:1px solid transparent;white-space:nowrap;
+}
+.tag--info{background:#f4f4f5;border-color:#e9e9eb;color:var(--info)}
+.tag--primary{background:#ecf5ff;border-color:#d9ecff;color:var(--primary)}
+.tag--success{background:#f0f9eb;border-color:#e1f3d8;color:var(--success)}
+.tag--warning{background:#fdf6ec;border-color:#faecd8;color:var(--warning)}
+.tag--danger{background:#fef0f0;border-color:#fde2e2;color:var(--danger)}
+.tag--plain{color:var(--text-2);border-color:var(--border);background:#fff}
+
+/* ---------- 分页 ---------- */
+.pager{display:flex;align-items:center;justify-content:flex-end;gap:8px;padding:16px 0 0;font-size:13px;color:var(--text-2)}
+.pager-total{margin-right:4px;color:var(--text-2)}
+.pager-btn{
+  min-width:28px;height:28px;padding:0 6px;border:1px solid var(--border);border-radius:var(--radius);
+  background:#fff;color:var(--text-2);display:inline-flex;align-items:center;justify-content:center;
+}
+.pager-btn:hover:not(:disabled){color:var(--primary);border-color:#c6e2ff}
+.pager-btn.is-active{background:var(--primary);border-color:var(--primary);color:#fff}
+.pager-btn:disabled{color:var(--text-4);cursor:not-allowed}
+
+/* ---------- 提示条 ---------- */
+.alert{
+  display:flex;gap:10px;padding:10px 14px;border-radius:var(--radius);font-size:13px;
+  line-height:1.6;margin-bottom:16px;border:1px solid transparent;
+}
+.alert-icon{flex:0 0 16px;font-weight:700;line-height:1.5}
+.alert--info{background:#ecf5ff;border-color:#d9ecff;color:#4a7bb5}
+.alert--warning{background:#fdf6ec;border-color:#faecd8;color:#b88230}
+.alert--success{background:#f0f9eb;border-color:#e1f3d8;color:#5d9c3f}
+.alert--danger{background:#fef0f0;border-color:#fde2e2;color:#c45656}
+.alert b{font-weight:600}
+
+/* ---------- 描述列表 ---------- */
+.desc-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(220px,1fr));gap:18px 24px}
+.desc-item{min-width:0}
+.desc-label{font-size:12px;color:var(--text-3);margin-bottom:6px}
+.desc-value{font-size:15px;color:var(--text-1);line-height:1.4;word-break:break-all}
+.desc-value.is-num{font-size:22px;font-weight:600;font-variant-numeric:tabular-nums}
+.desc-value.is-negative{color:var(--danger)}
+.desc-value small{font-size:12px;font-weight:400;color:var(--text-3);margin-left:6px}
+
+/* ---------- 账户摘要条 ----------
+   四项并排一张卡，竖线分隔；不用四张独立统计卡——抽屉里四张卡占掉半屏，
+   而这里每项只有「标签 / 数值 / 补充」三段，压扁后一行就够。 */
+.stat-row{
+  display:grid;grid-template-columns:repeat(4,minmax(0,1fr));margin-bottom:16px;
+  background:#fff;border-radius:var(--radius);box-shadow:var(--shadow);padding:16px 0;
+}
+.stat{padding:0 16px;border-left:1px solid var(--border-light);min-width:0}
+.stat:first-child{border-left:0;padding-left:20px}
+.stat:last-child{padding-right:20px}
+.stat-label{font-size:12px;color:var(--text-3);margin-bottom:6px}
+.stat-value{font-size:18px;font-weight:600;color:var(--text-1);font-variant-numeric:tabular-nums;line-height:1.25}
+.stat-value.is-hero{font-size:24px;color:var(--primary)}
+.stat-value.is-negative{color:var(--danger)}
+.stat-foot{margin-top:6px;font-size:12px;color:var(--text-3);line-height:1.4}
+
+/* ---------- 进度条 ---------- */
+.progress{height:8px;border-radius:4px;background:#ebeef5;overflow:hidden;margin-top:12px}
+.progress-bar{height:100%;border-radius:4px;background:var(--primary);transition:width .3s}
+.progress-bar.is-complete{background:var(--success)}
+.progress-legend{display:flex;justify-content:space-between;font-size:12px;color:var(--text-3);margin-top:8px}
+
+/* ---------- 内联指标行 ----------
+   周期卡原先是 2×2 描述列表，四个数占掉小半屏；标签和值并排一行就够。 */
+.metric-row{display:flex;flex-wrap:wrap;align-items:baseline;gap:10px 36px}
+.metric{display:flex;align-items:baseline;gap:8px;min-width:0}
+.metric-label{font-size:12px;color:var(--text-3);white-space:nowrap}
+.metric-value{font-size:14px;color:var(--text-1);font-variant-numeric:tabular-nums;line-height:1.4}
+.metric-value.is-strong{font-size:18px;font-weight:600}
+.metric-value.is-danger{color:var(--danger)}
+.metric-value .unit{font-size:12px;font-weight:400;color:var(--text-3);margin-left:4px}
+
+/* ---------- 抽屉 ---------- */
+.mask{
+  position:fixed;inset:0;background:rgba(0,0,0,.45);z-index:1000;
+  display:none;animation:fadeIn .2s ease;
+}
+.mask.is-open{display:block}
+@keyframes fadeIn{from{opacity:0}to{opacity:1}}
+@keyframes slideIn{from{transform:translateX(100%)}to{transform:translateX(0)}}
+@keyframes popIn{from{opacity:0;transform:translateY(-12px) scale(.98)}to{opacity:1;transform:none}}
+
+.drawer{
+  position:fixed;top:0;right:0;bottom:0;width:560px;max-width:92vw;background:#fff;z-index:1001;
+  display:none;flex-direction:column;box-shadow:-2px 0 12px rgba(0,0,0,.08);
+}
+.drawer.is-open{display:flex;animation:slideIn .24s ease}
+.drawer-head{
+  height:54px;flex:0 0 54px;display:flex;align-items:center;justify-content:space-between;
+  padding:0 20px;border-bottom:1px solid var(--border-light);
+}
+.drawer-title{font-size:16px;font-weight:600}
+.drawer-close{font-size:18px;color:var(--text-3);line-height:1;padding:4px}
+.drawer-close:hover{color:var(--primary)}
+.drawer-body{flex:1;overflow-y:auto;background:var(--bg-th);padding:16px}
+.drawer-foot{
+  flex:0 0 60px;display:flex;align-items:center;justify-content:flex-end;gap:12px;
+  padding:0 20px;border-top:1px solid var(--border-light);background:#fff;
+}
+
+/* ---------- 弹窗 ---------- */
+.modal{
+  position:fixed;top:14vh;left:50%;transform:translateX(-50%);width:640px;max-width:92vw;
+  background:#fff;border-radius:var(--radius);z-index:1001;display:none;
+  box-shadow:var(--shadow-modal);flex-direction:column;max-height:74vh;
+}
+.modal.is-open{display:flex;animation:popIn .2s ease}
+.modal--sm{width:520px}
+.modal--md{width:680px}
+.modal--lg{width:820px}
+.modal-head{
+  display:flex;align-items:center;justify-content:space-between;
+  padding:18px 20px 14px;
+}
+.modal-title{font-size:17px;font-weight:600}
+.modal-close{font-size:18px;color:var(--text-3);line-height:1;padding:4px}
+.modal-close:hover{color:var(--primary)}
+.modal-body{padding:0 20px 8px;overflow-y:auto;flex:1}
+.modal-foot{display:flex;justify-content:flex-end;gap:12px;padding:16px 20px 20px}
+
+/* ---------- 弹窗内的表单分组 ---------- */
+.form-block{background:var(--bg-th);border-radius:var(--radius);padding:16px 18px;margin-bottom:14px}
+/* 抽屉/弹窗内直接铺在灰底上，避免与容器同色糊成一片 */
+.drawer-body .form-block{background:transparent;border-radius:0;padding:14px 0;margin-bottom:0;border-bottom:1px solid var(--border-light)}
+.drawer-body .form-block:last-of-type{border-bottom:none}
+.modal-body .form-block{background:transparent;padding:0;margin-bottom:0}
+.modal-body .form-block .block-title{margin-top:4px}
+.form-block:last-child{margin-bottom:0}
+
+/* ---------- 抽屉 / 弹窗尺寸变体 ----------
+   表格型配置用宽抽屉，账本型明细用宽弹窗；560px 塞不下多列表格 */
+.drawer--wide{width:920px}
+.modal--xl{width:1080px;max-height:82vh}   /* 账本型明细更长，别让末行被 74vh 切掉 */
+/* 抽屉背景是浅灰，摘要条自带白底，别再叠一层内边距 */
+.drawer-body .stat-row{margin-top:0}
+.drawer-body .desc-grid{grid-template-columns:repeat(2,1fr);gap:14px 20px}
+.drawer-body .card:last-child{margin-bottom:0}
+.drawer-foot .foot-note{margin-right:auto;font-size:12px;color:var(--text-3)}
+.modal-body .table-wrap{border:1px solid var(--border-light);border-radius:var(--radius)}
+.form-block-title{font-size:14px;font-weight:600;color:var(--text-1);margin-bottom:14px}
+.form-row{display:flex;align-items:center;gap:12px;margin-bottom:14px}
+.form-row:last-child{margin-bottom:0}
+.form-row > .field-label{flex:0 0 108px;text-align:right;justify-content:flex-end}
+.form-row > .form-control{flex:1;min-width:0;display:flex;align-items:center;gap:8px}
+.form-row--top{align-items:flex-start}
+.form-row--top > .field-label{padding-top:6px}
+.form-static{color:var(--text-1);font-size:14px}
+.form-static.is-num{font-variant-numeric:tabular-nums;font-weight:600;font-size:15px}
+.inline-note{font-size:12px;color:var(--text-3);white-space:nowrap}
+
+/* ---------- 开关 ---------- */
+.switch{
+  position:relative;display:inline-flex;width:40px;height:20px;flex:0 0 40px;
+  border-radius:10px;background:#dcdfe6;transition:background .3s;cursor:pointer;
+}
+.switch::after{
+  content:"";position:absolute;top:2px;left:2px;width:16px;height:16px;border-radius:50%;
+  background:#fff;transition:transform .3s;box-shadow:0 1px 3px rgba(0,0,0,.15);
+}
+.switch.is-on{background:var(--primary)}
+.switch.is-on::after{transform:translateX(20px)}
+.switch.is-disabled{opacity:.5;cursor:not-allowed}
+
+/* ---------- 预览块 ---------- */
+.preview{
+  background:var(--border-lighter);border-radius:var(--radius);padding:14px 16px;font-size:13px;
+  color:var(--text-2);line-height:1.9;
+}
+.preview b{color:var(--text-1);font-weight:600;font-variant-numeric:tabular-nums}
+.preview .is-negative{color:var(--danger)}
+
+/* ---------- Toast ---------- */
+.toast-root{position:fixed;top:20px;left:50%;transform:translateX(-50%);z-index:2000;display:flex;flex-direction:column;gap:10px;align-items:center}
+.toast{
+  display:flex;align-items:center;gap:8px;padding:10px 18px;border-radius:var(--radius);
+  background:#f0f9eb;border:1px solid #e1f3d8;color:#5d9c3f;font-size:14px;
+  box-shadow:var(--shadow);animation:popIn .2s ease;
+}
+.toast--error{background:#fef0f0;border-color:#fde2e2;color:#c45656}
+
+/* ---------- 空态 ---------- */
+.empty{padding:48px 0;text-align:center;color:var(--text-3);font-size:13px}
+
+/* ---------- 页签 ---------- */
+.tabs{display:flex;gap:2px;border-bottom:1px solid var(--border-light);padding:0 20px;background:#fff;border-radius:var(--radius) var(--radius) 0 0}
+.tab{
+  padding:14px 18px;font-size:14px;color:var(--text-2);cursor:pointer;position:relative;
+  border-bottom:2px solid transparent;margin-bottom:-1px;
+}
+.tab:hover{color:var(--primary)}
+.tab.is-active{color:var(--primary);font-weight:500;border-bottom-color:var(--primary)}
+.tab-badge{
+  display:inline-flex;align-items:center;justify-content:center;min-width:18px;height:18px;
+  padding:0 5px;margin-left:6px;border-radius:9px;background:#f0f2f5;color:var(--text-2);font-size:12px;
+}
+.tab.is-active .tab-badge{background:var(--primary);color:#fff}
+
+/* ---------- 两栏 ---------- */
+.split{display:grid;grid-template-columns:1fr 1fr;gap:20px}
+@media (max-width:1100px){.split{grid-template-columns:1fr}}
+.kv-list{font-size:13px}
+.kv{display:flex;justify-content:space-between;gap:16px;padding:10px 0;border-bottom:1px dashed var(--border-light)}
+.kv:last-child{border-bottom:none}
+.kv-k{color:var(--text-3);flex:0 0 auto}
+.kv-v{color:var(--text-1);text-align:right;word-break:break-all;font-variant-numeric:tabular-nums}
+</style>
+</head>
+<body>
+<div class="app">
+  <aside class="sidebar" id="sidebar">
+    <div class="brand">
+      <div class="brand-logo">数</div>
+      <div class="brand-name">AI数班 · 运营后台</div>
+    </div>
+    <nav class="nav" id="nav"></nav>
+    <button class="nav-collapse" id="navCollapse" title="收起导航">«</button>
+  </aside>
+  <div class="main">
+    <header class="topbar" id="topbar"></header>
+    <div class="content" id="content"></div>
+  </div>
+</div>
+<div class="mask" id="mask"></div>
+<div id="drawerRoot"></div>
+<div id="modalRoot"></div>
+<div id="menuRoot"></div>
+<div class="toast-root" id="toastRoot"></div>
+<script>
+/* =========================================================================
+   AI数班 · 运营后台原型
+   对齐 docs/prd/PRD-v1.4-计费规则.md §10（充值登记 / 服务期管理 /
+   L1 行业消耗模版 / L2 员工消耗配置 / 费用记录查询）
+   结算方式口径：基础结算在门店×岗位级配置，高级结算按平台账号开关
+   ========================================================================= */
+(function () {
+'use strict';
+
+/* ---------- 基础常量 ---------- */
+const TODAY = '2026-08-27';
+
+const INDUSTRIES = ['二手车', '新车', '家居', '房地产'];
+const POSITIONS = ['主号获客专家', '副号获客专家', '客服专员', '矩阵视频发布专员'];
+// 可开高级结算的岗位（其余两个岗位固定基础结算）
+const ADVANCED_POSITIONS = ['主号获客专家', '副号获客专家'];
+// 刊例价：全行业统一、后台只读（§2.3）
+const LIST_PRICE = { '主号获客专家': 50, '副号获客专家': 50, '客服专员': 10, '矩阵视频发布专员': 2 };
+// 高级结算的线索分档（沿用系统原有获客专家配置）
+const SENIOR_TIERS = ['销售-精准线索', '销售-中等线索', '销售-普通线索', '收购-精准线索'];
+
+// 车型库：门店既有功能，本轮计费改造未涉及，仅作入口对齐
+const GARAGE = [
+  ['宝马 3系', '2021款 325Li M运动套装', '21.80 万', '在售', '2026-08-25 09:12'],
+  ['奥迪 A4L', '2020款 40 TFSI 时尚动感型', '18.60 万', '在售', '2026-08-24 17:40'],
+  ['奔驰 C级', '2022款 C 260 L 运动版', '24.30 万', '在售', '2026-08-24 16:05'],
+  ['大众 迈腾', '2019款 330TSI DSG 豪华型', '12.90 万', '已预定', '2026-08-22 11:33'],
+  ['丰田 凯美瑞', '2021款 2.0G 豪华版', '15.40 万', '在售', '2026-08-20 10:18'],
+  ['本田 雅阁', '2020款 260TURBO 精英版', '13.70 万', '已下架', '2026-08-18 15:52']
+];
+
+/* ---------- 套餐包 ----------
+   一份套餐 = 四个岗位的实际消耗单价 + 月最低消耗，整包生效、就地改价。
+   岗位单价留空 = 该岗位未配置，实际计费回落刊例价（§2.4）。
+   月最低消耗为套餐必配项，账户级结算（§4.2）。 */
+const packages = [
+  {
+    id: 'p1', name: '二手车标准套餐', note: '二手车行业默认',
+    prices: { '主号获客专家': 50, '副号获客专家': 50, '客服专员': 10, '矩阵视频发布专员': 2 },
+    monthlyMinimum: 1200
+  },
+  {
+    id: 'p2', name: '新车标准套餐', note: '新车行业默认',
+    prices: { '主号获客专家': 45, '副号获客专家': 45, '客服专员': 10, '矩阵视频发布专员': null },
+    monthlyMinimum: 1500
+  },
+  {
+    id: 'p3', name: '家居标准套餐', note: '四个岗位均未配置单价，按刊例价计费',
+    prices: { '主号获客专家': null, '副号获客专家': null, '客服专员': null, '矩阵视频发布专员': null },
+    monthlyMinimum: 800
+  },
+  {
+    id: 'p4', name: '房地产标准套餐', note: '四个岗位均未配置单价，按刊例价计费',
+    prices: { '主号获客专家': null, '副号获客专家': null, '客服专员': null, '矩阵视频发布专员': null },
+    monthlyMinimum: 600
+  },
+  {
+    id: 'p5', name: '骏驰专属套餐', note: '商务协议价，主号获客专家 30 电力值',
+    prices: { '主号获客专家': 30, '副号获客专家': 50, '客服专员': 10, '矩阵视频发布专员': 2 },
+    monthlyMinimum: 1200
+  },
+  {
+    id: 'p6', name: '二手车高配套餐', note: '尚未关联，待启用',
+    prices: { '主号获客专家': 60, '副号获客专家': 60, '客服专员': 12, '矩阵视频发布专员': 3 },
+    monthlyMinimum: 1500
+  }
+];
+function packageById(id) { return packages.find(p => p.id === id) || null; }
+// 每个行业至多关联一个默认套餐（§4.1）；未关联 = 该行业无默认套餐，全部回落刊例价
+const industryPackage = { '二手车': 'p1', '新车': 'p2', '家居': 'p3', '房地产': 'p4' };
+
+/* ---------- 门店账号（付费主体） ----------
+   balance / cycleConsumed / frozenPower 均为推导值，见下方「账本推导」，此处不填 */
+const stores = [
+  {
+    id: 's1', name: '老杨名车汇', industry: '二手车', phone: '18158137110',
+    storeNo: '623823117043564544', accountTotal: 4, douyinTotal: 4,
+    status: 'normal', expiresAt: '2027-06-15 23:59:59',
+    firstRechargeAt: '2026-07-28 10:20:00',
+    cycleStartAt: '2026-07-28', cycleEndAt: '2026-08-27',
+    packageId: null               // 未关联套餐，跟随行业默认套餐
+  },
+  {
+    id: 's2', name: '骏驰汽车', industry: '二手车', phone: '13906531782',
+    storeNo: '623855012334993408', accountTotal: 2, douyinTotal: 2,
+    status: 'normal', expiresAt: '2026-09-02 23:59:59',
+    firstRechargeAt: '2026-06-19 14:05:00',
+    cycleStartAt: '2026-08-20', cycleEndAt: '2026-09-19',
+    // 关联专属套餐：主号获客专家 30 电力值（商务协议价）
+    packageId: 'p5'
+  },
+  {
+    id: 's3', name: '星耀家居', industry: '家居', phone: '13675820194',
+    storeNo: '623901447728821760', accountTotal: 3, douyinTotal: 3,
+    status: 'normal', expiresAt: '2027-02-18 23:59:59',
+    // 透支态（§5.2）：首充 500 低于月低消 800，周期 1 末必然转负
+    firstRechargeAt: '2026-07-26 09:12:00',
+    cycleStartAt: '2026-07-26', cycleEndAt: '2026-08-25',
+    packageId: null
+  },
+  {
+    id: 's4', name: '恒信地产', industry: '房地产', phone: '13857194426',
+    storeNo: '623779005512441856', accountTotal: 2, douyinTotal: 2,
+    status: 'normal', expiresAt: '2027-05-21 23:59:59',
+    firstRechargeAt: '2026-06-19 10:30:00',
+    cycleStartAt: '2026-08-20', cycleEndAt: '2026-09-19',
+    packageId: null
+  },
+  {
+    id: 's5', name: '子龙测试', industry: '新车', phone: '13858126084',
+    storeNo: '623609280545566720', accountTotal: 0, douyinTotal: 0,
+    status: 'frozen', expiresAt: '2025-01-06 23:59:59',
+    firstRechargeAt: '2024-03-11 16:40:00',
+    cycleStartAt: '2024-03-11', cycleEndAt: '2024-04-10',
+    packageId: null
+  }
+];
+
+/* ---------- 平台账号（挂载在门店账号下） ---------- */
+const platformAccounts = {
+  s1: [
+    { id: 'a1', name: '菁英科技', uid: '623898359266947072', secId: 'MS4wLjABAAAAAGlu82IcGks2tVRK_EldopbUHro19OzbbegKfyJClbmU', channel: '抖音', human: '主号获客专家', osom: '二手车通用', settlement: 'basic', senior: null },
+    { id: 'a2', name: '泰廉电商上架辅助系统', uid: '623889194331078656', secId: 'MS4wLjABAAAA8SzmXviWAE_ha34kujkuBnVoj2_onsFo83BSE-Gascg', channel: '抖音', human: '主号获客专家', osom: '二手车通用', settlement: 'basic', senior: null },
+    { id: 'a3', name: '泰廉供应商资料管理平台', uid: '623887136588759040', secId: 'MS4wLjABAAAAAoEG11xjvEaWap6vsPBZueqvgKSrvtWpI8UZawHh7G6EtxPX3a3JN0iLBbqEAO_el', channel: '抖音', human: '副号获客专家', osom: '二手车通用', settlement: 'basic', senior: null },
+    { id: 'a4', name: '乐涵欣信息检索辅助软件', uid: '623825348107108352', secId: 'MS4wLjABAAAAAdrZd86FKvZoY3RNjuiiid6cPffU_A_jCKtJt8BP6DHQ', channel: '抖音', human: '客服专员', osom: '二手车通用', settlement: 'basic', senior: null }
+  ],
+  s2: [
+    {
+      id: 'b1', name: '骏驰汽车旗舰店', uid: '623744819205337088', secId: 'MS4wLjABAAAABq3nR7pXvK2mWsT9dLcYeHf4gUjZaN6oPiQr8xVbMdE', channel: '抖音', human: '主号获客专家', osom: '二手车通用', settlement: 'advanced',
+      senior: {
+        prices: { '销售-精准线索': 120, '销售-中等线索': 80, '销售-普通线索': 50, '收购-精准线索': 60 },
+        rules: { cities: ['杭州市', '绍兴市'], models: '宝马3系、奥迪A4L、奔驰C级', budgetEnabled: true, budgetMin: 15, budgetMax: 50, brandEnabled: false }
+      }
+    },
+    { id: 'b2', name: '骏驰汽车二手车', uid: '623744819205337089', secId: 'MS4wLjABAAAABq3nR7pXvK2mWsT9dLcYeHf4gUjZaN6oPiQr8xVbMdF', channel: '抖音', human: '副号获客专家', osom: '二手车通用', settlement: 'basic', senior: null }
+  ],
+  s3: [
+    { id: 'c1', name: '星耀家居官方号', uid: '623655102887442432', secId: 'MS4wLjABAAAACk7tQ2mYbV5nXwR8pLdZfEgHjUiSoP4aNqMvT6yWcXr', channel: '抖音', human: '主号获客专家', osom: '家居通用', settlement: 'basic', senior: null },
+    { id: 'c2', name: '星耀家居严选', uid: '623655102887442433', secId: 'MS4wLjABAAAACk7tQ2mYbV5nXwR8pLdZfEgHjUiSoP4aNqMvT6yWcXs', channel: '抖音', human: '副号获客专家', osom: '家居通用', settlement: 'basic', senior: null },
+    { id: 'c3', name: '星耀家居客服号', uid: '623655102887442434', secId: 'MS4wLjABAAAACk7tQ2mYbV5nXwR8pLdZfEgHjUiSoP4aNqMvT6yWcXt', channel: '抖音', human: '客服专员', osom: '家居通用', settlement: 'basic', senior: null }
+  ],
+  s4: [
+    { id: 'd1', name: '恒信地产官方号', uid: '623501778439006208', secId: 'MS4wLjABAAAADm9vB4kLpQ7sYcN2xWtRzEfJgUhViO6nPqAsD8bGmZa', channel: '抖音', human: '主号获客专家', osom: '房地产通用', settlement: 'basic', senior: null },
+    { id: 'd2', name: '恒信地产置业顾问', uid: '623501778439006209', secId: 'MS4wLjABAAAADm9vB4kLpQ7sYcN2xWtRzEfJgUhViO6nPqAsD8bGmZb', channel: '抖音', human: '客服专员', osom: '房地产通用', settlement: 'basic', senior: null }
+  ],
+  s5: []
+};
+
+/* ---------- 充值记录（§2.7 运营后台侧完整记录项） ---------- */
+const recharges = {
+  // 与客户端原型同口径：到账合计 8,000 − 业务 1,000 − 补扣 200 = 6,800
+  // 第 2 条为「抵扣负值」入账：周期 1 末补扣后账户转负 −200，本笔到账先抵扣这 200
+  s1: [
+    { id: 'R20260728102000', amount: 1000, arrivedAt: '2026-07-28 10:20:00', loggedAt: '2026-07-28 10:22:13', operator: '王敏', remark: '补充电力值' },
+    { id: 'R20260923102000', amount: 5000, arrivedAt: '2026-09-23 10:20:00', loggedAt: '2026-09-23 10:23:41', operator: '王敏', remark: '补充电力值，抵扣200电力值' },
+    { id: 'R20260924143500', amount: 2000, arrivedAt: '2026-09-24 14:35:00', loggedAt: '2026-09-24 14:37:26', operator: '王敏', remark: '补充电力值' }
+  ],
+  s2: [
+    { id: 'R20260619140500', amount: 2000, arrivedAt: '2026-06-19 14:05:00', loggedAt: '2026-06-19 14:08:22', operator: '陈昊', remark: '补充电力值' },
+    { id: 'R20260821101800', amount: 2000, arrivedAt: '2026-08-21 10:18:00', loggedAt: '2026-08-21 10:20:05', operator: '陈昊', remark: '补充电力值' }
+  ],
+  s3: [
+    { id: 'R20260726091200', amount: 500, arrivedAt: '2026-07-26 09:12:00', loggedAt: '2026-07-26 09:15:37', operator: '王敏', remark: '补充电力值' }
+  ],
+  s4: [
+    { id: 'R20260619103000', amount: 5000, arrivedAt: '2026-06-19 10:30:00', loggedAt: '2026-06-19 10:33:11', operator: '陈昊', remark: '补充电力值' }
+  ],
+  s5: [
+    { id: 'R20240311164000', amount: 2000, arrivedAt: '2024-03-11 16:40:00', loggedAt: '2024-03-11 16:42:58', operator: '陈昊', remark: '补充电力值' }
+  ]
+};
+
+/* ---------- 费用记录 ---------- */
+// 在位次 [时间, 岗位, 抖音账号, 计费对象, 客户, 联系方式, 留资时间, 城市, 车型, 预算, 意向, 备注]
+// 老杨名车汇：与客户端原型同口径（主号 10 / 副号 8 / 客服 9 / 矩阵 5，周期内合计 1,000 电力）
+const YANG_ROWS = [
+  ['2026-08-25 09:14:22', '主号获客专家', '菁英科技', 'L202608250914', '王先生', '138****2841', '2026-08-25 09:12', '杭州市', '宝马3系', '30-40万', '高', '有效线索计费'],
+  ['2026-08-25 10:42:07', '主号获客专家', '菁英科技', 'L202608251042', '李女士', '139****5573', '2026-08-25 10:38', '宁波市', '奥迪A4L', '20-30万', '中', '有效线索计费'],
+  ['2026-08-25 13:26:51', '主号获客专家', '泰廉电商上架辅助系统', 'L202608251326', '张先生', '137****9014', '2026-08-25 13:20', '温州市', '奔驰C级', '40万以上', '高', '有效线索计费'],
+  ['2026-08-25 15:08:33', '主号获客专家', '菁英科技', 'L202608251508', '陈女士', '135****6620', '2026-08-25 15:02', '绍兴市', '大众迈腾', '15-20万', '中', '有效线索计费'],
+  ['2026-08-26 09:37:19', '主号获客专家', '泰廉电商上架辅助系统', 'L202608260937', '刘先生', '136****3382', '2026-08-26 09:31', '嘉兴市', '丰田凯美瑞', '15-20万', '低', '有效线索计费'],
+  ['2026-08-26 11:22:45', '主号获客专家', '菁英科技', 'L202608261122', '赵女士', '188****7719', '2026-08-26 11:18', '杭州市', '宝马3系', '30-40万', '高', '有效线索计费'],
+  ['2026-08-26 14:55:02', '主号获客专家', '泰廉电商上架辅助系统', 'L202608261455', '孙先生', '150****4408', '2026-08-26 14:49', '金华市', '奥迪A4L', '20-30万', '中', '有效线索计费'],
+  ['2026-08-26 16:31:28', '主号获客专家', '菁英科技', 'L202608261631', '周女士', '158****2265', '2026-08-26 16:26', '宁波市', '奔驰C级', '40万以上', '高', '有效线索计费'],
+  ['2026-08-27 09:05:41', '主号获客专家', '泰廉电商上架辅助系统', 'L202608270905', '吴先生', '186****8893', '2026-08-27 09:00', '杭州市', '大众迈腾', '15-20万', '中', '有效线索计费'],
+  ['2026-08-27 10:48:16', '主号获客专家', '菁英科技', 'L202608271048', '郑女士', '133****1174', '2026-08-27 10:43', '温州市', '丰田凯美瑞', '15-20万', '低', '有效线索计费'],
+
+  ['2026-08-25 11:16:38', '副号获客专家', '泰廉供应商资料管理平台', 'L202608251116', '冯先生', '189****5502', '2026-08-25 11:11', '杭州市', '宝马5系', '40万以上', '高', '有效线索计费'],
+  ['2026-08-25 14:47:55', '副号获客专家', '泰廉供应商资料管理平台', 'L202608251447', '褚女士', '152****3367', '2026-08-25 14:42', '绍兴市', '奥迪Q5L', '30-40万', '中', '有效线索计费'],
+  ['2026-08-26 10:09:12', '副号获客专家', '泰廉供应商资料管理平台', 'L202608261009', '卫先生', '177****8821', '2026-08-26 10:04', '嘉兴市', '奔驰GLC', '40万以上', '高', '有效线索计费'],
+  ['2026-08-26 13:38:44', '副号获客专家', '泰廉供应商资料管理平台', 'L202608261338', '蒋女士', '131****6690', '2026-08-26 13:33', '金华市', '大众途观L', '20-30万', '中', '有效线索计费'],
+  ['2026-08-26 15:52:09', '副号获客专家', '泰廉供应商资料管理平台', 'L202608261552', '沈先生', '155****4413', '2026-08-26 15:47', '宁波市', '宝马3系', '30-40万', '高', '有效线索计费'],
+  ['2026-08-27 09:41:37', '副号获客专家', '泰廉供应商资料管理平台', 'L202608270941', '韩女士', '182****7736', '2026-08-27 09:36', '杭州市', '奥迪A4L', '20-30万', '中', '有效线索计费'],
+  ['2026-08-27 11:29:53', '副号获客专家', '泰廉供应商资料管理平台', 'L202608271129', '杨先生', '134****2208', '2026-08-27 11:24', '温州市', '奔驰C级', '40万以上', '高', '有效线索计费'],
+  ['2026-08-27 15:07:26', '副号获客专家', '泰廉供应商资料管理平台', 'L202608271507', '朱女士', '187****9915', '2026-08-27 15:02', '绍兴市', '丰田汉兰达', '30-40万', '中', '有效线索计费'],
+
+  ['2026-08-25 09:58:14', '客服专员', '乐涵欣信息检索辅助软件', 'C202608250958', '', '', '', '', '', '', '', '转化线索计费'],
+  ['2026-08-25 12:33:47', '客服专员', '乐涵欣信息检索辅助软件', 'C202608251233', '', '', '', '', '', '', '', '转化线索计费'],
+  ['2026-08-25 16:19:05', '客服专员', '乐涵欣信息检索辅助软件', 'C202608251619', '', '', '', '', '', '', '', '转化线索计费'],
+  ['2026-08-26 10:27:31', '客服专员', '乐涵欣信息检索辅助软件', 'C202608261027', '', '', '', '', '', '', '', '转化线索计费'],
+  ['2026-08-26 11:54:18', '客服专员', '乐涵欣信息检索辅助软件', 'C202608261154', '', '', '', '', '', '', '', '转化线索计费'],
+  ['2026-08-26 15:11:42', '客服专员', '乐涵欣信息检索辅助软件', 'C202608261511', '', '', '', '', '', '', '', '转化线索计费'],
+  ['2026-08-27 09:22:56', '客服专员', '乐涵欣信息检索辅助软件', 'C202608270922', '', '', '', '', '', '', '', '转化线索计费'],
+  ['2026-08-27 13:46:23', '客服专员', '乐涵欣信息检索辅助软件', 'C202608271346', '', '', '', '', '', '', '', '转化线索计费'],
+  ['2026-08-27 16:38:49', '客服专员', '乐涵欣信息检索辅助软件', 'C202608271638', '', '', '', '', '', '', '', '转化线索计费'],
+
+  ['2026-08-25 10:05:00', '矩阵视频发布专员', '菁英科技', '配置对比：买车前先看这三项', '', '', '', '', '', '', '', '作品发布扣费'],
+  ['2026-08-26 10:05:00', '矩阵视频发布专员', '泰廉电商上架辅助系统', '二手车避坑指南：这五类车别碰', '', '', '', '', '', '', '', '作品发布扣费'],
+  ['2026-08-26 18:30:00', '矩阵视频发布专员', '菁英科技', '实拍：15万预算能买到什么车', '', '', '', '', '', '', '', '作品发布扣费'],
+  ['2026-08-27 10:05:00', '矩阵视频发布专员', '泰廉电商上架辅助系统', '置换补贴怎么算才不亏', '', '', '', '', '', '', '', '作品发布扣费'],
+  ['2026-08-27 18:30:00', '矩阵视频发布专员', '泰廉供应商资料管理平台', '提车必查：这六个地方最容易被忽略', '', '', '', '', '', '', '', '作品发布扣费']
+];
+
+// 骏驰汽车：门店级覆盖 30 + 高级结算（分档单价）
+const JUNCHI_ROWS = [
+  ['2026-08-20 10:12:04', '主号获客专家', '骏驰汽车旗舰店', 'L202608201012', '何先生', '139****3301', '2026-08-20 10:07', '杭州市', '宝马3系', '30-40万', '高', '获客结算扣费', 'advanced'],
+  ['2026-08-21 14:26:37', '主号获客专家', '骏驰汽车旗舰店', 'L202608211426', '吕女士', '158****8842', '2026-08-21 14:20', '绍兴市', '奥迪A4L', '20-30万', '中', '获客结算扣费', 'advanced'],
+  ['2026-08-23 09:48:51', '主号获客专家', '骏驰汽车旗舰店', 'L202608230948', '施先生', '186****5590', '2026-08-23 09:43', '杭州市', '奔驰C级', '40万以上', '高', '获客结算扣费', 'advanced'],
+  ['2026-08-24 16:03:19', '主号获客专家', '骏驰汽车二手车', 'L202608241603', '孔女士', '133****2274', '2026-08-24 15:58', '杭州市', '大众迈腾', '15-20万', '中', '有效线索计费'],
+  ['2026-08-25 11:37:45', '主号获客专家', '骏驰汽车二手车', 'L202608251137', '曹先生', '150****9016', '2026-08-25 11:32', '绍兴市', '丰田凯美瑞', '15-20万', '低', '有效线索计费'],
+  ['2026-08-26 15:21:08', '副号获客专家', '骏驰汽车二手车', 'L202608261521', '秦先生', '138****7764', '2026-08-26 15:16', '杭州市', '宝马X3', '30-40万', '高', '有效线索计费']
+];
+
+// 星耀家居：L1 单价待配置 → 回落刊例价
+const XINGYAO_ROWS = [
+  ['2026-08-12 10:24:16', '主号获客专家', '星耀家居官方号', 'L202608121024', '周先生', '139****2280', '2026-08-12 10:19', '杭州市', '全屋定制', '10-20万', '高', '有效线索计费'],
+  ['2026-08-15 14:08:52', '主号获客专家', '星耀家居官方号', 'L202608151408', '吴女士', '137****6641', '2026-08-15 14:03', '绍兴市', '客厅套装', '5-10万', '中', '有效线索计费'],
+  ['2026-08-19 09:36:41', '副号获客专家', '星耀家居严选', 'L202608190936', '郑先生', '150****3392', '2026-08-19 09:31', '宁波市', '实木床', '1-3万', '低', '有效线索计费'],
+  ['2026-08-24 11:52:30', '客服专员', '星耀家居客服号', 'C202608241152', '', '', '', '', '', '', '', '转化线索计费']
+];
+
+const fees = [];
+function pushFee(store, row) {
+  const [time, position, account, object, customer, contact, leadAt, city, model, budget, intent, remark, mode] = row;
+  fees.push({
+    store: store.name, storeId: store.id, industry: store.industry,
+    time: time, position: position, account: account, object: object,
+    customer: customer, contact: contact, leadAt: leadAt, city: city,
+    model: model, budget: budget, intent: intent, remark: remark,
+    advanced: mode === 'advanced'
+  });
+}
+// 老杨名车汇：全部基础结算，取价来源按 L1（客服/矩阵亦为 L1）
+YANG_ROWS.forEach(r => pushFee(stores[0], r));
+JUNCHI_ROWS.forEach(r => pushFee(stores[1], r));
+XINGYAO_ROWS.forEach(r => pushFee(stores[2], r));
+
+// 单价快照在费用记录写入时定格（§2.6）：之后改 L2 消耗数值或开关高级结算，
+// 只影响新发生的计费，不回溯改写已入账的历史费用——否则改一次价，账本余额
+// 和周期消耗都会跟着漂，与客户侧对不上账。
+fees.forEach(f => { f.snap = priceOfFee(f); });
+
+/* ---------- 取价与快照 ---------- */
+// 门店生效套餐：门店关联套餐优先，未关联回落所属行业的默认套餐；都没有则无套餐
+function effectivePackage(store) {
+  return packageById(store.packageId) || packageById(industryPackage[store.industry]) || null;
+}
+// 基础结算：套餐内该岗位配了价就用，留空回落刊例价（§2.2）
+// 套餐是整包的——门店一旦关联了自己的套餐，就不再回看行业默认套餐
+function basePriceOf(store, position) {
+  const own = packageById(store.packageId);
+  const pkg = own || packageById(industryPackage[store.industry]);
+  if (pkg && pkg.prices[position] != null) {
+    return { price: pkg.prices[position], source: own ? '门店关联套餐' : '行业默认套餐' };
+  }
+  return { price: LIST_PRICE[position], source: '刊例价兜底' };
+}
+// 高级结算：单价由原有获客结算配置决定，取价来源记为「高级结算配置」
+function seniorPriceOf(account, position, object) {
+  if (!account.senior) return null;
+  const tier = position === '副号获客专家' ? '收购-精准线索' : tierOfObject(object);
+  const p = account.senior.prices[tier];
+  return { price: p == null ? 50 : p, source: '高级结算配置', tier: tier };
+}
+// 按线索标识稳定派生分档，保证同一线索在各视图读数一致
+function tierOfObject(object) {
+  let h = 0;
+  for (let i = 0; i < object.length; i++) h = (h * 31 + object.charCodeAt(i)) >>> 0;
+  return SENIOR_TIERS[h % 3];
+}
+// 单条费用记录的单价快照：先判账号是否已开启高级结算，再回落基础结算链路
+// 已入账的记录直接返回定格快照，配置变更不影响历史
+function priceOfFee(fee) {
+  if (fee.snap) return fee.snap;
+  const store = stores.find(s => s.id === fee.storeId);
+  if (fee.isMinimum) return { price: 0, source: '—', settlement: '—' };
+  const account = (platformAccounts[fee.storeId] || []).find(a => a.name === fee.account);
+  if (account && account.settlement === 'advanced' && account.senior) {
+    const sp = seniorPriceOf(account, fee.position, fee.object);
+    return { price: sp.price, source: sp.source, settlement: '高级结算' };
+  }
+  const bp = basePriceOf(store, fee.position);
+  return { price: bp.price, source: bp.source, settlement: '基础结算' };
+}
+
+/* ---------- 服务期 / 低消周期计算 ---------- */
+function daysBetween(a, b) {
+  return Math.round((new Date(b + 'T00:00:00') - new Date(a + 'T00:00:00')) / 86400000);
+}
+function addDays(dateStr, n) {
+  const d = new Date(dateStr + 'T00:00:00');
+  d.setDate(d.getDate() + n);
+  // 这里必须按本地年月日拼串：解析用的是本地时区（T00:00:00），
+  // toISOString() 却输出 UTC，UTC+8 下每次加天数都会少一天（+90 变成 89）。
+  const p = v => String(v).padStart(2, '0');
+  return d.getFullYear() + '-' + p(d.getMonth() + 1) + '-' + p(d.getDate());
+}
+function serviceRemainDays(store) {
+  return daysBetween(TODAY, store.expiresAt.slice(0, 10));
+}
+function cycleRemainDays(store) {
+  return daysBetween(TODAY, store.cycleEndAt);
+}
+// 月最低消耗随生效套餐走，与单价同一条链路（§4.2）
+// 门店关联套餐 > 行业默认套餐；都没有则不设低消，周期末不做补差
+function monthlyMinimumOf(store) {
+  const pkg = effectivePackage(store);
+  return pkg ? pkg.monthlyMinimum : 0;
+}
+function cycleConsumedOf(store) {
+  return store.cycleConsumed;
+}
+
+/* ---------- 账本推导 ----------
+   余额、周期消耗、补扣金额一律由流水推出，不手填——否则「可用电力值 ≡
+   到账合计 − 扣减合计」这条恒等式会在演示数据里悄悄破掉。 */
+// 周期内业务消耗：不含周期末补扣（补差是找齐，不是消耗，§4.2）
+function cycleFeesOf(store) {
+  return fees.filter(f => f.storeId === store.id && !f.isMinimum &&
+    f.time.slice(0, 10) >= store.cycleStartAt && f.time.slice(0, 10) <= store.cycleEndAt);
+}
+function sumPower(list) {
+  return list.reduce((a, f) => a + priceOfFee(f).price, 0);
+}
+// 周期已结束、且服务期仍在的门店，在周期末日 23:59:59 落一条补差记录
+stores.forEach(s => {
+  if (cycleRemainDays(s) > 0 || serviceRemainDays(s) <= 0) return;
+  const gap = monthlyMinimumOf(s) - sumPower(cycleFeesOf(s));
+  if (gap <= 0) return;
+  fees.push({
+    store: s.name, storeId: s.id, industry: s.industry,
+    time: s.cycleEndAt + ' 23:59:59', position: '', account: '', object: '',
+    customer: '', contact: '', leadAt: '', city: '', model: '', budget: '', intent: '',
+    remark: '31天最低消耗补扣', advanced: false, isMinimum: true, power: gap,
+    snap: { price: 0, source: '—', settlement: '—' }
+  });
+});
+// 按时间重放账本：充值前/后可用电力值、账户可用电力值均由重放得出
+stores.forEach(s => {
+  const events = [];
+  (recharges[s.id] || []).forEach(r => events.push({ t: r.arrivedAt, inbound: r }));
+  fees.filter(f => f.storeId === s.id).forEach(f => events.push({ t: f.time, fee: f }));
+  events.sort((a, b) => a.t === b.t ? (a.fee ? -1 : 1) : (a.t < b.t ? -1 : 1));
+  let bal = 0;
+  events.forEach(e => {
+    if (e.inbound) { e.inbound.before = bal; bal += e.inbound.amount; e.inbound.after = bal; }
+    else { bal -= e.fee.isMinimum ? e.fee.power : priceOfFee(e.fee).price; }
+  });
+  s.balance = bal;
+  s.cycleConsumed = sumPower(cycleFeesOf(s));
+  s.frozenPower = s.status === 'frozen' ? bal : 0;
+});
+
+/* ---------- 通用工具 ---------- */
+const $ = s => document.querySelector(s);
+const $$ = s => Array.from(document.querySelectorAll(s));
+const esc = v => String(v == null ? '' : v).replace(/[&<>"']/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
+const num = n => Number(n || 0).toLocaleString('en-US');
+const signed = n => (n > 0 ? '+' : '') + num(n);
+
+function toast(msg, isError) {
+  const t = document.createElement('div');
+  t.className = 'toast' + (isError ? ' toast--error' : '');
+  t.innerHTML = '<span>' + (isError ? '✕' : '✓') + '</span><span>' + esc(msg) + '</span>';
+  $('#toastRoot').appendChild(t);
+  setTimeout(() => t.remove(), 2400);
+}
+
+/* ---------- 左侧导航 ---------- */
+const NAV = [
+  { label: 'AI中台', disabled: true },
+  { label: '对话管理', disabled: true },
+  { label: '大黄蜂', disabled: true },
+  { label: '擎天', disabled: true },
+  { label: '聆居', disabled: true },
+  {
+    label: '数班', open: true, children: [
+      { label: '用户管理', route: 'store-list' },
+      { label: '云电脑管理', disabled: true },
+      { label: '注册审核', disabled: true },
+      { label: '套餐包管理', route: 'packages' }
+    ]
+  },
+  { label: '聆律', disabled: true },
+  { label: '线索猎人...', disabled: true },
+  { label: '聆美', disabled: true },
+  { label: '聆商', disabled: true },
+  { label: '绿城', disabled: true },
+  { label: '炮机', disabled: true }
+];
+
+function renderNav() {
+  $('#nav').innerHTML = NAV.map(g => {
+    if (!g.children) {
+      return '<div class="nav-group"><div class="nav-item" data-nav-disabled="1">' +
+        '<span class="nav-dot"></span><span class="nav-label">' + esc(g.label) + '</span>' +
+        '<span class="nav-arrow">›</span></div></div>';
+    }
+    return '<div class="nav-group">' +
+      '<div class="nav-item' + (g.open ? ' is-open' : '') + '" data-nav-toggle="1">' +
+      '<span class="nav-dot"></span><span class="nav-label">' + esc(g.label) + '</span>' +
+      '<span class="nav-arrow">›</span></div>' +
+      '<div class="nav-sub">' + g.children.map(c =>
+        '<div class="nav-item" data-route="' + (c.route || '') + '"' +
+        (c.disabled ? ' data-nav-disabled="1"' : '') + '>' + esc(c.label) + '</div>'
+      ).join('') + '</div></div>';
+  }).join('');
+}
+
+/* ---------- 路由 ---------- */
+const state = { route: 'store-list', storeId: null, page: 1, perPage: 20 };
+
+// 门店级路由只保留「店端账号详情」一条；员工消耗套餐包 / 电力账户 / VIP 编辑 /
+// 车型库均由门店行的「···」菜单以抽屉或弹窗承载，不产生路由（见 STORE_MENU）
+function parseHash() {
+  const raw = location.hash.replace(/^#\/?/, '');
+  const [route, a] = raw.split('/');
+  if (route === 'store-detail' && a) {
+    state.route = route; state.storeId = a;
+  } else if (route === 'packages' || route === 'store-list') {
+    state.route = route;
+  } else {
+    // 无效或已下线的地址（如旧的 #/store-l2/s1）回落列表，并把地址栏一起纠回来，
+    // 免得页面显示列表、URL 却停留在打不开的路径上。raw 为空是首次进入、
+    // 由启动段补默认地址，这里不要抢先写 hash，否则会多触发一次 hashchange。
+    state.route = 'store-list';
+    if (raw && location.hash !== '#/store-list') location.hash = '#/store-list';
+  }
+}
+function go(path) { location.hash = '#/' + path; }
+
+function currentStore() { return stores.find(s => s.id === state.storeId) || stores[0]; }
+
+/* ---------- 面包屑 ---------- */
+function renderTopbar() {
+  const items = [];
+  if (state.route === 'store-list') {
+    items.push(['数班店端用户管理', null]);
+  } else if (state.route === 'store-detail') {
+    items.push(['数班店端用户管理', 'store-list']);
+    items.push([currentStore().name + '店端账号详情', null]);
+  } else if (state.route === 'packages') {
+    items.push(['数班', null]);
+    items.push(['套餐包管理', null]);
+  }
+  $('#topbar').innerHTML = items.map((it, i) =>
+    (i ? '<span class="crumb-sep">|</span>' : '') +
+    (it[1]
+      ? '<span class="crumb link" data-route="' + it[1] + '">' + esc(it[0]) + '</span>'
+      : '<span class="crumb crumb-current">' + esc(it[0]) + '</span>')
+  ).join('');
+  $$('.nav-item[data-route]').forEach(el => {
+    el.classList.toggle('is-active', el.dataset.route === (state.route === 'store-detail' ? 'store-list' : state.route));
+  });
+}
+
+/* ---------- 分页 ---------- */
+function pager(total, page, perPage, onAttr, resizable) {
+  const pages = Math.max(1, Math.ceil(total / perPage));
+  let btns = '';
+  for (let i = 1; i <= pages; i++) {
+    btns += '<button class="pager-btn' + (i === page ? ' is-active' : '') + '" ' + onAttr + '="' + i + '">' + i + '</button>';
+  }
+  const sizeOpts = [10, 20, 50].map(n =>
+    '<option value="' + n + '"' + (n === perPage ? ' selected' : '') + '>' + n + ' 条/页</option>').join('');
+  return '<div class="pager">' +
+    '<span class="pager-total">共 ' + pages + ' 页/' + total + ' 条数据</span>' +
+    '<button class="pager-btn" ' + onAttr + '="' + Math.max(1, page - 1) + '"' + (page <= 1 ? ' disabled' : '') + '>‹</button>' +
+    btns +
+    '<button class="pager-btn" ' + onAttr + '="' + Math.min(pages, page + 1) + '"' + (page >= pages ? ' disabled' : '') + '>›</button>' +
+    (resizable
+      ? '<select class="select input--sm" style="height:28px" data-pagesize="' + onAttr + '">' + sizeOpts + '</select>'
+      : '<select class="select input--sm" style="height:28px" disabled>' + sizeOpts + '</select>') +
+    '</div>';
+}
+
+/* ---------- 状态标签 ---------- */
+function accountStatusTag(store) {
+  return store.status === 'frozen'
+    ? '<span class="tag tag--danger">已冻结</span>'
+    : '<span class="tag tag--success">正常</span>';
+}
+
+/* ---------- 页面 1：数班店端用户列表 ---------- */
+function renderStoreList() {
+  const kw = state.storeKeyword || '';
+  const ind = state.storeIndustry || '';
+  const filtered = stores.filter(s =>
+    (!kw || s.name.indexOf(kw) >= 0) && (!ind || s.industry === ind));
+
+  const perPage = state.perPage || 20;
+  const pages = Math.max(1, Math.ceil(filtered.length / perPage));
+  const page = Math.min(state.page || 1, pages);
+  const rows = filtered.slice((page - 1) * perPage, page * perPage).map(s => {
+    const bind = s.accountTotal > 0
+      ? '<div>全部：' + s.accountTotal + '个</div>' + (s.douyinTotal ? '<div class="cell-sub">抖音：' + s.douyinTotal + '个</div>' : '')
+      : '全部：' + s.accountTotal + '个';
+    const days = serviceRemainDays(s);
+    const expiry = esc(s.expiresAt) +
+      (s.status === 'frozen' ? '' : days <= 7
+        ? '<div class="cell-sub text-danger">剩余 ' + days + ' 天</div>'
+        : '<div class="cell-sub">剩余 ' + days + ' 天</div>');
+    const bal = '<span class="cell-num' + (s.balance < 0 ? ' text-danger' : '') + '">' + num(s.balance) + '</span>';
+    return '<tr>' +
+      '<td class="cell-strong">' + esc(s.name) + '</td>' +
+      '<td>' + bind + '</td>' +
+      '<td class="cell-num">' + esc(s.phone) + '</td>' +
+      '<td class="mono">' + esc(s.storeNo) + '</td>' +
+      '<td>' + esc(s.industry) + '</td>' +
+      '<td>' + accountStatusTag(s) + '</td>' +
+      '<td>' + expiry + '</td>' +
+      '<td>' + bal + '</td>' +
+      '<td class="col-op">' +
+      '<span class="link" data-store-edit="' + s.id + '">编辑</span>' +
+      '<span class="link" data-store-login="' + s.id + '">一键登录</span>' +
+      '<span class="link" data-store-detail="' + s.id + '">账号详情</span>' +
+      '<span class="link" data-store-menu="' + s.id + '">···</span>' +
+      '</td></tr>';
+  }).join('');
+
+  return '' +
+    '<div class="page is-active">' +
+    '<div class="card"><div class="filter-bar">' +
+    '<div class="field"><span class="field-label">店铺名称：</span>' +
+    '<select class="select" data-filter="storeKeyword"><option value="">请选择</option>' +
+    stores.map(s => '<option' + (kw === s.name ? ' selected' : '') + '>' + esc(s.name) + '</option>').join('') +
+    '</select></div>' +
+    '<div class="field"><span class="field-label">行业：</span>' +
+    '<select class="select" data-filter="storeIndustry"><option value="">请选择</option>' +
+    INDUSTRIES.map(i => '<option' + (ind === i ? ' selected' : '') + '>' + esc(i) + '</option>').join('') +
+    '</select></div>' +
+    '<div class="filter-actions">' +
+    '<button class="btn btn--primary" data-action="store-search">查找</button>' +
+    '<button class="btn" data-action="store-reset">重置</button>' +
+    '</div></div></div>' +
+
+    '<div class="card card--flush">' +
+    '<div class="card-head"><div class="card-title">数班店端用户列表</div></div>' +
+    '<div class="card-body" style="padding-top:0">' +
+    '<div class="table-wrap"><table class="table"><thead><tr>' +
+    '<th>店铺名称</th><th>绑定账号数量</th><th>登录手机号</th><th>店铺id</th><th>行业</th>' +
+    '<th>账户状态</th><th>到期时间</th><th>余额</th><th class="col-op">操作</th>' +
+    '</tr></thead><tbody>' + (rows || '<tr><td colspan="9"><div class="empty">暂无数据</div></td></tr>') + '</tbody></table></div>' +
+    pager(filtered.length, page, perPage, 'data-page', true) +
+    '</div></div></div>';
+}
+
+/* ---------- 页面 2：店端账号详情（平台账号列表，唯一保留的门店级路由） ---------- */
+function renderStorePage() {
+  return '<div class="page is-active">' + tabPlatform(currentStore()) + '</div>';
+}
+
+/* ---------- 门店行「···」菜单 ----------
+   四项都以浮层承载、不跳转：VIP编辑 / 车型库走弹窗，
+   员工消耗套餐包 / 电力账户走侧边栏。操作完仍停留在门店列表，不丢失筛选与分页。 */
+const STORE_MENU = [
+  { label: 'VIP编辑',       act: 'vip' },
+  { label: '查看车型库',     act: 'garage' },
+  { label: '员工消耗套餐包', act: 'pkg' },
+  { label: '电力账户',       act: 'account' }
+];
+function openRowMenu(storeId, trigger) {
+  const root = $('#menuRoot');
+  root.innerHTML = '<div class="row-menu">' + STORE_MENU.map(m =>
+    '<div class="row-menu-item" data-menu-store="' + storeId + '" data-menu-act="' + m.act + '">' +
+    esc(m.label) + '</div>').join('') + '</div>';
+  const menu = root.firstChild;
+  const r = trigger.getBoundingClientRect();
+  const w = menu.offsetWidth, h = menu.offsetHeight;
+  const left = Math.min(r.right - w, window.innerWidth - w - 12);
+  let top = r.bottom + 6;
+  if (top + h > window.innerHeight - 12) top = Math.max(12, r.top - h - 6);
+  menu.style.left = Math.max(12, left) + 'px';
+  menu.style.top = top + 'px';
+}
+function closeRowMenu() { $('#menuRoot').innerHTML = ''; }
+
+/* ---- 页签：平台账号 ---- */
+function tabPlatform(s) {
+  const list = platformAccounts[s.id] || [];
+  const kw = state.acctKeyword || '', uid = state.acctUid || '', human = state.acctHuman || '';
+  const filtered = list.filter(a =>
+    (!kw || a.name.indexOf(kw) >= 0) && (!uid || a.uid.indexOf(uid) >= 0) && (!human || a.human === human));
+
+  const rows = filtered.map(a => {
+    const canAdvanced = ADVANCED_POSITIONS.indexOf(a.human) >= 0;
+    const seniorLink = canAdvanced
+      ? '<span class="link" data-senior-config="' + a.id + '">获客专家配置</span>'
+      : '<span class="text-3" style="font-size:13px">不支持</span>';
+    return '<tr>' +
+      '<td><input type="checkbox"></td>' +
+      '<td class="cell-strong">' + esc(a.name) + '</td>' +
+      '<td class="mono cell-num">' + esc(a.uid) + '</td>' +
+      '<td class="mono" style="max-width:220px"><span class="ellipsis" title="' + esc(a.secId) + '">' + esc(a.secId) + '</span></td>' +
+      '<td>' + esc(a.channel) + '</td>' +
+      '<td>' + esc(a.human) + '</td>' +
+      '<td>' + esc(a.osom) + '</td>' +
+      '<td class="col-op">' +
+      '<span class="link" data-acct-edit="' + a.id + '">编辑</span>' +
+      '<span class="link" data-acct-human="' + a.id + '">数字人配置</span>' +
+      seniorLink +
+      '<span class="link" data-acct-more="' + a.id + '">···</span>' +
+      '</td></tr>';
+  }).join('');
+
+  const humans = Array.from(new Set(list.map(a => a.human)));
+
+  return '<div class="card"><div class="filter-bar">' +
+    '<div class="field"><span class="field-label">账号名称：</span><input class="input" placeholder="请输入" data-filter="acctKeyword" value="' + esc(kw) + '"></div>' +
+    '<div class="field"><span class="field-label">uid：</span><input class="input" placeholder="请输入" data-filter="acctUid" value="' + esc(uid) + '"></div>' +
+    '<div class="field"><span class="field-label">secId：</span><input class="input" placeholder="请输入" data-filter="acctSecId"></div>' +
+    '<div class="field"><span class="field-label">渠道：</span><select class="select"><option>请选择</option><option>抖音</option></select></div>' +
+    '<div class="field"><span class="field-label">数字人：</span><select class="select" data-filter="acctHuman"><option value="">请选择</option>' +
+    humans.map(h => '<option' + (human === h ? ' selected' : '') + '>' + esc(h) + '</option>').join('') + '</select></div>' +
+    '<div class="filter-actions">' +
+    '<button class="btn btn--primary" data-action="acct-search">查找</button>' +
+    '<button class="btn" data-action="acct-reset">重置</button>' +
+    '</div></div></div>' +
+
+    '<div class="card card--flush">' +
+    '<div class="card-head"><div class="card-title">' + esc(s.name) + '店端账号详情</div>' +
+    '<div class="card-actions">' +
+    '<button class="btn is-disabled" disabled>批量绑定一店一型</button>' +
+    '<button class="btn is-disabled" disabled>批量绑定数字人</button>' +
+    '</div></div>' +
+    '<div class="card-body" style="padding-top:0">' +
+    '<div class="table-wrap"><table class="table"><thead><tr>' +
+    '<th class="col-check"><input type="checkbox"></th><th>账号名称</th><th>uid</th><th>secId</th>' +
+    '<th>渠道</th><th>数字人</th><th>一店一型</th><th class="col-op">操作</th>' +
+    '</tr></thead><tbody>' + (rows || '<tr><td colspan="8"><div class="empty">暂无数据</div></td></tr>') + '</tbody></table></div>' +
+    pager(filtered.length, 1, 20, 'data-page', false) +
+    '</div></div>';
+}
+
+/* ---- 侧边栏：员工消耗套餐包 —— 门店行「···」菜单打开，不跳转 ---- */
+function openPkgDrawer(storeId) {
+  const s = stores.find(x => x.id === storeId) || currentStore();
+  openDrawer('员工消耗套餐包', pkgBody(s), pkgFoot(s));
+}
+function pkgFoot(s) {
+  return '<span class="foot-note">月最低消耗 <b>' + num(monthlyMinimumOf(s)) + '</b> 电力值</span>' +
+    '<button class="btn" data-action="pkg-reload" data-id="' + s.id + '">重置</button>' +
+    '<button class="btn btn--primary" data-action="pkg-assign" data-id="' + s.id + '">保存</button>';
+}
+function pkgBody(s) {
+  const indPkg = packageById(industryPackage[s.industry]);
+
+  const opts = ['<option value="">未关联（跟随行业默认套餐）</option>'].concat(
+    packages.map(p => '<option value="' + p.id + '"' + (s.packageId === p.id ? ' selected' : '') + '>' +
+      esc(p.name) + '</option>')).join('');
+
+  const rows = POSITIONS.map(p => {
+    const r = basePriceOf(s, p);
+    return '<tr>' +
+      '<td class="cell-strong nw">' + esc(p) + '</td>' +
+      '<td class="cell-num">' + r.price + '</td>' +
+      '<td>' + esc(r.source) + '</td>' +
+      '</tr>';
+  }).join('');
+
+  return '<div class="card card--flush" style="margin-bottom:0">' +
+    '<div class="card-head">' +
+    '<div class="card-title">关联套餐<small>' + esc(s.name) + ' · ' + esc(s.industry) + '</small></div>' +
+    '<span class="link" data-open-platform="' + s.id + '">平台账号结算</span>' +
+    '</div>' +
+    '<div class="card-body">' +
+    '<select class="select select--block" id="pkgSelect">' + opts + '</select>' +
+    '<div class="field-hint" style="margin-top:8px">行业默认套餐：' +
+    (indPkg ? esc(indPkg.name) : '<span class="text-3">未关联</span>') + '，单位电力值</div>' +
+    '</div></div>' +
+
+    '<div class="card card--flush" style="margin:14px 0 0">' +
+    '<div class="card-head"><div class="card-title">本店生效单价</div></div>' +
+    '<div class="card-body" style="padding-top:0">' +
+    '<div class="table-wrap"><table class="table"><thead><tr>' +
+    '<th>岗位</th><th>生效单价（电力值）</th><th>取价来源</th>' +
+    '</tr></thead><tbody>' + rows + '</tbody></table></div>' +
+    '</div></div>';
+}
+
+/* ---- 侧边栏：电力账户（§10.1 / §10.2）—— 门店行「···」菜单打开，不跳转 ---- */
+function openAccountDrawer(storeId) {
+  const s = stores.find(x => x.id === storeId) || currentStore();
+  openDrawer('电力账户', accountBody(s),
+    '<button class="btn btn--primary" data-action="open-vip" data-id="' + s.id + '">VIP 编辑</button>',
+    'drawer--wide');
+}
+function accountBody(s) {
+  const frozen = s.status === 'frozen';
+  const svcDays = serviceRemainDays(s);
+  const cycDays = cycleRemainDays(s);
+  const minimum = monthlyMinimumOf(s);
+  const consumed = cycleConsumedOf(s);
+  // 未生效任何套餐时没有低消，进度条不做除零
+  const pct = minimum > 0 ? Math.min(100, Math.round(consumed / minimum * 100)) : 0;
+  const effPkg = effectivePackage(s);
+
+  const svcFoot = frozen
+    ? '<div class="stat-foot text-danger">服务期已到期，账户已冻结</div>'
+    : (svcDays <= 7
+      ? '<div class="stat-foot text-danger">距到期仅剩 ' + svcDays + ' 天</div>'
+      : '<div class="stat-foot">剩余 ' + svcDays + ' 天</div>');
+
+  const cycleCard = frozen
+    ? '<div class="card"><div class="card-title" style="margin-bottom:12px">月度最低消耗周期</div>' +
+      '<div class="alert alert--danger" style="margin:0"><span class="alert-icon">!</span><span>' +
+      '账户已冻结，低消周期暂停。增加付费时间后自动解冻。</span></div></div>'
+    : '<div class="card">' +
+      '<div class="card-title" style="margin-bottom:12px">月度最低消耗周期<small>31 天 · 账户级结算</small></div>' +
+      '<div class="metric-row">' +
+      metricItem('本周期', s.cycleStartAt + ' ~ ' + s.cycleEndAt) +
+      // 周期已过结束时点但尚未结转：直接写天数会出现「剩余 -2 天」
+      metricItem('剩余天数', cycDays >= 0 ? cycDays + ' 天' : '已结束 ' + (-cycDays) + ' 天，待结转',
+        cycDays >= 0 ? '' : 'is-danger') +
+      // 标出生效套餐，否则看不出这个数是哪来的
+      metricItem('月最低消耗', num(minimum) + '<span class="unit">电力值' +
+        (effPkg ? ' · ' + esc(effPkg.name) : '') + '</span>', 'is-strong') +
+      '</div>' +
+      '<div class="progress"><div class="progress-bar' + (pct >= 100 ? ' is-complete' : '') + '" style="width:' + pct + '%"></div></div>' +
+      '<div class="progress-legend"><span>本周期已消耗 <b class="mono" style="color:#303133">' + num(consumed) + '</b> 电力值</span>' +
+      '<span>已完成 ' + pct + '%</span></div></div>';
+
+  const allRc = recharges[s.id] || [];
+  const rcRows = allRc.slice().reverse().map(r => {
+    // 备注里的抵扣额带千分位（num()），正则要连逗号一起收，否则 ≥1000 时高亮丢失
+    const deduct = /抵扣([\d,]+)电力值/.exec(r.remark);
+    return '<tr>' +
+      '<td class="mono">' + esc(r.id) + '</td>' +
+      // VIP 调整可以为负，此时不能再硬拼「+」，颜色也要跟着翻
+      '<td class="cell-num cell-strong ' + (r.amount < 0 ? 'text-danger' : 'text-success') + '">' + signed(r.amount) + '</td>' +
+      // 充值前/后合成一格：抽屉比弹窗窄，八列并排会把备注挤成一字一行
+      '<td class="cell-num" title="充值前 ' + num(r.before) + ' → 充值后 ' + num(r.after) + '">' +
+      '<span' + (r.before < 0 ? ' class="text-danger"' : '') + '>' + num(r.before) + '</span>' +
+      ' <span class="text-3">→</span> ' + num(r.after) + '</td>' +
+      // 抽屉比弹窗窄，两个时间列去掉秒，完整值放 title 里
+      '<td class="cell-num" title="' + esc(r.arrivedAt) + '">' + esc(r.arrivedAt.slice(0, 16)) + '</td>' +
+      '<td class="cell-num" title="' + esc(r.loggedAt) + '">' + esc(r.loggedAt.slice(0, 16)) + '</td>' +
+      '<td>' + esc(r.operator) + '</td>' +
+      '<td>' + (deduct ? '补充电力值，抵扣 <b class="text-danger">' + num(deduct[1].replace(/,/g, '')) + '</b> 电力值' : esc(r.remark)) + '</td>' +
+      '</tr>';
+  }).join('');
+
+  const lastRc = (recharges[s.id] || []).slice(-1)[0];
+
+  return '<div class="stat-row">' +
+    '<div class="stat"><div class="stat-label">可用电力值</div>' +
+    '<div class="stat-value is-hero' + (s.balance < 0 ? ' is-negative' : '') + '">' + num(s.balance) + '</div>' +
+    '<div class="stat-foot">' + (s.balance < 0 ? '账户已透支'
+      : (lastRc ? '最近到账 ' + esc(lastRc.arrivedAt.slice(0, 10)) : '暂无充值记录')) + '</div></div>' +
+
+    '<div class="stat"><div class="stat-label">冻结电力值</div>' +
+    '<div class="stat-value">' + num(s.frozenPower) + '</div>' +
+    '<div class="stat-foot">' + (frozen ? '服务期到期后冻结' : '无') + '</div></div>' +
+
+    '<div class="stat"><div class="stat-label">服务期截止日</div>' +
+    '<div class="stat-value">' + esc(s.expiresAt.slice(0, 10)) + '</div>' +
+    svcFoot + '</div>' +
+
+    '<div class="stat"><div class="stat-label">账户状态</div>' +
+    '<div class="stat-value">' + (frozen ? '<span class="text-danger">已冻结</span>' : '<span class="text-success">正常</span>') + '</div>' +
+    '<div class="stat-foot">首次充值到账日 ' + esc(s.firstRechargeAt.slice(0, 10)) + '</div></div>' +
+    '</div>' +
+
+    cycleCard +
+
+    '<div class="card card--flush">' +
+    '<div class="card-head"><div class="card-title">充值记录<small>共 ' + allRc.length + ' 笔</small></div>' +
+    '<span class="link" data-action="export-recharge" data-id="' + s.id + '">导出</span></div>' +
+    '<div class="card-body" style="padding-top:0"><div class="table-wrap"><table class="table"><thead><tr>' +
+    '<th>记录标识</th><th>到账电力值</th><th>可用电力值</th>' +
+    '<th>到账时间</th><th>登记时间</th><th>操作人</th><th>备注</th>' +
+    '</tr></thead><tbody>' +
+    (rcRows || '<tr><td colspan="7"><div class="empty">暂无充值记录</div></td></tr>') +
+    '</tbody></table></div></div></div>';
+}
+
+function descItem(label, value, cls) {
+  return '<div class="desc-item"><div class="desc-label">' + esc(label) + '</div>' +
+    '<div class="desc-value ' + (cls || '') + '">' + (cls === 'is-num' ? value : esc(value)) + '</div></div>';
+}
+/* 一行内联指标：标签和值并排，不再各占一行 */
+function metricItem(label, value, cls) {
+  return '<div class="metric"><span class="metric-label">' + esc(label) + '</span>' +
+    '<span class="metric-value ' + (cls || '') + '">' + (cls === 'is-strong' ? value : esc(value)) + '</span></div>';
+}
+
+/* ---------- 页面 3：套餐包管理（§10.3） ---------- */
+// 关联情况：被哪些行业、哪些门店引用——列表展示与删除保护读同一个函数，避免两处判断走散
+function usageOf(pkgId) {
+  return {
+    industries: INDUSTRIES.filter(i => industryPackage[i] === pkgId),
+    stores: stores.filter(s => s.packageId === pkgId)
+  };
+}
+function usageText(u) {
+  const parts = [];
+  if (u.industries.length) parts.push('「' + u.industries.join('、') + '」行业');
+  if (u.stores.length) parts.push(u.stores.length + ' 家门店');
+  return parts.join('和');
+}
+
+function renderPackages() {
+  const priceCell = v => v == null
+    ? '<td class="cell-num"><span class="text-3">未配置</span></td>'
+    : '<td class="cell-num">' + v + '</td>';
+
+  const rows = packages.map(p => {
+    const u = usageOf(p.id);
+    return '<tr>' +
+      '<td class="cell-strong nw">' + esc(p.name) +
+      (p.note ? '<div class="cell-sub">' + esc(p.note) + '</div>' : '') + '</td>' +
+      POSITIONS.map(pos => priceCell(p.prices[pos])).join('') +
+      '<td class="cell-num">' + num(p.monthlyMinimum) + '</td>' +
+      '<td>' + (u.industries.length ? esc(u.industries.join('、')) : '<span class="text-3">—</span>') + '</td>' +
+      '<td>' + (u.stores.length ? esc(u.stores.map(s => s.name).join('、')) : '<span class="text-3">—</span>') + '</td>' +
+      '<td class="col-op">' +
+      '<span class="link" data-pkg-edit="' + p.id + '">编辑</span>' +
+      '<span class="link link--danger" data-pkg-del="' + p.id + '">删除</span>' +
+      '</td></tr>';
+  }).join('');
+
+  const indRows = INDUSTRIES.map(i => {
+    const cur = industryPackage[i];
+    const opts = ['<option value="">未关联</option>'].concat(
+      packages.map(p => '<option value="' + p.id + '"' + (cur === p.id ? ' selected' : '') + '>' +
+        esc(p.name) + '</option>')).join('');
+    const pkg = packageById(cur);
+    return '<tr>' +
+      '<td class="cell-strong nw">' + esc(i) + '</td>' +
+      '<td><select class="select" data-pkg-industry="' + esc(i) + '">' + opts + '</select></td>' +
+      '<td class="cell-num">' + (pkg ? num(pkg.monthlyMinimum) : '<span class="text-3">—</span>') + '</td>' +
+      '<td class="cell-num">' + num(stores.filter(s => s.industry === i && !s.packageId).length) + '</td>' +
+      '</tr>';
+  }).join('');
+
+  return '<div class="card card--flush">' +
+    '<div class="card-head"><div class="card-title">套餐包列表<small>单位：电力值</small></div>' +
+    '<div class="card-actions"><button class="btn btn--primary" data-action="pkg-add">新增套餐包</button></div></div>' +
+    '<div class="card-body" style="padding-top:0">' +
+    '<div class="table-wrap"><table class="table"><thead><tr>' +
+    '<th>套餐名称</th>' + POSITIONS.map(p => '<th>' + esc(p) + '</th>').join('') +
+    '<th>月最低消耗</th><th>关联行业</th><th>关联门店</th><th class="col-op">操作</th>' +
+    '</tr></thead><tbody>' + (rows || '<tr><td colspan="9"><div class="empty">暂无数据</div></td></tr>') + '</tbody></table></div>' +
+    '<div class="field-hint" style="padding:12px 0 0">' +
+    '门店关联套餐后四个岗位整包生效；套餐内留空的岗位按刊例价计费。</div>' +
+    '</div></div>' +
+
+    '<div class="card card--flush" style="margin-top:14px">' +
+    '<div class="card-head"><div class="card-title">行业默认配置</div></div>' +
+    '<div class="card-body" style="padding-top:0">' +
+    '<div class="table-wrap"><table class="table"><thead><tr>' +
+    '<th>行业</th><th>默认套餐</th><th>月最低消耗（电力值）</th><th>跟随本行业的门店</th>' +
+    '</tr></thead><tbody>' + indRows + '</tbody></table></div>' +
+    '</div></div>';
+}
+
+/* ---------- 抽屉 / 弹窗基础设施 ---------- */
+function openDrawer(title, body, foot, size) {
+  $('#modalRoot').innerHTML = '';   // 抽屉与弹窗互斥，避免叠成两层
+  $('#drawerRoot').innerHTML =
+    '<div class="drawer is-open ' + (size || '') + '"><div class="drawer-head">' +
+    '<div class="drawer-title">' + esc(title) + '</div>' +
+    '<button class="drawer-close" data-close="1">✕</button></div>' +
+    '<div class="drawer-body">' + body + '</div>' +
+    '<div class="drawer-foot">' + foot + '</div></div>';
+  $('#mask').classList.add('is-open');
+}
+function openModal(title, body, foot, size) {
+  $('#drawerRoot').innerHTML = '';  // 同上
+  $('#modalRoot').innerHTML =
+    '<div class="modal is-open ' + (size || '') + '"><div class="modal-head">' +
+    '<div class="modal-title">' + esc(title) + '</div>' +
+    '<button class="modal-close" data-close="1">✕</button></div>' +
+    '<div class="modal-body">' + body + '</div>' +
+    '<div class="modal-foot">' + foot + '</div></div>';
+  $('#mask').classList.add('is-open');
+}
+function closeOverlay() {
+  closeRowMenu();
+  $('#drawerRoot').innerHTML = '';
+  $('#modalRoot').innerHTML = '';
+  $('#mask').classList.remove('is-open');
+}
+
+function formRow(label, control, required, extraCls) {
+  return '<div class="form-row ' + (extraCls || '') + '">' +
+    '<span class="field-label' + (required ? ' is-required' : '') + '">' + esc(label) + '</span>' +
+    '<span class="form-control">' + control + '</span></div>';
+}
+
+/* ---------- 抽屉：获客专家配置（高级结算，按平台账号） ---------- */
+function openSeniorConfig(accountId) {
+  const s = currentStore();
+  const a = (platformAccounts[s.id] || []).find(x => x.id === accountId);
+  if (!a) return;
+  const on = a.settlement === 'advanced' && !!a.senior;
+  const cfg = a.senior || {
+    prices: { '销售-精准线索': '', '销售-中等线索': '', '销售-普通线索': '', '收购-精准线索': '' },
+    rules: { cities: [], models: '', budgetEnabled: false, budgetMin: '', budgetMax: '', brandEnabled: false }
+  };
+
+  const priceRows = SENIOR_TIERS.map(t =>
+    formRow(t, '<input class="input input--block" type="number" min="1" step="1" placeholder="可配置单价，仅可输入正整数" ' +
+      'data-senior-price="' + esc(t) + '" value="' + (cfg.prices[t] === '' || cfg.prices[t] == null ? '' : cfg.prices[t]) + '"' +
+      (on ? '' : ' disabled') + '>', true)).join('');
+
+  const body =
+    '<div class="form-block">' +
+    formRow('高级结算', '<span class="switch' + (on ? ' is-on' : '') + '" data-senior-toggle="1"></span>' +
+      '<span class="inline-note">' + (on ? '已开启，该账号优先走高级结算，基础结算不生效' : '未开启，该账号走基础结算') + '</span>') +
+    '</div>' +
+
+    '<div class="form-block">' +
+    '<div class="form-block-title">结算金额配置<small>单位：电力值</small></div>' + priceRows +
+    '</div>' +
+
+    '<div class="form-block">' +
+    '<div class="form-block-title">结算规则配置</div>' +
+    formRow('周边城市', '<input class="input input--block" placeholder="请选择省/市" value="' + esc((cfg.rules.cities || []).join('、')) + '"' + (on ? '' : ' disabled') + '>') +
+    formRow('热卖车型', '<input class="input input--block" placeholder="请选择热卖车型" value="' + esc(cfg.rules.models || '') + '"' + (on ? '' : ' disabled') + '>') +
+    formRow('预算范围', '<span class="switch' + (cfg.rules.budgetEnabled ? ' is-on' : '') + '" data-senior-budget="1"></span>', false, 'form-row--top') +
+    formRow('', '<input class="input input--sm" placeholder="可结算预算下限" value="' + esc(cfg.rules.budgetMin) + '"' + (on ? '' : ' disabled') + '>' +
+      '<span class="inline-note">万</span><span class="inline-note">—</span>' +
+      '<input class="input input--sm" placeholder="可结算预算上限" value="' + esc(cfg.rules.budgetMax) + '"' + (on ? '' : ' disabled') + '>' +
+      '<span class="inline-note">万</span>') +
+    '</div>' +
+
+    '<div class="form-block">' +
+    '<div class="form-block-title">触达规则配置</div>' +
+    formRow('可触达品牌/车系', '<span class="switch' + (cfg.rules.brandEnabled ? ' is-on' : '') + '" data-senior-brand="1"></span>', false, 'form-row--top') +
+    '</div>';
+
+  openDrawer('获客专家配置', body,
+    '<button class="btn" data-close="1">取消</button>' +
+    '<button class="btn btn--primary" data-action="senior-save" data-id="' + a.id + '">保存</button>');
+}
+
+/* ---------- 弹窗：查看车型库（门店既有功能，不进计费链路） ---------- */
+function openGarageDocs(storeId) {
+  const s = stores.find(x => x.id === storeId) || currentStore();
+  const rows = GARAGE.map(g =>
+    '<tr><td class="cell-strong nw">' + esc(g[0]) + '</td>' +
+    '<td class="nw">' + esc(g[1]) + '</td>' +
+    '<td class="cell-num">' + esc(g[2]) + '</td>' +
+    '<td>' + (g[3] === '在售' ? '<span class="tag tag--success">在售</span>'
+      : (g[3] === '已预定' ? '<span class="tag tag--warning">已预定</span>'
+        : '<span class="tag tag--plain">已下架</span>')) + '</td>' +
+    '<td class="cell-num nw">' + esc(g[4]) + '</td></tr>').join('');
+
+  openModal('查看车型库 · ' + s.name,
+    '<div class="table-wrap"><table class="table"><thead><tr>' +
+    '<th>品牌车系</th><th>配置</th><th>挂牌价</th><th>状态</th><th>最近更新</th>' +
+    '</tr></thead><tbody>' + rows + '</tbody></table></div>' +
+    '<div class="field-hint" style="margin-top:10px">共 <b>' + GARAGE.length + '</b> 个在库车型。</div>',
+    '<button class="btn btn--primary" data-close="1">关闭</button>', 'modal--lg');
+}
+
+/* ---------- 弹窗：VIP 编辑（服务期 + 电力值） ---------- */
+function openVipEdit(storeId) {
+  const s = stores.find(x => x.id === storeId) || currentStore();
+  const ownPkg = packageById(s.packageId);
+  const body =
+    (ownPkg
+      ? '<div class="alert alert--warning" style="margin-bottom:14px"><span class="alert-icon">!</span>' +
+        '<span>该门店已关联「' + esc(ownPkg.name) + '」，调整电力值时注意避免重复让利。</span></div>'
+      : '') +
+    formRow('当前到期时间', '<span class="form-static is-num">' + esc(s.expiresAt) + '</span>') +
+    formRow('当前剩余电力值', '<span class="form-static is-num' + (s.balance < 0 ? ' text-danger' : '') + '">' + num(s.balance) + '</span>') +
+    formRow('到期天数调整', '<input class="input input--block" id="vipDays" placeholder="正数增加，负数减少">') +
+    formRow('电力值调整', '<input class="input input--block" id="vipPower" placeholder="正数增加，负数减少">') +
+    formRow('员工消耗套餐包', '<span class="form-static">' + (ownPkg ? esc(ownPkg.name) : '未关联（跟随行业）') + '</span>') +
+    '<div class="form-row form-row--top"><span class="field-label"></span><span class="form-control">' +
+    '<span class="field-hint">填写电力值调整后，保存时自动生成一条充值记录；不填则不产生记录。</span>' +
+    '</span></div>' +
+    '<div class="preview" style="margin-top:6px">' +
+    '预计到期时间：<b id="vipPreviewDate">' + esc(s.expiresAt) + '</b><br>' +
+    '预计剩余电力值：<b id="vipPreviewPower">' + num(s.balance) + '</b><br>' +
+    '预计月最低消耗：<b>' + num(monthlyMinimumOf(s)) + ' 电力值</b>' +
+    '</div>';
+
+  openModal('VIP编辑', body,
+    '<button class="btn" data-close="1">取消</button>' +
+    '<button class="btn btn--primary" data-action="vip-save" data-id="' + s.id + '">保存</button>', 'modal--sm');
+
+  const upd = () => {
+    const d = parseInt($('#vipDays').value, 10) || 0;
+    const p = parseInt($('#vipPower').value, 10) || 0;
+    $('#vipPreviewDate').textContent = d ? addDays(s.expiresAt.slice(0, 10), d) + ' 23:59:59' : s.expiresAt;
+    $('#vipPreviewPower').textContent = num(s.balance + p);
+  };
+  $('#vipDays').addEventListener('input', upd);
+  $('#vipPower').addEventListener('input', upd);
+}
+
+/* ---------- 弹窗：新建 / 编辑套餐包 ---------- */
+function openPkgEdit(pkgId) {
+  const pkg = packageById(pkgId);
+  const u = pkg ? usageOf(pkg.id) : { industries: [], stores: [] };
+
+  const priceRows = POSITIONS.map(p =>
+    formRow(p, '<input class="input input--sm" type="number" min="1" step="1" data-pkg-price="' + esc(p) + '"' +
+      ' value="' + (pkg && pkg.prices[p] != null ? pkg.prices[p] : '') + '" placeholder="留空按刊例价">' +
+      '<span class="inline-note">刊例价 ' + LIST_PRICE[p] + '</span>')).join('');
+
+  const body =
+    (u.industries.length || u.stores.length
+      ? '<div class="alert alert--warning" style="margin-bottom:14px"><span class="alert-icon">!</span><span>' +
+        '该套餐已关联' + usageText(u) + '，保存后立即生效。</span></div>'
+      : '') +
+    formRow('套餐名称', '<input class="input input--block" id="pkgName" value="' + esc(pkg ? pkg.name : '') + '" placeholder="请输入套餐名称">', true) +
+    formRow('备注', '<input class="input input--block" id="pkgNote" value="' + esc(pkg ? pkg.note : '') + '" placeholder="选填">') +
+    '<div class="form-block"><div class="form-block-title">岗位实际消耗单价<small>留空 = 该岗位按刊例价计费</small></div>' +
+    priceRows + '</div>' +
+    formRow('月最低消耗', '<input class="input input--sm" type="number" min="1" step="1" id="pkgMin" value="' +
+      (pkg ? pkg.monthlyMinimum : '') + '" placeholder="请输入"><span class="inline-note">电力值</span>', true);
+
+  openModal(pkg ? '编辑套餐包' : '新增套餐包', body,
+    '<button class="btn" data-close="1">取消</button>' +
+    '<button class="btn btn--primary" data-action="pkg-save" data-id="' + (pkg ? pkg.id : '') + '">保存</button>',
+    'modal--md');
+}
+
+/* ---------- 弹窗：删除套餐包（已关联行业或门店的不可删） ---------- */
+function openPkgDelete(pkgId) {
+  const pkg = packageById(pkgId);
+  if (!pkg) return;
+  const u = usageOf(pkg.id);
+  const used = u.industries.length > 0 || u.stores.length > 0;
+
+  const body = used
+    ? '<div class="alert alert--warning" style="margin:0"><span class="alert-icon">!</span><span>' +
+      '「' + esc(pkg.name) + '」已关联' + usageText(u) + '，不可删除。如需删除，请先解除关联。</span></div>'
+    : '<div class="field-hint" style="font-size:13px">确定删除「' + esc(pkg.name) + '」？删除后不可恢复。</div>';
+
+  openModal('删除套餐包', body,
+    '<button class="btn" data-close="1">取消</button>' +
+    (used ? '' : '<button class="btn btn--danger" data-action="pkg-del-confirm" data-id="' + pkg.id + '">删除</button>'),
+    'modal--sm');
+}
+
+/* ---------- 渲染调度 ---------- */
+function render() {
+  renderTopbar();
+  let html = '';
+  if (state.route === 'store-list') html = renderStoreList();
+  else if (state.route === 'store-detail') html = renderStorePage();
+  else if (state.route === 'packages') html = renderPackages();
+  $('#content').innerHTML = html;
+  $('#content').scrollTop = 0;
+}
+
+/* ---------- 事件绑定 ---------- */
+document.addEventListener('click', function (e) {
+  const inMenu = e.target.closest('#menuRoot');
+  if (!inMenu && !e.target.closest('[data-store-menu]')) closeRowMenu();
+
+  const t = e.target.closest('[data-nav-toggle],[data-route],[data-close],[data-action],[data-store-detail],' +
+    '[data-store-edit],[data-store-login],[data-store-menu],[data-menu-act],' +
+    '[data-open-platform],' +
+    '[data-acct-edit],[data-acct-human],[data-acct-more],' +
+    '[data-senior-config],[data-pkg-edit],[data-pkg-del],[data-page],' +
+    '[data-senior-toggle],[data-senior-budget],[data-senior-brand]');
+  if (!t) return;
+
+  if (t.dataset.close) { closeOverlay(); return; }
+  if (t.dataset.navToggle) { t.classList.toggle('is-open'); return; }
+  if (t.dataset.route) { closeOverlay(); go(t.dataset.route); return; }
+
+  // 门店列表
+  if (t.dataset.storeDetail) { go('store-detail/' + t.dataset.storeDetail); return; }
+  if (t.dataset.storeEdit) { openVipEdit(t.dataset.storeEdit); return; }
+  if (t.dataset.storeLogin) { toast('已在新窗口打开该门店的客户端'); return; }
+  if (t.dataset.storeMenu) {
+    const wasOpen = !!$('#menuRoot').firstChild;
+    closeRowMenu();
+    if (!wasOpen) openRowMenu(t.dataset.storeMenu, t);
+    return;
+  }
+  if (t.dataset.menuAct) {
+    const id = t.dataset.menuStore, act = t.dataset.menuAct;
+    closeRowMenu();                       // 先收菜单再开浮层，避免两层叠在一起
+    if (act === 'vip') openVipEdit(id);
+    else if (act === 'garage') openGarageDocs(id);
+    else if (act === 'pkg') openPkgDrawer(id);
+    else if (act === 'account') openAccountDrawer(id);
+    return;
+  }
+  if (t.dataset.openPlatform) { closeOverlay(); go('store-detail/' + t.dataset.openPlatform); return; }
+
+  // 平台账号
+  if (t.dataset.acctEdit) { toast('编辑平台账号信息'); return; }
+  if (t.dataset.acctHuman) { toast('配置该账号的数字人'); return; }
+  if (t.dataset.acctMore) { toast('更多操作'); return; }
+  if (t.dataset.seniorConfig) { openSeniorConfig(t.dataset.seniorConfig); return; }
+
+  // 套餐包管理
+  if (t.dataset.pkgEdit) { openPkgEdit(t.dataset.pkgEdit); return; }
+  if (t.dataset.pkgDel) { openPkgDelete(t.dataset.pkgDel); return; }
+
+  // 高级结算抽屉内的开关
+  if (t.dataset.seniorToggle) {
+    const on = t.classList.toggle('is-on');
+    $$('.drawer-body .input').forEach(i => { if (i.dataset.seniorPrice) i.disabled = !on; });
+    const note = t.parentElement.querySelector('.inline-note');
+    if (note) note.textContent = on ? '已开启，该账号优先走高级结算，基础结算不生效' : '未开启，该账号走基础结算';
+    return;
+  }
+  if (t.dataset.seniorBudget) { t.classList.toggle('is-on'); return; }
+  if (t.dataset.seniorBrand) { t.classList.toggle('is-on'); return; }
+
+  // 分页
+  if (t.dataset.page) { state.page = parseInt(t.dataset.page, 10); render(); return; }
+
+  // 动作
+  const act = t.dataset.action;
+  if (!act) return;
+  if (act === 'store-search' || act === 'acct-search') { state.page = 1; render(); return; }
+  if (act === 'store-reset') { state.storeKeyword = ''; state.storeIndustry = ''; state.page = 1; render(); return; }
+  if (act === 'acct-reset') { state.acctKeyword = ''; state.acctUid = ''; state.acctHuman = ''; render(); return; }
+
+  if (act === 'open-vip') { openVipEdit(t.dataset.id); return; }
+  if (act === 'pkg-add') { openPkgEdit(null); return; }
+  if (act === 'export-recharge') { toast('已导出该门店的充值记录'); return; }
+
+  // 保存
+  if (act === 'pkg-del-confirm') {
+    const i = packages.findIndex(p => p.id === t.dataset.id);
+    if (i < 0) return;
+    const name = packages[i].name;
+    packages.splice(i, 1);
+    closeOverlay(); toast('已删除「' + name + '」'); render(); return;
+  }
+  if (act === 'pkg-save') {
+    const name = $('#pkgName').value.trim();
+    if (!name) { toast('请输入套餐名称', true); return; }
+    const min = parseInt($('#pkgMin').value, 10);
+    if (!min || min < 1) { toast('请输入大于 0 的整数月最低消耗', true); return; }
+
+    // 岗位单价留空 = 未配置，实际计费回落刊例价
+    const prices = {};
+    let invalid = null;
+    $$('[data-pkg-price]').forEach(i => {
+      const raw = i.value.trim();
+      if (raw === '') { prices[i.dataset.pkgPrice] = null; return; }
+      const v = parseInt(raw, 10);
+      if (!v || v < 1) invalid = i.dataset.pkgPrice;
+      prices[i.dataset.pkgPrice] = v || null;
+    });
+    if (invalid) { toast('「' + invalid + '」的单价需为大于 0 的整数，留空表示按刊例价计费', true); return; }
+
+    const note = $('#pkgNote').value.trim();
+    const old = packageById(t.dataset.id);
+    const u = old ? usageOf(old.id) : { industries: [], stores: [] };
+
+    if (old) { old.name = name; old.note = note; old.prices = prices; old.monthlyMinimum = min; }
+    else {
+      // 编号取现有最大值 +1，删除套餐后不回收，避免与新套餐撞号
+      const n = packages.reduce((a, p) => Math.max(a, parseInt(p.id.slice(1), 10) || 0), 0) + 1;
+      packages.push({ id: 'p' + n, name: name, note: note, prices: prices, monthlyMinimum: min });
+    }
+    closeOverlay();
+    toast(old && (u.industries.length || u.stores.length)
+      ? '已保存，对' + usageText(u) + '立即生效' : '已保存');
+    render(); return;
+  }
+  if (act === 'pkg-reload') { openPkgDrawer(t.dataset.id); return; }
+  if (act === 'pkg-assign') {
+    const s = stores.find(x => x.id === t.dataset.id) || currentStore();
+    const sel = $('#pkgSelect').value;
+    const before = packageById(s.packageId);
+    s.packageId = sel || null;
+    const after = packageById(s.packageId);
+    closeOverlay();
+    toast(after ? '已关联「' + after.name + '」' + (before ? '' : '，不再跟随行业默认套餐')
+      : '已解除关联，跟随行业默认套餐');
+    render(); openPkgDrawer(s.id); return;
+  }
+  if (act === 'senior-save') {
+    const s = currentStore();
+    const a = (platformAccounts[s.id] || []).find(x => x.id === t.dataset.id);
+    if (!a) return;
+    const on = document.querySelector('[data-senior-toggle]').classList.contains('is-on');
+    if (!on) { a.settlement = 'basic'; a.senior = null; closeOverlay(); toast('已关闭高级结算，该账号恢复基础结算'); render(); return; }
+    const prices = {};
+    let missing = false;
+    $$('[data-senior-price]').forEach(i => {
+      const v = parseInt(i.value, 10);
+      if (!v || v < 1) missing = true;
+      prices[i.dataset.seniorPrice] = v || 0;
+    });
+    if (missing) { toast('请填写全部四档线索单价', true); return; }
+    a.settlement = 'advanced';
+    a.senior = {
+      prices: prices,
+      rules: {
+        cities: (($('.drawer-body .input[placeholder="请选择省/市"]') || {}).value || '').split('、').filter(Boolean),
+        models: ($('.drawer-body .input[placeholder="请选择热卖车型"]') || {}).value || '',
+        budgetEnabled: document.querySelector('[data-senior-budget]').classList.contains('is-on'),
+        budgetMin: ($('.drawer-body .input[placeholder="可结算预算下限"]') || {}).value || '',
+        budgetMax: ($('.drawer-body .input[placeholder="可结算预算上限"]') || {}).value || '',
+        brandEnabled: document.querySelector('[data-senior-brand]').classList.contains('is-on')
+      }
+    };
+    closeOverlay(); toast('已保存，该账号优先走高级结算'); render(); return;
+  }
+  if (act === 'vip-save') {
+    const s = stores.find(x => x.id === t.dataset.id);
+    const d = parseInt($('#vipDays').value, 10) || 0;
+    const p = parseInt($('#vipPower').value, 10) || 0;
+    if (!d && !p) { toast('请填写到期天数或电力值调整', true); return; }
+    if (d) s.expiresAt = addDays(s.expiresAt.slice(0, 10), d) + ' 23:59:59';
+    if (p) {
+      const before = s.balance;
+      // 只有正向入账才可能抵扣负值；负数调整是扣减，不产生「抵扣」
+      const deduct = (p > 0 && before < 0) ? Math.min(p, -before) : 0;
+      s.balance = before + p;
+      const list = recharges[s.id] || (recharges[s.id] = []);
+      const now = TODAY + ' ' + new Date().toTimeString().slice(0, 8);
+      list.push({
+        id: 'R' + now.replace(/[-: ]/g, '') + '-VIP', amount: p, before: before, after: s.balance,
+        arrivedAt: now, loggedAt: now, operator: '王敏',
+        remark: p < 0 ? 'VIP 调整，扣减电力值'
+          : (deduct > 0 ? '补充电力值，抵扣' + num(deduct) + '电力值' : '补充电力值')
+      });
+    }
+    // 减少付费时间导致截止日早于当前时间 → 立即冻结（§10.2）
+    if (serviceRemainDays(s) <= 0) {
+      s.status = 'frozen';
+      s.frozenPower = Math.max(0, s.balance);
+      closeOverlay();
+      toast('服务期截止日已早于当前时间，账户立即冻结', true);
+      render(); return;
+    }
+    const thawed = s.status === 'frozen';
+    if (thawed) { s.status = 'normal'; s.cycleStartAt = TODAY; s.cycleEndAt = addDays(TODAY, 30); s.cycleConsumed = 0; }
+    closeOverlay();
+    toast(thawed ? '已解冻，低消周期重新起算 31 天'
+      : 'VIP 信息已保存' + (p ? '，已自动生成充值记录' : ''));
+    render(); return;
+  }
+});
+
+// 筛选项录入（不触发重渲染，等「查找」）
+document.addEventListener('input', function (e) {
+  const f = e.target.dataset.filter;
+  if (f) state[f] = e.target.value;
+});
+document.addEventListener('change', function (e) {
+  // 行业换绑默认套餐：立即生效，被关联的门店跟着变
+  const ind = e.target.dataset.pkgIndustry;
+  if (ind) {
+    const after = packageById(e.target.value);
+    if (industryPackage[ind] === (after ? after.id : null)) return;
+    industryPackage[ind] = after ? after.id : null;
+    toast(after ? ind + '默认套餐已切换为「' + after.name + '」' : ind + '已解除默认套餐关联');
+    render(); return;
+  }
+  const ps = e.target.dataset.pagesize;
+  if (ps === 'data-page') { state.perPage = parseInt(e.target.value, 10); state.page = 1; render(); return; }
+  const f = e.target.dataset.filter;
+  if (f) { state[f] = e.target.value; }
+});
+
+// 遮罩点击与 Esc 关闭
+$('#mask').addEventListener('click', closeOverlay);
+document.addEventListener('keydown', e => { if (e.key === 'Escape') closeOverlay(); });
+$('#content').addEventListener('scroll', closeRowMenu, true);
+window.addEventListener('resize', closeRowMenu);
+$('#navCollapse').addEventListener('click', function () {
+  const sb = $('#sidebar');
+  sb.classList.toggle('is-collapsed');
+  this.textContent = sb.classList.contains('is-collapsed') ? '»' : '«';
+});
+
+/* ---------- 启动 ---------- */
+renderNav();
+parseHash();
+if (!location.hash) location.hash = '#/store-list';
+render();
+window.addEventListener('hashchange', function () { parseHash(); closeOverlay(); render(); });
+})();
+</script>
+</body>
+</html>
