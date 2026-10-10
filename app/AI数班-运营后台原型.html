@@ -4,7 +4,7 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>AI数班 · 运营后台</title>
-<!-- 运营后台原型 · 对齐 PRD-v1.4-计费规则 §10 -->
+<!-- 运营后台原型 · 对齐 PRD-v1.4-计费规则 §9 -->
 <style>
 :root{
   --primary:#409eff; --primary-hover:#66b1ff; --primary-active:#3a8ee6;
@@ -153,6 +153,7 @@ textarea.input{height:auto;padding:6px 10px;resize:vertical;line-height:1.5}
 /* ---------- 链接与文本 ---------- */
 .link{color:var(--primary);cursor:pointer}
 .link:hover{color:var(--primary-hover)}
+.link.is-disabled,.link.is-disabled:hover{color:var(--text-4);cursor:not-allowed}
 .link--danger{color:var(--danger)}
 .link--danger:hover{color:#f78989}
 .link + .link{margin-left:14px}
@@ -307,9 +308,20 @@ textarea.input{height:auto;padding:6px 10px;resize:vertical;line-height:1.5}
 .modal.is-open{display:flex;animation:popIn .2s ease}
 .modal--sm{width:520px}
 .modal--md{width:680px}
-/* 套餐弹窗的客服专员两行行名带岗位名，比其他弹窗的标签长，单独放宽标签列，
-   让两行的输入框左边缘与其余计价项对齐（.modal--md 只被套餐包弹窗使用） */
-.modal--md .form-row > .field-label{flex:0 0 164px}
+/* 客服专员的两档转化线索在**同一行内**并排：档位名做成输入框前缀，
+   这样一行仍是一个数字员工，行高与其他计价项保持一致（32px） */
+.input-group{
+  display:inline-flex;align-items:stretch;height:32px;overflow:hidden;
+  border:1px solid var(--border);border-radius:var(--radius);background:#fff;transition:border-color .2s;
+}
+.input-group:hover{border-color:var(--text-4)}
+.input-group:focus-within{border-color:var(--primary)}
+.input-group__addon{
+  display:flex;align-items:center;padding:0 8px;background:var(--bg-th);
+  border-right:1px solid var(--border);color:var(--text-2);font-size:12px;white-space:nowrap;
+}
+.input-group .input{border:none;border-radius:0;height:100%;width:60px;padding:0 8px;background:transparent}
+.input-group .input:hover,.input-group .input:focus{border-color:transparent}
 .modal--lg{width:820px}
 .modal-head{
   display:flex;align-items:center;justify-content:space-between;
@@ -336,19 +348,11 @@ textarea.input{height:auto;padding:6px 10px;resize:vertical;line-height:1.5}
 .table th.th-group{text-align:center}
 .table th.th-group small{display:block;font-weight:400;font-size:12px;color:var(--text-4);margin-top:2px}
 .table th.th-sub{text-align:center;font-weight:400;font-size:13px;padding-top:8px;padding-bottom:8px}
-/* 客服专员两档是同一岗位下的两个计价项：行名已带岗位名，这里再把字色降一级，
-   与其余三个常规岗位的行区分开（标签列右对齐，不用 padding 制造假缩进） */
-.form-row.is-sub > .field-label{color:var(--text-3)}
-
-/* ---------- 多选行（关联行业） ---------- */
-.pick-list{border:1px solid var(--border-light);border-radius:var(--radius);padding:0 14px}
-.pick-row{display:flex;align-items:center;gap:10px;padding:12px 0;border-bottom:1px solid var(--border-light);cursor:pointer}
-.pick-row:last-child{border-bottom:none}
-.pick-row.is-locked{cursor:default}
-.pick-row input[type=checkbox]{flex:0 0 auto;width:16px;height:16px;margin:0;accent-color:var(--primary);cursor:pointer}
-.pick-row input[type=checkbox]:disabled{cursor:not-allowed}
-.pick-name{flex:0 0 72px;font-size:14px;font-weight:500;color:var(--text-1)}
-.pick-note{font-size:12px;color:var(--text-3)}
+/* 表格里的两档：数字在上、档位名在下，左右并排，一行仍是一个岗位 */
+.tier-pair{display:inline-flex;gap:16px;vertical-align:middle}
+.tier-pair > span{display:inline-flex;flex-direction:column;gap:2px;line-height:1.25}
+.tier-pair b{font-variant-numeric:tabular-nums;font-weight:600;color:var(--text-1)}
+.tier-pair small{font-size:12px;color:var(--text-3);white-space:nowrap}
 
 /* ---------- 抽屉 / 弹窗尺寸变体 ----------
    表格型配置用宽抽屉，账本型明细用宽弹窗；560px 塞不下多列表格 */
@@ -451,7 +455,7 @@ textarea.input{height:auto;padding:6px 10px;resize:vertical;line-height:1.5}
 <script>
 /* =========================================================================
    AI数班 · 运营后台原型
-   对齐 docs/prd/PRD-v1.4-计费规则.md §10（VIP 编辑 / 服务期管理 /
+   对齐 docs/prd/PRD-v1.4-计费规则.md §9（VIP 编辑 / 服务期管理 /
    套餐包管理 / 员工消耗套餐包）
    结算方式口径：基础结算按生效套餐的岗位单价计费，高级结算在平台账号上单独开启并优先
    ========================================================================= */
@@ -497,54 +501,57 @@ const GARAGE = [
 /* ---------- 套餐包 ----------
    一份套餐 = 五个计价项的实际消耗单价 + 月最低消耗，整包生效、就地改价。
    五个计价项（三个常规岗位 + 客服专员的自然/AI 两档转化线索）与月最低消耗
-   都是必配项，留空即不予保存（§10.3）——因此计费链路上不存在"该计价项未
+   都是必配项，留空即不予保存（§9.3）——因此计费链路上不存在"该计价项未
    配置、回落刊例价"的分支。
-   计费起点是门店所属行业的默认套餐，行业必然有默认套餐（系统预置，§2.4）；
-   门店单独关联套餐后，生效套餐整包改为门店关联套餐，行业默认套餐对本店失效。
+   套餐归属唯一一个行业（所属行业必填，§9.3）；一个行业名下可以有多个
+   套餐包，其中恰好一个被指定为默认套餐（§2.4）。计费起点是该行业的
+   默认套餐，必然存在；门店单独关联套餐后，生效套餐整包改为门店关联套餐，
+   默认套餐对本店失效（§2.2）。
    月最低消耗随生效套餐走，账户级结算（§4.2）。 */
 const packages = [
   {
-    id: 'p1', name: '二手车标准套餐', note: '二手车行业预置默认套餐，主号与副号获客专家按刊例价',
+    id: 'p1', name: '二手车标准套餐', industry: '二手车', note: '预置默认套餐，主号与副号按刊例价',
     prices: { '主号获客专家': 50, '副号获客专家': 50, '客服专员·自然转化线索': 5,
       '客服专员·AI转化线索': 10, '矩阵视频发布专员': 2 },
     monthlyMinimum: 1200
   },
   {
-    id: 'p2', name: '新车标准套餐', note: '新车行业预置默认套餐，主号与副号获客专家 45 电力值',
+    id: 'p2', name: '新车标准套餐', industry: '新车', note: '预置默认套餐，获客专家按 45 电力值',
     prices: { '主号获客专家': 45, '副号获客专家': 45, '客服专员·自然转化线索': 5,
       '客服专员·AI转化线索': 10, '矩阵视频发布专员': 2 },
     monthlyMinimum: 1500
   },
   {
-    id: 'p3', name: '家居标准套餐', note: '家居行业预置默认套餐，主号与副号获客专家按刊例价',
+    id: 'p3', name: '家居标准套餐', industry: '家居', note: '预置默认套餐，主号与副号按刊例价',
     prices: { '主号获客专家': 50, '副号获客专家': 50, '客服专员·自然转化线索': 5,
       '客服专员·AI转化线索': 10, '矩阵视频发布专员': 2 },
     monthlyMinimum: 800
   },
   {
-    id: 'p4', name: '房地产标准套餐', note: '房地产行业预置默认套餐，主号与副号获客专家按刊例价',
+    id: 'p4', name: '房地产标准套餐', industry: '房地产', note: '预置默认套餐，主号与副号按刊例价',
     prices: { '主号获客专家': 50, '副号获客专家': 50, '客服专员·自然转化线索': 5,
       '客服专员·AI转化线索': 10, '矩阵视频发布专员': 2 },
     monthlyMinimum: 600
   },
   {
-    id: 'p5', name: '骏驰专属套餐', note: '商务协议价，主号获客专家 30 电力值',
+    id: 'p5', name: '骏驰专属套餐', industry: '二手车', note: '商务协议价，主号获客专家 30 电力值',
     prices: { '主号获客专家': 30, '副号获客专家': 50, '客服专员·自然转化线索': 5,
       '客服专员·AI转化线索': 10, '矩阵视频发布专员': 2 },
     monthlyMinimum: 1200
   },
   {
-    id: 'p6', name: '二手车高配套餐', note: '尚未关联行业，可作为行业默认套餐的备选',
+    id: 'p6', name: '二手车高配套餐', industry: '二手车', note: '高配备选，可作二手车行业的默认套餐',
     prices: { '主号获客专家': 60, '副号获客专家': 60, '客服专员·自然转化线索': 6,
       '客服专员·AI转化线索': 12, '矩阵视频发布专员': 3 },
     monthlyMinimum: 1500
   }
 ];
 function packageById(id) { return packages.find(p => p.id === id) || null; }
-// 每个行业**恰好**一个默认套餐，由系统预置，不存在未关联的行业（§2.4）；
-// 一个套餐可以同时是多个行业的默认套餐（多对一）。
-// 关联关系在套餐包列表的操作里指定，不单独成页。
-const industryPackage = { '二手车': 'p1', '新车': 'p2', '家居': 'p3', '房地产': 'p4' };
+// 每个行业**恰好**一个默认套餐（§2.4）：套餐只归属自己的行业，所以默认套餐
+// 只能从本行业名下的套餐里指定；一个行业允许多个套餐，但默认位只有一个。
+// 新建门店账号时默认关联本行业的默认套餐；指定入口在套餐包列表行的
+// 【设为默认】，不单独成页。
+const industryDefault = { '二手车': 'p1', '新车': 'p2', '家居': 'p3', '房地产': 'p4' };
 
 /* ---------- 门店账号（付费主体） ----------
    balance / cycleConsumed / frozenPower 均为推导值，见下方「账本推导」，此处不填 */
@@ -732,11 +739,11 @@ XINGYAO_ROWS.forEach(r => pushFee(stores[2], r));
 fees.forEach(f => { f.snap = priceOfFee(f); });
 
 /* ---------- 取价与快照 ---------- */
-// 门店生效套餐：计费起点是所属行业的默认套餐（系统预置、必然存在），
+// 门店生效套餐：计费起点是所属行业的默认套餐（必然存在），
 // 门店单独关联套餐后整包改为门店关联套餐（§2.2）。
 // 末尾的 || null 只是防御：按规则每个行业都有默认套餐，正常取不到 null。
 function effectivePackage(store) {
-  return packageById(store.packageId) || packageById(industryPackage[store.industry]) || null;
+  return packageById(store.packageId) || packageById(industryDefault[store.industry]) || null;
 }
 // 基础结算：取生效套餐的计价项单价（§2.2）。五个计价项单价都是套餐的必配项，
 // 不存在"该计价项未配置"；LIST_PRICE 分支是数据异常时的兜底，正常取不到。
@@ -744,7 +751,7 @@ function effectivePackage(store) {
 // 套餐是整包的——门店一旦关联了自己的套餐，就不再回看行业默认套餐
 function basePriceOf(store, position, leadType) {
   const own = packageById(store.packageId);
-  const pkg = own || packageById(industryPackage[store.industry]);
+  const pkg = own || packageById(industryDefault[store.industry]);
   const key = priceKeyOf(position, leadType);
   if (pkg && pkg.prices[key] != null) {
     return { price: pkg.prices[key], source: own ? '门店关联套餐' : '行业默认套餐' };
@@ -1140,23 +1147,27 @@ function pkgFoot(s) {
     '<button class="btn btn--primary" data-action="pkg-assign" data-id="' + s.id + '">保存</button>';
 }
 function pkgBody(s) {
-  const indPkg = packageById(industryPackage[s.industry]);
+  const indPkg = packageById(industryDefault[s.industry]);
 
+  // 只能关联本行业的套餐包——其他行业的套餐不出现在下拉里（§9.4）
   const opts = ['<option value="">未关联（跟随行业默认套餐）</option>'].concat(
-    packages.map(p => '<option value="' + p.id + '"' + (s.packageId === p.id ? ' selected' : '') + '>' +
+    packages.filter(p => p.industry === s.industry).map(p =>
+      '<option value="' + p.id + '"' + (s.packageId === p.id ? ' selected' : '') + '>' +
       esc(p.name) + '</option>')).join('');
 
-  // 客服专员两档各占一行，标注里带上岗位名，本店按哪一档计费一目了然
+  // 一行一个岗位；客服专员的两档单价在同一格里并排，本店按哪一档计费一目了然
   const rows = POSITIONS.map(pos => {
-    const items = pos === '客服专员' ? LEAD_TYPES : [null];
-    return items.map(lt => {
-      const r = basePriceOf(s, pos, lt);
-      return '<tr>' +
-        '<td class="cell-strong nw">' + esc(pos) + (lt ? '<div class="cell-sub">' + esc(lt) + '</div>' : '') + '</td>' +
-        '<td class="cell-num">' + r.price + '</td>' +
-        '<td>' + esc(r.source) + '</td>' +
-        '</tr>';
-    }).join('');
+    const tiers = pos === '客服专员' ? LEAD_TYPES : [null];
+    const priced = tiers.map(lt => ({ lt: lt, r: basePriceOf(s, pos, lt) }));
+    const cell = tiers.length === 1
+      ? '<td class="cell-num">' + priced[0].r.price + '</td>'
+      : '<td class="cell-num"><span class="tier-pair">' + priced.map(x =>
+          '<span><b>' + x.r.price + '</b><small>' + esc(x.lt) + '</small></span>').join('') + '</span></td>';
+    return '<tr>' +
+      '<td class="cell-strong nw">' + esc(pos) + '</td>' +
+      cell +
+      '<td>' + esc(priced[0].r.source) + '</td>' +
+      '</tr>';
   }).join('');
 
   return '<div class="card card--flush" style="margin-bottom:0">' +
@@ -1167,7 +1178,8 @@ function pkgBody(s) {
     '<div class="card-body">' +
     '<select class="select select--block" id="pkgSelect">' + opts + '</select>' +
     '<div class="field-hint" style="margin-top:8px">行业默认套餐：' +
-    (indPkg ? esc(indPkg.name) : '<span class="text-3">未关联</span>') + '，单位电力值</div>' +
+    (indPkg ? esc(indPkg.name) : '<span class="text-3">未关联</span>') +
+    '；下拉只出「' + esc(s.industry) + '」行业的套餐包，单位电力值</div>' +
     '</div></div>' +
 
     '<div class="card card--flush" style="margin:14px 0 0">' +
@@ -1179,7 +1191,7 @@ function pkgBody(s) {
     '</div></div>';
 }
 
-/* ---- 侧边栏：电力账户（§10.1 / §10.2）—— 门店行「···」菜单打开，不跳转 ---- */
+/* ---- 侧边栏：电力账户（§9.1 / §9.2）—— 门店行「···」菜单打开，不跳转 ---- */
 function openAccountDrawer(storeId) {
   const s = stores.find(x => x.id === storeId) || currentStore();
   openDrawer('电力账户', accountBody(s),
@@ -1285,32 +1297,40 @@ function metricItem(label, value, cls) {
     '<span class="metric-value ' + (cls || '') + '">' + (cls === 'is-strong' ? value : esc(value)) + '</span></div>';
 }
 
-/* ---------- 页面 3：套餐包管理（§10.3） ---------- */
-// 关联情况：被哪些行业、哪些门店引用——列表展示与删除保护读同一个函数，避免两处判断走散
-function usageOf(pkgId) {
+/* ---------- 页面 3：套餐包管理（§9.3） ---------- */
+// 引用情况：是不是所属行业的默认套餐、被哪些门店关联——列表展示、删除保护与
+// 「所属行业」不可改的拦截读同一个函数，避免几处判断走散
+function usageOf(pkg) {
   return {
-    industries: INDUSTRIES.filter(i => industryPackage[i] === pkgId),
-    stores: stores.filter(s => s.packageId === pkgId)
+    isDefault: industryDefault[pkg.industry] === pkg.id,
+    stores: stores.filter(s => s.packageId === pkg.id)
   };
 }
-function usageText(u) {
+// 引用情况的文字陈述，如「是「二手车」行业的默认套餐」「已关联 3 家门店」
+function usageReasons(pkg) {
+  const u = usageOf(pkg);
   const parts = [];
-  if (u.industries.length) parts.push('「' + u.industries.join('、') + '」行业');
-  if (u.stores.length) parts.push(u.stores.length + ' 家门店');
-  return parts.join('和');
+  if (u.isDefault) parts.push('是「' + pkg.industry + '」行业的默认套餐');
+  if (u.stores.length) parts.push('已关联 ' + u.stores.length + ' 家门店');
+  return parts;
 }
 
 function renderPackages() {
   const rows = packages.map(p => {
-    const u = usageOf(p.id);
+    const u = usageOf(p);
     return '<tr>' +
-      '<td class="cell-strong nw">' + esc(p.name) +
-      (p.note ? '<div class="cell-sub">' + esc(p.note) + '</div>' : '') + '</td>' +
+      '<td class="cell-strong nw">' + esc(p.name) + '</td>' +
+      '<td class="cell-note">' + (p.note ? esc(p.note) : '<span class="text-3">—</span>') + '</td>' +
       PRICE_KEYS.map(k => '<td class="cell-num">' + p.prices[k] + '</td>').join('') +
       '<td class="cell-num">' + num(p.monthlyMinimum) + '</td>' +
-      '<td>' + (u.industries.length ? esc(u.industries.join('、')) : '<span class="text-3">—</span>') + '</td>' +
+      '<td class="nw">' + esc(p.industry) + '</td>' +
+      '<td>' + (u.isDefault
+        ? '<span class="tag tag--primary">默认套餐</span>'
+        : '<span class="text-3">—</span>') + '</td>' +
       '<td class="col-op">' +
-      '<span class="link" data-pkg-ind="' + p.id + '">关联行业</span>' +
+      (u.isDefault
+        ? '<span class="link is-disabled">设为默认</span>'
+        : '<span class="link" data-pkg-default="' + p.id + '">设为默认</span>') +
       '<span class="link" data-pkg-edit="' + p.id + '">编辑</span>' +
       '<span class="link link--danger" data-pkg-del="' + p.id + '">删除</span>' +
       '</td></tr>';
@@ -1321,17 +1341,18 @@ function renderPackages() {
     '<div class="card-actions"><button class="btn btn--primary" data-action="pkg-add">新增套餐包</button></div></div>' +
     '<div class="card-body" style="padding-top:0">' +
     '<div class="table-wrap"><table class="table"><thead><tr>' +
-    '<th rowspan="2">套餐名称</th>' +
+    '<th rowspan="2">套餐名称</th><th rowspan="2">备注</th>' +
     '<th rowspan="2">' + esc(POSITIONS[0]) + '</th>' +
     '<th rowspan="2">' + esc(POSITIONS[1]) + '</th>' +
     '<th colspan="2" class="th-group">' + esc(POSITIONS[2]) + '<small>按转化线索类型分档</small></th>' +
     '<th rowspan="2">' + esc(POSITIONS[3]) + '</th>' +
-    '<th rowspan="2">月最低消耗</th><th rowspan="2">关联行业</th><th rowspan="2" class="col-op">操作</th>' +
+    '<th rowspan="2">月最低消耗</th><th rowspan="2">所属行业</th><th rowspan="2">行业默认</th>' +
+    '<th rowspan="2" class="col-op">操作</th>' +
     '</tr><tr>' + LEAD_TYPES.map(lt => '<th class="th-sub">' + esc(lt) + '</th>').join('') + '</tr></thead>' +
-    '<tbody>' + (rows || '<tr><td colspan="9"><div class="empty">暂无数据</div></td></tr>') + '</tbody></table></div>' +
+    '<tbody>' + (rows || '<tr><td colspan="11"><div class="empty">暂无数据</div></td></tr>') + '</tbody></table></div>' +
     '<div class="field-hint" style="padding:12px 0 0">' +
-    '计费起点是行业预置的默认套餐，门店关联套餐后整包覆盖；五个计价项均为必配项。' +
-    '客服专员按转化线索类型分两档——会话里 AI 有回复按「AI转化线索」计费，全程无 AI 回复按「自然转化线索」计费。</div>' +
+    '套餐包归属唯一一个行业；计费起点是该行业指定的默认套餐，门店关联套餐后整包覆盖。' +
+    '五个计价项均为必配项。客服专员按转化线索类型分两档——会话里 AI 有回复按「AI转化线索」计费，全程无 AI 回复按「自然转化线索」计费。</div>' +
     '</div></div>';
 }
 
@@ -1476,33 +1497,46 @@ function openVipEdit(storeId) {
 /* ---------- 弹窗：新建 / 编辑套餐包 ---------- */
 function openPkgEdit(pkgId) {
   const pkg = packageById(pkgId);
-  const u = pkg ? usageOf(pkg.id) : { industries: [], stores: [] };
+  const reasons = pkg ? usageReasons(pkg) : [];
 
-  // 客服专员按转化线索类型拆成两行；两行的标注都带岗位名，避免被读成两个独立岗位
+  // 所属行业是套餐的固有属性、必填（§9.3）。已经关联门店、或已经是本行业默认
+  // 套餐的不允许改——改了会留下跨行业的门店关联，或把某行业置为没有默认套餐
+  const indLocked = reasons.length > 0;
+  const indField = '<select class="select" id="pkgIndustry"' + (indLocked ? ' disabled' : '') + '>' +
+    '<option value="">请选择</option>' +
+    INDUSTRIES.map(i => '<option value="' + esc(i) + '"' +
+      (pkg && pkg.industry === i ? ' selected' : '') + '>' + esc(i) + '</option>').join('') +
+    '</select>' +
+    (indLocked ? '<span class="inline-note" style="white-space:normal">该套餐' + reasons.join('，') + '，不可修改</span>' : '');
+
+  // 一行一个数字员工；客服专员的两档转化线索在同一行内并排，档位名做输入框前缀，
+  // 因此套餐里是五个计价项，但表单里只有四行
   const priceRows = POSITIONS.map(pos => {
-    const items = pos === '客服专员' ? LEAD_TYPES : [null];
-    return items.map(lt => {
-      const label = lt ? pos + ' · ' + lt : pos;
-      return formRow(label,
-        '<input class="input input--sm" type="number" min="1" step="1" data-pkg-price="' +
-          esc(priceKeyOf(pos, lt)) + '" value="' +
-          (pkg && pkg.prices[priceKeyOf(pos, lt)] != null ? pkg.prices[priceKeyOf(pos, lt)] : '') +
-          '" placeholder="请输入">' +
-        '<span class="inline-note">刊例价 ' + LIST_PRICE[pos] +
-          (lt ? ' / 转化线索' : '') + '</span>',
-        false, lt ? 'is-sub' : '');
+    const tiers = pos === '客服专员' ? LEAD_TYPES : [null];
+    const controls = tiers.map(lt => {
+      const key = priceKeyOf(pos, lt);
+      const attrs = 'type="number" min="1" step="1" data-pkg-price="' + esc(key) + '" value="' +
+        (pkg && pkg.prices[key] != null ? pkg.prices[key] : '') + '"';
+      return lt
+        ? '<span class="input-group"><span class="input-group__addon">' + esc(lt) + '</span>' +
+          '<input class="input" ' + attrs + ' placeholder="必填"></span>'
+        : '<input class="input input--sm" ' + attrs + ' placeholder="请输入">';
     }).join('');
+    return formRow(pos, controls +
+      '<span class="inline-note">刊例价 ' + LIST_PRICE[pos] +
+        (pos === '客服专员' ? ' / 转化线索' : '') + '</span>');
   }).join('');
 
   const body =
-    (u.industries.length || u.stores.length
+    (reasons.length
       ? '<div class="alert alert--warning" style="margin-bottom:14px"><span class="alert-icon">!</span><span>' +
-        '该套餐已关联' + usageText(u) + '，保存后立即生效。</span></div>'
+        '该套餐' + reasons.join('，') + '，保存后立即生效。</span></div>'
       : '') +
     formRow('套餐名称', '<input class="input input--block" id="pkgName" value="' + esc(pkg ? pkg.name : '') + '" placeholder="请输入套餐名称">', true) +
+    formRow('所属行业', indField, true) +
     formRow('备注', '<input class="input input--block" id="pkgNote" value="' + esc(pkg ? pkg.note : '') + '" placeholder="选填">') +
     '<div class="form-block"><div class="form-block-title">岗位实际消耗单价' +
-      '<small>五个计价项均为必配项；客服专员按转化线索类型分两档</small></div>' +
+      '<small>四个数字员工均为必配项；客服专员按线索类型分两档</small></div>' +
     priceRows + '</div>' +
     '<div class="form-block"><div class="form-block-title">月最低消耗<small>账户级参数，与岗位单价相互独立</small></div>' +
     formRow('数值', '<input class="input input--sm" type="number" min="1" step="1" id="pkgMin" value="' +
@@ -1515,51 +1549,52 @@ function openPkgEdit(pkgId) {
     'modal--md');
 }
 
-/* ---------- 弹窗：删除套餐包（已关联行业或门店的不可删） ---------- */
+/* ---------- 弹窗：删除套餐包（行业默认套餐、或有关联门店的不可删） ---------- */
 function openPkgDelete(pkgId) {
   const pkg = packageById(pkgId);
   if (!pkg) return;
-  const u = usageOf(pkg.id);
-  const used = u.industries.length > 0 || u.stores.length > 0;
+  const u = usageOf(pkg);
+  const reasons = usageReasons(pkg);
 
-  const body = used
+  const body = reasons.length
     ? '<div class="alert alert--warning" style="margin:0"><span class="alert-icon">!</span><span>' +
-      '「' + esc(pkg.name) + '」已关联' + usageText(u) + '，不可删除。如需删除，请先解除关联。</span></div>'
+      '「' + esc(pkg.name) + '」' + reasons.join('，') + '，不可删除。' +
+      (u.isDefault
+        ? '如需删除，请先把「' + esc(pkg.industry) + '」行业的默认套餐改选为其他套餐' +
+          (u.stores.length ? '，并解除与门店的关联。' : '。')
+        : '如需删除，请先解除与门店的关联。') + '</span></div>'
     : '<div class="field-hint" style="font-size:13px">确定删除「' + esc(pkg.name) + '」？删除后不可恢复。</div>';
 
   openModal('删除套餐包', body,
     '<button class="btn" data-close="1">取消</button>' +
-    (used ? '' : '<button class="btn btn--danger" data-action="pkg-del-confirm" data-id="' + pkg.id + '">删除</button>'),
+    (reasons.length ? '' : '<button class="btn btn--danger" data-action="pkg-del-confirm" data-id="' + pkg.id + '">删除</button>'),
     'modal--sm');
 }
 
-/* ---------- 弹窗：关联行业 ----------
-   每个行业恰好一个默认套餐（系统预置），一个套餐可同时是多个行业的默认。
-   已在用本套餐的行业行锁定勾选态——行业不能没有默认套餐，更换只能在目标套餐上改选。 */
-function openPkgIndustries(pkgId) {
+/* ---------- 弹窗：设为默认套餐 ----------
+   默认套餐只能从本行业名下的套餐里指定，每个行业恰好一个（§2.4）。
+   切换即时生效：该行业下未单独关联套餐的门店立即改按新套餐计费；
+   原默认套餐本身不删除，只是默认位改挂到本套餐。 */
+function openPkgSetDefault(pkgId) {
   const pkg = packageById(pkgId);
   if (!pkg) return;
-
-  const rows = INDUSTRIES.map(ind => {
-    const cur = packageById(industryPackage[ind]);
-    const isSelf = !!(cur && cur.id === pkg.id);
-    const note = isSelf
-      ? '当前默认套餐：本套餐，如需更换请在目标套餐上勾选本行业'
-      : '当前默认套餐：' + esc(cur ? cur.name : '—') + '，勾选后改选为本套餐';
-    return '<label class="pick-row' + (isSelf ? ' is-locked' : '') + '">' +
-      '<input type="checkbox" data-ind-pick="' + esc(ind) + '"' + (isSelf ? ' checked disabled' : '') + '>' +
-      '<span class="pick-name">' + esc(ind) + '</span>' +
-      '<span class="pick-note">' + note + '</span></label>';
-  }).join('');
+  const cur = packageById(industryDefault[pkg.industry]);
+  if (cur && cur.id === pkg.id) return;
+  const followers = stores.filter(s => s.industry === pkg.industry && !s.packageId);
+  const impact = followers.length
+    ? '本行业未单独关联套餐的 ' + followers.length + ' 家门店（' +
+      followers.map(s => esc(s.name)).join('、') + '）立即改按本套餐计费'
+    : '本行业当前没有未单独关联套餐的门店，切换只影响新建门店的默认关联';
 
   const body =
-    '<div class="field-hint" style="padding:0 0 6px">每个行业必有一个默认套餐，已在用本套餐的行业不能取消；' +
-    '勾选其他行业即把该行业改选为本套餐。门店已单独关联套餐时不受影响。</div>' +
-    '<div class="pick-list">' + rows + '</div>';
+    '<div class="field-hint" style="font-size:13px;line-height:1.8">' +
+    '「' + esc(pkg.industry) + '」行业当前的默认套餐是「' + (cur ? esc(cur.name) : '—') + '」。' +
+    '设为默认后，' + impact + '；已单独关联套餐的门店不受影响。<br>' +
+    '原默认套餐不会被删除，只是默认位改挂到「' + esc(pkg.name) + '」。</div>';
 
-  openModal('关联行业', body,
+  openModal('设为默认套餐', body,
     '<button class="btn" data-close="1">取消</button>' +
-    '<button class="btn btn--primary" data-action="pkg-ind-save" data-id="' + pkg.id + '">保存</button>',
+    '<button class="btn btn--primary" data-action="pkg-default-save" data-id="' + pkg.id + '">设为默认</button>',
     'modal--sm');
 }
 
@@ -1583,7 +1618,7 @@ document.addEventListener('click', function (e) {
     '[data-store-edit],[data-store-login],[data-store-menu],[data-menu-act],' +
     '[data-open-platform],' +
     '[data-acct-edit],[data-acct-human],[data-acct-more],' +
-    '[data-senior-config],[data-pkg-ind],[data-pkg-edit],[data-pkg-del],[data-page],' +
+    '[data-senior-config],[data-pkg-default],[data-pkg-edit],[data-pkg-del],[data-page],' +
     '[data-senior-toggle],[data-senior-budget],[data-senior-brand]');
   if (!t) return;
 
@@ -1619,7 +1654,7 @@ document.addEventListener('click', function (e) {
   if (t.dataset.seniorConfig) { openSeniorConfig(t.dataset.seniorConfig); return; }
 
   // 套餐包管理
-  if (t.dataset.pkgInd) { openPkgIndustries(t.dataset.pkgInd); return; }
+  if (t.dataset.pkgDefault) { openPkgSetDefault(t.dataset.pkgDefault); return; }
   if (t.dataset.pkgEdit) { openPkgEdit(t.dataset.pkgEdit); return; }
   if (t.dataset.pkgDel) { openPkgDelete(t.dataset.pkgDel); return; }
 
@@ -1659,10 +1694,13 @@ document.addEventListener('click', function (e) {
   if (act === 'pkg-save') {
     const name = $('#pkgName').value.trim();
     if (!name) { toast('请输入套餐名称', true); return; }
+    // 所属行业是套餐的必填项（§9.3）：计费链路上不存在"没有归属"的套餐
+    const industry = $('#pkgIndustry').value;
+    if (!industry) { toast('请选择所属行业', true); return; }
     const min = parseInt($('#pkgMin').value, 10);
     if (!min || min < 1) { toast('请输入大于 0 的整数月最低消耗', true); return; }
 
-    // 四个岗位单价均为必配项，留空即不予保存（§10.3）
+    // 四个岗位单价均为必配项，留空即不予保存（§9.3）
     const prices = {};
     const blank = [];
     let invalid = null;
@@ -1678,32 +1716,33 @@ document.addEventListener('click', function (e) {
 
     const note = $('#pkgNote').value.trim();
     const old = packageById(t.dataset.id);
-    const u = old ? usageOf(old.id) : { industries: [], stores: [] };
+    const reasons = old ? usageReasons(old) : [];
 
-    if (old) { old.name = name; old.note = note; old.prices = prices; old.monthlyMinimum = min; }
+    // 已关联门店、或已是本行业默认套餐的，所属行业不可改（表单里也做了禁用，
+    // 这里再拦一道，防止改动绕过表单）
+    if (old && reasons.length && old.industry !== industry) {
+      toast('该套餐' + reasons.join('，') + '，所属行业不可修改', true); return;
+    }
+
+    if (old) { old.name = name; old.industry = industry; old.note = note; old.prices = prices; old.monthlyMinimum = min; }
     else {
       // 编号取现有最大值 +1，删除套餐后不回收，避免与新套餐撞号
       const n = packages.reduce((a, p) => Math.max(a, parseInt(p.id.slice(1), 10) || 0), 0) + 1;
-      packages.push({ id: 'p' + n, name: name, note: note, prices: prices, monthlyMinimum: min });
+      packages.push({ id: 'p' + n, name: name, industry: industry, note: note, prices: prices, monthlyMinimum: min });
     }
     closeOverlay();
-    toast(old && (u.industries.length || u.stores.length)
-      ? '已保存，对' + usageText(u) + '立即生效' : '已保存');
+    toast(old && reasons.length
+      ? '已保存，该套餐' + reasons.join('，') + '，改动立即生效' : '已保存');
     render(); return;
   }
-  if (act === 'pkg-ind-save') {
+  if (act === 'pkg-default-save') {
     const pkg = packageById(t.dataset.id);
     if (!pkg) return;
-    // 行业只能改选、不能为空，故这里只会新增关联
-    const picked = $$('[data-ind-pick]').filter(i => i.checked).map(i => i.dataset.indPick);
-    const added = [];
-    INDUSTRIES.forEach(ind => {
-      if (picked.indexOf(ind) >= 0 && industryPackage[ind] !== pkg.id) {
-        industryPackage[ind] = pkg.id; added.push(ind);
-      }
-    });
+    const before = packageById(industryDefault[pkg.industry]);
+    industryDefault[pkg.industry] = pkg.id;
     closeOverlay();
-    toast(added.length ? '已关联「' + added.join('、') + '」行业，立即生效' : '未变更');
+    toast('「' + pkg.industry + '」行业的默认套餐已改为「' + pkg.name + '」' +
+      (before && before.id !== pkg.id ? '，原「' + before.name + '」不再作为默认' : '') + '，立即生效');
     render(); return;
   }
   if (act === 'pkg-reload') { openPkgDrawer(t.dataset.id); return; }
@@ -1766,7 +1805,7 @@ document.addEventListener('click', function (e) {
           : (deduct > 0 ? '补充电力值，抵扣' + num(deduct) + '电力值' : '补充电力值')
       });
     }
-    // 减少付费时间导致截止日早于当前时间 → 立即冻结（§10.2）
+    // 减少付费时间导致截止日早于当前时间 → 立即冻结（§9.2）
     if (serviceRemainDays(s) <= 0) {
       s.status = 'frozen';
       s.frozenPower = Math.max(0, s.balance);
