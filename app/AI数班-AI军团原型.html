@@ -11483,7 +11483,7 @@ function activeDependencyRequirements() {
   return environmentCheckEmployeeId ? environmentRequirements() : firstRunRequirements();
 }
 
-/* 只有阻断项参与门禁判定；余额等非阻断提示不影响能否雇佣（PRD-v1.4 §8.2） */
+/* 只有阻断项参与门禁判定；余额等非阻断提示不影响能否雇佣（PRD-v1.4 §7） */
 function firstRunRequirementsReady() {
   return activeDependencyRequirements().filter((item) => item.blocking !== false).every((item) => item.ready);
 }
@@ -13516,7 +13516,7 @@ function consumptionColumnsForRole(roleId) {
   return [...consumptionPublicColumns, ...(consumptionRoleColumns[roleId] || [])];
 }
 
-/* 筛选：时间范围由日期控件承载；数字员工与费用类型仅在「全部」视图可选（岗位视图已按岗位锁定，见 PRD-v1.4 §9.3） */
+/* 筛选：时间范围由日期控件承载；数字员工与费用类型仅在「全部」视图可选（岗位视图已按岗位锁定，见 PRD-v1.4 §8.3） */
 function consumptionFilteredRows(roleId) {
   const isLead = ["lead-main", "lead-sub"].includes(roleId);
   const isAll = roleId === "all";
@@ -13559,7 +13559,7 @@ function renderConsumptionLeadDashboard() {
   dashboard.innerHTML = consumptionLeadDashboard.map(([label, count]) => `<article class="consumption-lead-kpi"><span>${label}</span><strong>${count}</strong><small>消耗 <b>-${formatPower(count * consumptionUnitPower["lead-main"])} 电力值</b></small></article>`).join("");
 }
 
-/* 本周期业务消耗合计：只累计落在本周期区间内的业务消耗，不含低消补扣本身（PRD-v1.4 §4.2 / §12.3 第 17 条） */
+/* 本周期业务消耗合计：只累计落在本周期区间内的业务消耗，不含低消补扣本身（PRD-v1.4 §4.2 / §11.3 第 17 条） */
 function consumptionCycleConsumed() {
   const cycleEndAt = `${accountPower.cycleEndAt} 23:59:59`;
   return ["lead-main", "lead-sub", "service", "video"]
@@ -13624,7 +13624,7 @@ function renderConsumptionTable() {
       `<td class="${row.roleLabel === "—" ? "consumption-dash" : "consumption-account"}">${escapeHTML(row.roleLabel)}</td>`,
       `<td class="${row.accountLabel === "—" ? "consumption-dash" : "consumption-account"}">${escapeHTML(row.accountLabel)}</td>`,
     ];
-    /* 「全部」视图不展示计费对象列，岗位视图保留（PRD-v1.4 §9.2） */
+    /* 「全部」视图不展示计费对象列，岗位视图保留（PRD-v1.4 §8.2） */
     if (roleId !== "all") {
       cells.push(`<td class="consumption-object">${row.object === "—" ? `<span class="consumption-dash">—</span>` : `<b>${escapeHTML(row.object)}</b>${row.objectMeta ? `<small>${escapeHTML(row.objectMeta)}</small>` : ""}`}</td>`);
     }
@@ -20994,7 +20994,7 @@ window.setInterval(streamDemoQueueSignal, 4200);
       if (employee.id === "ai-video") return prdVideoHireConfigMarkup();
       return `<section class="prd-hire-config"><div class="prd-hire-config-intro"><div><strong>${escapeHTML(prdTalentData(employee).persona)}已准备好</strong><small>雇佣后可在工作页面修改。</small></div><b>默认配置</b></div><section class="prd-hire-config-block"><header><div><span>01</span><strong>员工配置</strong></div><small>默认配置已准备好，可直接开始</small></header><div class="prd-hire-default-config"><i>✓</i><div><strong>${escapeHTML(prdTalentData(employee).name)}可以直接工作</strong><small>需要调整时，进入员工工作页面修改。</small></div></div></section></section>`;
     }
-    /* 雇佣门禁只看阻断项：余额为非阻断提示（PRD-v1.4 §8.2），抖音营销授权是唯一阻断项 */
+    /* 雇佣门禁只看阻断项：余额为非阻断提示（PRD-v1.4 §7），抖音营销授权是唯一阻断项 */
     function prdHireBlockers(id) { return prdEmployeeRequirements(id).filter((item) => item.blocking !== false); }
     function prdRenderHireFlow() {
       const employee = employeeById(prdHireEmployeeId); const modal = prd$("#first-run-modal"); const back = prd$(".first-run-backdrop"); if (!modal || !employee) return;
