@@ -575,7 +575,8 @@ const stores = [
     id: 's1', name: '老杨名车汇', industry: '二手车', phone: '18158137110',
     storeNo: '623823117043564544', accountTotal: 4, douyinTotal: 4,
     status: 'normal', payStatus: '付费', expiresAt: '2027-06-15 23:59:59',
-    firstRechargeAt: '2026-07-28 10:20:00',
+    // 周期 1 由 07-27 到账的那笔起算：到账当天不计入，起算日 07-28、末日 08-27（§4.1）
+    firstRechargeAt: '2026-07-27 10:20:00',
     cycleStartAt: '2026-07-28', cycleEndAt: '2026-08-27',
     packageId: 'p1'               // 建店时按行业默认套餐写入，此后恒为本店关联套餐
   },
@@ -584,7 +585,8 @@ const stores = [
     storeNo: '623855012334993408', accountTotal: 2, douyinTotal: 2,
     status: 'normal', payStatus: '付费', expiresAt: '2026-09-02 23:59:59',
     firstRechargeAt: '2026-06-19 14:05:00',
-    cycleStartAt: '2026-08-20', cycleEndAt: '2026-09-19',
+    // 本周期由 08-20 那笔充值起算：到账当天不计入，起算日 08-21、末日 09-20（§4.1）
+    cycleStartAt: '2026-08-21', cycleEndAt: '2026-09-20',
     // 关联专属套餐：主号获客专家 30 电力值（商务协议价）
     packageId: 'p5'
   },
@@ -593,7 +595,7 @@ const stores = [
     storeNo: '623901447728821760', accountTotal: 3, douyinTotal: 3,
     status: 'normal', payStatus: '付费', expiresAt: '2027-02-18 23:59:59',
     // 透支态（§5.2）：首充 500 低于月低消 800，周期 1 末必然转负
-    firstRechargeAt: '2026-07-26 09:12:00',
+    firstRechargeAt: '2026-07-25 09:12:00',
     cycleStartAt: '2026-07-26', cycleEndAt: '2026-08-25',
     packageId: 'p3'
   },
@@ -602,14 +604,15 @@ const stores = [
     storeNo: '623779005512441856', accountTotal: 2, douyinTotal: 2,
     status: 'normal', payStatus: '付费', expiresAt: '2027-05-21 23:59:59',
     firstRechargeAt: '2026-06-19 10:30:00',
-    cycleStartAt: '2026-08-20', cycleEndAt: '2026-09-19',
+    // 末笔充值在 06-19，本周期是延续中的空转周期，只作为演示里的「进行中」样本
+    cycleStartAt: '2026-08-21', cycleEndAt: '2026-09-20',
     packageId: 'p4'
   },
   {
     id: 's5', name: '子龙测试', industry: '新车', phone: '13858126084',
     storeNo: '623609280545566720', accountTotal: 0, douyinTotal: 0,
     status: 'frozen', payStatus: '试用', expiresAt: '2025-01-06 23:59:59',
-    firstRechargeAt: '2024-03-11 16:40:00',
+    firstRechargeAt: '2024-03-10 16:40:00',
     cycleStartAt: '2024-03-11', cycleEndAt: '2024-04-10',
     packageId: 'p2'
   }
@@ -652,23 +655,23 @@ const recharges = {
   // 与客户端原型同口径：到账合计 8,000 − 业务 1,000 − 补扣 200 = 6,800
   // 第 2 条为「抵扣负值」入账：周期 1 末补扣后账户转负 −200，本笔到账先抵扣这 200
   s1: [
-    { id: 'R20260728102000', amount: 1000, type: '付费充值', arrivedAt: '2026-07-28 10:20:00', loggedAt: '2026-07-28 10:22:13', operator: '王敏', remark: '补充电力值' },
+    { id: 'R20260727102000', amount: 1000, type: '付费充值', arrivedAt: '2026-07-27 10:20:00', loggedAt: '2026-07-27 10:22:13', operator: '王敏', remark: '补充电力值' },
     { id: 'R20260923102000', amount: 5000, type: '付费充值', arrivedAt: '2026-09-23 10:20:00', loggedAt: '2026-09-23 10:23:41', operator: '王敏', remark: '补充电力值，抵扣200电力值' },
     { id: 'R20260924143500', amount: 2000, type: '付费充值', arrivedAt: '2026-09-24 14:35:00', loggedAt: '2026-09-24 14:37:26', operator: '王敏', remark: '补充电力值' }
   ],
   s2: [
     { id: 'R20260619140500', amount: 2000, type: '付费充值', arrivedAt: '2026-06-19 14:05:00', loggedAt: '2026-06-19 14:08:22', operator: '陈昊', remark: '补充电力值' },
-    { id: 'R20260821101800', amount: 2000, type: '付费充值', arrivedAt: '2026-08-21 10:18:00', loggedAt: '2026-08-21 10:20:05', operator: '陈昊', remark: '补充电力值' }
+    { id: 'R20260820101800', amount: 2000, type: '付费充值', arrivedAt: '2026-08-20 10:18:00', loggedAt: '2026-08-20 10:20:05', operator: '陈昊', remark: '补充电力值' }
   ],
   s3: [
-    { id: 'R20260726091200', amount: 500, type: '付费充值', arrivedAt: '2026-07-26 09:12:00', loggedAt: '2026-07-26 09:15:37', operator: '王敏', remark: '补充电力值' }
+    { id: 'R20260725091200', amount: 500, type: '付费充值', arrivedAt: '2026-07-25 09:12:00', loggedAt: '2026-07-25 09:15:37', operator: '王敏', remark: '补充电力值' }
   ],
   s4: [
     { id: 'R20260619103000', amount: 5000, type: '付费充值', arrivedAt: '2026-06-19 10:30:00', loggedAt: '2026-06-19 10:33:11', operator: '陈昊', remark: '补充电力值' }
   ],
   // 子龙测试为试用账户，历史入账按试用充值计
   s5: [
-    { id: 'R20240311164000', amount: 2000, type: '试用充值', arrivedAt: '2024-03-11 16:40:00', loggedAt: '2024-03-11 16:42:58', operator: '陈昊', remark: '补充电力值' }
+    { id: 'R20240310164000', amount: 2000, type: '试用充值', arrivedAt: '2024-03-10 16:40:00', loggedAt: '2024-03-10 16:42:58', operator: '陈昊', remark: '补充电力值' }
   ]
 };
 
@@ -677,11 +680,15 @@ const recharges = {
    充值类型：本次这笔入账的性质，默认「付费充值」。
    两者共同驱动两条连带规则，且只在这笔入账真的发生时生效（电力值调整为正数）：
    ① 重置 31 天低消周期；② 「到期天数调整」前端自动填 365 天。
-   「赠送」是纯电力值赠与，两条都不触发——低消周期刷新只认充值（§4.1）。 */
+   「赠送」是纯电力值赠与，两条都不触发——低消周期刷新只认充值（§4.1）。
+   重置出的周期按「到账当天不计入」计日：起算日 = 到账日 + 1 天，末日 = 到账日 + 31 天。
+   「电力值调整」另受单笔 100,000 上限约束，正负都卡（§9.1）。 */
 const VIP_PAY_STATUS = ['试用', '付费'];
 const VIP_RECHARGE_TYPES = ['付费充值', '试用充值', '赠送', '延期付费'];
 const RECHARGE_RENEWS = { '付费充值': true, '试用充值': true, '赠送': false, '延期付费': true };
 const VIP_SERVICE_DAYS = 365;
+// 单笔电力值调整的上限（§9.1 / §6.2）：充值、扣减双向都卡，按绝对值判定
+const VIP_POWER_LIMIT = 100000;
 const RECHARGE_TYPE_TAG = {
   '付费充值': 'tag--success', '试用充值': 'tag--primary',
   '赠送': 'tag--info', '延期付费': 'tag--warning'
@@ -860,7 +867,8 @@ function cycleFeesOf(store) {
 function sumPower(list) {
   return list.reduce((a, f) => a + priceOfFee(f).price, 0);
 }
-// 周期已结束、且服务期仍在的门店，在周期末日 23:59:59 落一条补差记录
+// 周期已结束、且服务期仍在的门店，在周期末日 23:59:59（等价于到账日 + 32 天的 00:00）
+// 落一条补差记录（§4.1 / §4.2）
 stores.forEach(s => {
   if (cycleRemainDays(s) > 0 || serviceRemainDays(s) <= 0) return;
   const gap = monthlyMinimumOf(s) - sumPower(cycleFeesOf(s));
@@ -1545,8 +1553,8 @@ function openVipEdit(storeId) {
         ? '按当日 ' + TODAY + ' 顺延 ' + d + ' 天'
         : '按当前到期时间 ' + s.expiresAt.slice(0, 10) + ' 顺延 ' + d + ' 天');
     $('#vipPreviewPower').textContent = num(s.balance + p);
-    // 低消周期直接出日期，不写「是否重置」的规则说明
-    $('#vipPreviewCycle').textContent = renews() ? TODAY : s.cycleStartAt;
+    // 低消周期直接出日期，不写「是否重置」的规则说明；起算日是到账日的次日（§4.1）
+    $('#vipPreviewCycle').textContent = renews() ? addDays(TODAY, 1) : s.cycleStartAt;
   };
   // 充值类型 → 「到期天数调整」自动填 365。填进去的才允许被自动收回，
   // 运营手改过的不覆盖；换成「赠送」或改成负数扣减时把自动值收回
@@ -1857,6 +1865,8 @@ document.addEventListener('click', function (e) {
     const d = parseInt($('#vipDays').value, 10) || 0;
     const p = parseInt($('#vipPower').value, 10) || 0;
     if (!d && !p) { toast('请填写到期天数或电力值调整', true); return; }
+    // 单笔上限 100,000 电力值：充值、扣减双向都卡，按绝对值判定（§9.1 / §6.2）
+    if (Math.abs(p) > VIP_POWER_LIMIT) { toast('单笔电力值调整不能超过 ' + num(VIP_POWER_LIMIT), true); return; }
     // 切换了付费状态 → 以「当日」为基准重算到期时间；未切换 → 在原到期时间上顺延（§9.1）
     if (d) s.expiresAt = addDays(switched ? TODAY : s.expiresAt.slice(0, 10), d) + ' 23:59:59';
     s.payStatus = payStatus;
@@ -1881,8 +1891,9 @@ document.addEventListener('click', function (e) {
     // 负数扣减不算充值。周期的刷新点全部收在这里——冻结/解冻本身不再改写周期（§5.3）
     const cycleReset = !isDeduction && RECHARGE_RENEWS[rcType];
     if (cycleReset) {
-      s.cycleStartAt = TODAY;
-      s.cycleEndAt = addDays(TODAY, 30);
+      // 到账当天不计入周期：起算日是到账日的次日，末日是到账日 + 31 天（§4.1）
+      s.cycleStartAt = addDays(TODAY, 1);
+      s.cycleEndAt = addDays(TODAY, 31);
       s.cycleConsumed = sumPower(cycleFeesOf(s));   // 按新窗口重算，不手填 0
     }
     // 减少付费时间导致截止日早于当前时间 → 立即冻结（§9.2）
