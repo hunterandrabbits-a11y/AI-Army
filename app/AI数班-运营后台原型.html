@@ -307,6 +307,9 @@ textarea.input{height:auto;padding:6px 10px;resize:vertical;line-height:1.5}
 .modal.is-open{display:flex;animation:popIn .2s ease}
 .modal--sm{width:520px}
 .modal--md{width:680px}
+/* 套餐弹窗的客服专员两行行名带岗位名，比其他弹窗的标签长，单独放宽标签列，
+   让两行的输入框左边缘与其余计价项对齐（.modal--md 只被套餐包弹窗使用） */
+.modal--md .form-row > .field-label{flex:0 0 164px}
 .modal--lg{width:820px}
 .modal-head{
   display:flex;align-items:center;justify-content:space-between;
@@ -326,6 +329,26 @@ textarea.input{height:auto;padding:6px 10px;resize:vertical;line-height:1.5}
 .modal-body .form-block{background:transparent;padding:0;margin-bottom:0}
 .modal-body .form-block .block-title{margin-top:4px}
 .form-block:last-child{margin-bottom:0}
+/* 弹窗内分组自身 margin 归零，相邻分组之间补回间距 */
+.modal-body .form-block + .form-block{margin-top:18px}
+
+/* 两行表头：客服专员跨两列（自然 / AI 两档转化线索），子表头居中且弱化 */
+.table th.th-group{text-align:center}
+.table th.th-group small{display:block;font-weight:400;font-size:12px;color:var(--text-4);margin-top:2px}
+.table th.th-sub{text-align:center;font-weight:400;font-size:13px;padding-top:8px;padding-bottom:8px}
+/* 客服专员两档是同一岗位下的两个计价项：行名已带岗位名，这里再把字色降一级，
+   与其余三个常规岗位的行区分开（标签列右对齐，不用 padding 制造假缩进） */
+.form-row.is-sub > .field-label{color:var(--text-3)}
+
+/* ---------- 多选行（关联行业） ---------- */
+.pick-list{border:1px solid var(--border-light);border-radius:var(--radius);padding:0 14px}
+.pick-row{display:flex;align-items:center;gap:10px;padding:12px 0;border-bottom:1px solid var(--border-light);cursor:pointer}
+.pick-row:last-child{border-bottom:none}
+.pick-row.is-locked{cursor:default}
+.pick-row input[type=checkbox]{flex:0 0 auto;width:16px;height:16px;margin:0;accent-color:var(--primary);cursor:pointer}
+.pick-row input[type=checkbox]:disabled{cursor:not-allowed}
+.pick-name{flex:0 0 72px;font-size:14px;font-weight:500;color:var(--text-1)}
+.pick-note{font-size:12px;color:var(--text-3)}
 
 /* ---------- 抽屉 / 弹窗尺寸变体 ----------
    表格型配置用宽抽屉，账本型明细用宽弹窗；560px 塞不下多列表格 */
@@ -428,9 +451,9 @@ textarea.input{height:auto;padding:6px 10px;resize:vertical;line-height:1.5}
 <script>
 /* =========================================================================
    AI数班 · 运营后台原型
-   对齐 docs/prd/PRD-v1.4-计费规则.md §10（充值登记 / 服务期管理 /
-   L1 行业消耗模版 / L2 员工消耗配置 / 费用记录查询）
-   结算方式口径：基础结算在门店×岗位级配置，高级结算按平台账号开关
+   对齐 docs/prd/PRD-v1.4-计费规则.md §10（VIP 编辑 / 服务期管理 /
+   套餐包管理 / 员工消耗套餐包）
+   结算方式口径：基础结算按生效套餐的岗位单价计费，高级结算在平台账号上单独开启并优先
    ========================================================================= */
 (function () {
 'use strict';
@@ -444,6 +467,20 @@ const POSITIONS = ['主号获客专家', '副号获客专家', '客服专员', '
 const ADVANCED_POSITIONS = ['主号获客专家', '副号获客专家'];
 // 刊例价：全行业统一、后台只读（§2.3）
 const LIST_PRICE = { '主号获客专家': 50, '副号获客专家': 50, '客服专员': 10, '矩阵视频发布专员': 2 };
+/* 客服专员的转化线索按 AI 是否参与承接分两档，单价分开配置（§3.4）：
+   会话里 AI 有回复即判「AI转化线索」，全程无 AI 回复判「自然转化线索」。
+   人才市场的刊例价仍是单一价 10 电力/转化线索，不随分档变化。 */
+const LEAD_TYPES = ['自然转化线索', 'AI转化线索'];
+/* 计价项：套餐里可单独配价的最小单位。除客服专员外一个岗位一个计价项，
+   客服专员按转化线索类型拆两档，所以套餐里是 5 个格子而不是 4 个。 */
+const PRICE_KEYS = ['主号获客专家', '副号获客专家',
+  '客服专员·自然转化线索', '客服专员·AI转化线索', '矩阵视频发布专员'];
+// 岗位 + 转化类型 → 计价项；非客服岗位不使用转化类型
+function priceKeyOf(position, leadType) {
+  return position === '客服专员'
+    ? '客服专员·' + (LEAD_TYPES.indexOf(leadType) >= 0 ? leadType : LEAD_TYPES[1])
+    : position;
+}
 // 高级结算的线索分档（沿用系统原有获客专家配置）
 const SENIOR_TIERS = ['销售-精准线索', '销售-中等线索', '销售-普通线索', '收购-精准线索'];
 
@@ -458,43 +495,55 @@ const GARAGE = [
 ];
 
 /* ---------- 套餐包 ----------
-   一份套餐 = 四个岗位的实际消耗单价 + 月最低消耗，整包生效、就地改价。
-   岗位单价留空 = 该岗位未配置，实际计费回落刊例价（§2.4）。
-   月最低消耗为套餐必配项，账户级结算（§4.2）。 */
+   一份套餐 = 五个计价项的实际消耗单价 + 月最低消耗，整包生效、就地改价。
+   五个计价项（三个常规岗位 + 客服专员的自然/AI 两档转化线索）与月最低消耗
+   都是必配项，留空即不予保存（§10.3）——因此计费链路上不存在"该计价项未
+   配置、回落刊例价"的分支。
+   计费起点是门店所属行业的默认套餐，行业必然有默认套餐（系统预置，§2.4）；
+   门店单独关联套餐后，生效套餐整包改为门店关联套餐，行业默认套餐对本店失效。
+   月最低消耗随生效套餐走，账户级结算（§4.2）。 */
 const packages = [
   {
-    id: 'p1', name: '二手车标准套餐', note: '二手车行业默认',
-    prices: { '主号获客专家': 50, '副号获客专家': 50, '客服专员': 10, '矩阵视频发布专员': 2 },
+    id: 'p1', name: '二手车标准套餐', note: '二手车行业预置默认套餐，主号与副号获客专家按刊例价',
+    prices: { '主号获客专家': 50, '副号获客专家': 50, '客服专员·自然转化线索': 5,
+      '客服专员·AI转化线索': 10, '矩阵视频发布专员': 2 },
     monthlyMinimum: 1200
   },
   {
-    id: 'p2', name: '新车标准套餐', note: '新车行业默认',
-    prices: { '主号获客专家': 45, '副号获客专家': 45, '客服专员': 10, '矩阵视频发布专员': null },
+    id: 'p2', name: '新车标准套餐', note: '新车行业预置默认套餐，主号与副号获客专家 45 电力值',
+    prices: { '主号获客专家': 45, '副号获客专家': 45, '客服专员·自然转化线索': 5,
+      '客服专员·AI转化线索': 10, '矩阵视频发布专员': 2 },
     monthlyMinimum: 1500
   },
   {
-    id: 'p3', name: '家居标准套餐', note: '四个岗位均未配置单价，按刊例价计费',
-    prices: { '主号获客专家': null, '副号获客专家': null, '客服专员': null, '矩阵视频发布专员': null },
+    id: 'p3', name: '家居标准套餐', note: '家居行业预置默认套餐，主号与副号获客专家按刊例价',
+    prices: { '主号获客专家': 50, '副号获客专家': 50, '客服专员·自然转化线索': 5,
+      '客服专员·AI转化线索': 10, '矩阵视频发布专员': 2 },
     monthlyMinimum: 800
   },
   {
-    id: 'p4', name: '房地产标准套餐', note: '四个岗位均未配置单价，按刊例价计费',
-    prices: { '主号获客专家': null, '副号获客专家': null, '客服专员': null, '矩阵视频发布专员': null },
+    id: 'p4', name: '房地产标准套餐', note: '房地产行业预置默认套餐，主号与副号获客专家按刊例价',
+    prices: { '主号获客专家': 50, '副号获客专家': 50, '客服专员·自然转化线索': 5,
+      '客服专员·AI转化线索': 10, '矩阵视频发布专员': 2 },
     monthlyMinimum: 600
   },
   {
     id: 'p5', name: '骏驰专属套餐', note: '商务协议价，主号获客专家 30 电力值',
-    prices: { '主号获客专家': 30, '副号获客专家': 50, '客服专员': 10, '矩阵视频发布专员': 2 },
+    prices: { '主号获客专家': 30, '副号获客专家': 50, '客服专员·自然转化线索': 5,
+      '客服专员·AI转化线索': 10, '矩阵视频发布专员': 2 },
     monthlyMinimum: 1200
   },
   {
-    id: 'p6', name: '二手车高配套餐', note: '尚未关联，待启用',
-    prices: { '主号获客专家': 60, '副号获客专家': 60, '客服专员': 12, '矩阵视频发布专员': 3 },
+    id: 'p6', name: '二手车高配套餐', note: '尚未关联行业，可作为行业默认套餐的备选',
+    prices: { '主号获客专家': 60, '副号获客专家': 60, '客服专员·自然转化线索': 6,
+      '客服专员·AI转化线索': 12, '矩阵视频发布专员': 3 },
     monthlyMinimum: 1500
   }
 ];
 function packageById(id) { return packages.find(p => p.id === id) || null; }
-// 每个行业至多关联一个默认套餐（§4.1）；未关联 = 该行业无默认套餐，全部回落刊例价
+// 每个行业**恰好**一个默认套餐，由系统预置，不存在未关联的行业（§2.4）；
+// 一个套餐可以同时是多个行业的默认套餐（多对一）。
+// 关联关系在套餐包列表的操作里指定，不单独成页。
 const industryPackage = { '二手车': 'p1', '新车': 'p2', '家居': 'p3', '房地产': 'p4' };
 
 /* ---------- 门店账号（付费主体） ----------
@@ -599,7 +648,9 @@ const recharges = {
 };
 
 /* ---------- 费用记录 ---------- */
-// 在位次 [时间, 岗位, 抖音账号, 计费对象, 客户, 联系方式, 留资时间, 城市, 车型, 预算, 意向, 备注]
+// 在位次 [时间, 岗位, 抖音账号, 计费对象, 客户, 联系方式, 留资时间, 城市, 车型, 预算, 意向,
+//          备注, 结算标记, 转化类型]
+// 转化类型只有客服专员用：会话里 AI 有回复 → AI转化线索，全程无回复 → 自然转化线索（§3.4）
 // 老杨名车汇：与客户端原型同口径（主号 10 / 副号 8 / 客服 9 / 矩阵 5，周期内合计 1,000 电力）
 const YANG_ROWS = [
   ['2026-08-25 09:14:22', '主号获客专家', '菁英科技', 'L202608250914', '王先生', '138****2841', '2026-08-25 09:12', '杭州市', '宝马3系', '30-40万', '高', '有效线索计费'],
@@ -622,15 +673,15 @@ const YANG_ROWS = [
   ['2026-08-27 11:29:53', '副号获客专家', '泰廉供应商资料管理平台', 'L202608271129', '杨先生', '134****2208', '2026-08-27 11:24', '温州市', '奔驰C级', '40万以上', '高', '有效线索计费'],
   ['2026-08-27 15:07:26', '副号获客专家', '泰廉供应商资料管理平台', 'L202608271507', '朱女士', '187****9915', '2026-08-27 15:02', '绍兴市', '丰田汉兰达', '30-40万', '中', '有效线索计费'],
 
-  ['2026-08-25 09:58:14', '客服专员', '乐涵欣信息检索辅助软件', 'C202608250958', '', '', '', '', '', '', '', '转化线索计费'],
-  ['2026-08-25 12:33:47', '客服专员', '乐涵欣信息检索辅助软件', 'C202608251233', '', '', '', '', '', '', '', '转化线索计费'],
-  ['2026-08-25 16:19:05', '客服专员', '乐涵欣信息检索辅助软件', 'C202608251619', '', '', '', '', '', '', '', '转化线索计费'],
-  ['2026-08-26 10:27:31', '客服专员', '乐涵欣信息检索辅助软件', 'C202608261027', '', '', '', '', '', '', '', '转化线索计费'],
-  ['2026-08-26 11:54:18', '客服专员', '乐涵欣信息检索辅助软件', 'C202608261154', '', '', '', '', '', '', '', '转化线索计费'],
-  ['2026-08-26 15:11:42', '客服专员', '乐涵欣信息检索辅助软件', 'C202608261511', '', '', '', '', '', '', '', '转化线索计费'],
-  ['2026-08-27 09:22:56', '客服专员', '乐涵欣信息检索辅助软件', 'C202608270922', '', '', '', '', '', '', '', '转化线索计费'],
-  ['2026-08-27 13:46:23', '客服专员', '乐涵欣信息检索辅助软件', 'C202608271346', '', '', '', '', '', '', '', '转化线索计费'],
-  ['2026-08-27 16:38:49', '客服专员', '乐涵欣信息检索辅助软件', 'C202608271638', '', '', '', '', '', '', '', '转化线索计费'],
+  ['2026-08-25 09:58:14', '客服专员', '乐涵欣信息检索辅助软件', 'C202608250958', '', '', '', '', '', '', '', '自然转化线索计费', '', '自然转化线索'],
+  ['2026-08-25 12:33:47', '客服专员', '乐涵欣信息检索辅助软件', 'C202608251233', '', '', '', '', '', '', '', 'AI转化线索计费', '', 'AI转化线索'],
+  ['2026-08-25 16:19:05', '客服专员', '乐涵欣信息检索辅助软件', 'C202608251619', '', '', '', '', '', '', '', '自然转化线索计费', '', '自然转化线索'],
+  ['2026-08-26 10:27:31', '客服专员', '乐涵欣信息检索辅助软件', 'C202608261027', '', '', '', '', '', '', '', 'AI转化线索计费', '', 'AI转化线索'],
+  ['2026-08-26 11:54:18', '客服专员', '乐涵欣信息检索辅助软件', 'C202608261154', '', '', '', '', '', '', '', 'AI转化线索计费', '', 'AI转化线索'],
+  ['2026-08-26 15:11:42', '客服专员', '乐涵欣信息检索辅助软件', 'C202608261511', '', '', '', '', '', '', '', '自然转化线索计费', '', '自然转化线索'],
+  ['2026-08-27 09:22:56', '客服专员', '乐涵欣信息检索辅助软件', 'C202608270922', '', '', '', '', '', '', '', 'AI转化线索计费', '', 'AI转化线索'],
+  ['2026-08-27 13:46:23', '客服专员', '乐涵欣信息检索辅助软件', 'C202608271346', '', '', '', '', '', '', '', 'AI转化线索计费', '', 'AI转化线索'],
+  ['2026-08-27 16:38:49', '客服专员', '乐涵欣信息检索辅助软件', 'C202608271638', '', '', '', '', '', '', '', 'AI转化线索计费', '', 'AI转化线索'],
 
   ['2026-08-25 10:05:00', '矩阵视频发布专员', '菁英科技', '配置对比：买车前先看这三项', '', '', '', '', '', '', '', '作品发布扣费'],
   ['2026-08-26 10:05:00', '矩阵视频发布专员', '泰廉电商上架辅助系统', '二手车避坑指南：这五类车别碰', '', '', '', '', '', '', '', '作品发布扣费'],
@@ -649,49 +700,56 @@ const JUNCHI_ROWS = [
   ['2026-08-26 15:21:08', '副号获客专家', '骏驰汽车二手车', 'L202608261521', '秦先生', '138****7764', '2026-08-26 15:16', '杭州市', '宝马X3', '30-40万', '高', '有效线索计费']
 ];
 
-// 星耀家居：L1 单价待配置 → 回落刊例价
+// 星耀家居：基础结算，按家居行业默认套餐取价
 const XINGYAO_ROWS = [
   ['2026-08-12 10:24:16', '主号获客专家', '星耀家居官方号', 'L202608121024', '周先生', '139****2280', '2026-08-12 10:19', '杭州市', '全屋定制', '10-20万', '高', '有效线索计费'],
   ['2026-08-15 14:08:52', '主号获客专家', '星耀家居官方号', 'L202608151408', '吴女士', '137****6641', '2026-08-15 14:03', '绍兴市', '客厅套装', '5-10万', '中', '有效线索计费'],
   ['2026-08-19 09:36:41', '副号获客专家', '星耀家居严选', 'L202608190936', '郑先生', '150****3392', '2026-08-19 09:31', '宁波市', '实木床', '1-3万', '低', '有效线索计费'],
-  ['2026-08-24 11:52:30', '客服专员', '星耀家居客服号', 'C202608241152', '', '', '', '', '', '', '', '转化线索计费']
+  ['2026-08-24 11:52:30', '客服专员', '星耀家居客服号', 'C202608241152', '', '', '', '', '', '', '', 'AI转化线索计费', '', 'AI转化线索']
 ];
 
 const fees = [];
 function pushFee(store, row) {
-  const [time, position, account, object, customer, contact, leadAt, city, model, budget, intent, remark, mode] = row;
+  const [time, position, account, object, customer, contact, leadAt, city, model, budget, intent,
+    remark, mode, leadType] = row;
   fees.push({
     store: store.name, storeId: store.id, industry: store.industry,
     time: time, position: position, account: account, object: object,
     customer: customer, contact: contact, leadAt: leadAt, city: city,
     model: model, budget: budget, intent: intent, remark: remark,
-    advanced: mode === 'advanced'
+    advanced: mode === 'advanced',
+    leadType: leadType || null   // 只有客服专员有值（§3.4）
   });
 }
-// 老杨名车汇：全部基础结算，取价来源按 L1（客服/矩阵亦为 L1）
+// 老杨名车汇：全部基础结算，按二手车行业默认套餐取价
 YANG_ROWS.forEach(r => pushFee(stores[0], r));
 JUNCHI_ROWS.forEach(r => pushFee(stores[1], r));
 XINGYAO_ROWS.forEach(r => pushFee(stores[2], r));
 
-// 单价快照在费用记录写入时定格（§2.6）：之后改 L2 消耗数值或开关高级结算，
+// 单价快照在费用记录写入时定格（§2.6）：之后改套餐单价或开关高级结算，
 // 只影响新发生的计费，不回溯改写已入账的历史费用——否则改一次价，账本余额
 // 和周期消耗都会跟着漂，与客户侧对不上账。
 fees.forEach(f => { f.snap = priceOfFee(f); });
 
 /* ---------- 取价与快照 ---------- */
-// 门店生效套餐：门店关联套餐优先，未关联回落所属行业的默认套餐；都没有则无套餐
+// 门店生效套餐：计费起点是所属行业的默认套餐（系统预置、必然存在），
+// 门店单独关联套餐后整包改为门店关联套餐（§2.2）。
+// 末尾的 || null 只是防御：按规则每个行业都有默认套餐，正常取不到 null。
 function effectivePackage(store) {
   return packageById(store.packageId) || packageById(industryPackage[store.industry]) || null;
 }
-// 基础结算：套餐内该岗位配了价就用，留空回落刊例价（§2.2）
+// 基础结算：取生效套餐的计价项单价（§2.2）。五个计价项单价都是套餐的必配项，
+// 不存在"该计价项未配置"；LIST_PRICE 分支是数据异常时的兜底，正常取不到。
+// 客服专员还要看转化类型——自然与 AI 两档在套餐里是两个独立的格子（§3.4）。
 // 套餐是整包的——门店一旦关联了自己的套餐，就不再回看行业默认套餐
-function basePriceOf(store, position) {
+function basePriceOf(store, position, leadType) {
   const own = packageById(store.packageId);
   const pkg = own || packageById(industryPackage[store.industry]);
-  if (pkg && pkg.prices[position] != null) {
-    return { price: pkg.prices[position], source: own ? '门店关联套餐' : '行业默认套餐' };
+  const key = priceKeyOf(position, leadType);
+  if (pkg && pkg.prices[key] != null) {
+    return { price: pkg.prices[key], source: own ? '门店关联套餐' : '行业默认套餐' };
   }
-  return { price: LIST_PRICE[position], source: '刊例价兜底' };
+  return { price: LIST_PRICE[position], source: '刊例价兜底' };   // 数据异常兜底，正常不应出现
 }
 // 高级结算：单价由原有获客结算配置决定，取价来源记为「高级结算配置」
 function seniorPriceOf(account, position, object) {
@@ -717,7 +775,7 @@ function priceOfFee(fee) {
     const sp = seniorPriceOf(account, fee.position, fee.object);
     return { price: sp.price, source: sp.source, settlement: '高级结算' };
   }
-  const bp = basePriceOf(store, fee.position);
+  const bp = basePriceOf(store, fee.position, fee.leadType);
   return { price: bp.price, source: bp.source, settlement: '基础结算' };
 }
 
@@ -739,8 +797,9 @@ function serviceRemainDays(store) {
 function cycleRemainDays(store) {
   return daysBetween(TODAY, store.cycleEndAt);
 }
-// 月最低消耗随生效套餐走，与单价同一条链路（§4.2）
-// 门店关联套餐 > 行业默认套餐；都没有则不设低消，周期末不做补差
+// 月最低消耗随生效套餐走，与单价同一条链路（§4.2）：行业默认套餐是计费起点
+// 且系统预置、必然存在，所以每个账户都有月最低消耗，不存在不设低消的账户。
+// 末尾的 || 0 只是防御：按规则取不到 null。
 function monthlyMinimumOf(store) {
   const pkg = effectivePackage(store);
   return pkg ? pkg.monthlyMinimum : 0;
@@ -751,7 +810,7 @@ function cycleConsumedOf(store) {
 
 /* ---------- 账本推导 ----------
    余额、周期消耗、补扣金额一律由流水推出，不手填——否则「可用电力值 ≡
-   到账合计 − 扣减合计」这条恒等式会在演示数据里悄悄破掉。 */
+   到账合计 − 扣减合计」这条恒等式会在数据变动中悄悄破掉。 */
 // 周期内业务消耗：不含周期末补扣（补差是找齐，不是消耗，§4.2）
 function cycleFeesOf(store) {
   return fees.filter(f => f.storeId === store.id && !f.isMinimum &&
@@ -1087,13 +1146,17 @@ function pkgBody(s) {
     packages.map(p => '<option value="' + p.id + '"' + (s.packageId === p.id ? ' selected' : '') + '>' +
       esc(p.name) + '</option>')).join('');
 
-  const rows = POSITIONS.map(p => {
-    const r = basePriceOf(s, p);
-    return '<tr>' +
-      '<td class="cell-strong nw">' + esc(p) + '</td>' +
-      '<td class="cell-num">' + r.price + '</td>' +
-      '<td>' + esc(r.source) + '</td>' +
-      '</tr>';
+  // 客服专员两档各占一行，标注里带上岗位名，本店按哪一档计费一目了然
+  const rows = POSITIONS.map(pos => {
+    const items = pos === '客服专员' ? LEAD_TYPES : [null];
+    return items.map(lt => {
+      const r = basePriceOf(s, pos, lt);
+      return '<tr>' +
+        '<td class="cell-strong nw">' + esc(pos) + (lt ? '<div class="cell-sub">' + esc(lt) + '</div>' : '') + '</td>' +
+        '<td class="cell-num">' + r.price + '</td>' +
+        '<td>' + esc(r.source) + '</td>' +
+        '</tr>';
+    }).join('');
   }).join('');
 
   return '<div class="card card--flush" style="margin-bottom:0">' +
@@ -1129,7 +1192,7 @@ function accountBody(s) {
   const cycDays = cycleRemainDays(s);
   const minimum = monthlyMinimumOf(s);
   const consumed = cycleConsumedOf(s);
-  // 未生效任何套餐时没有低消，进度条不做除零
+  // 行业默认套餐必然存在，每个账户都有低消；|| 只是防御，进度条不做除零
   const pct = minimum > 0 ? Math.min(100, Math.round(consumed / minimum * 100)) : 0;
   const effPkg = effectivePackage(s);
 
@@ -1238,37 +1301,19 @@ function usageText(u) {
 }
 
 function renderPackages() {
-  const priceCell = v => v == null
-    ? '<td class="cell-num"><span class="text-3">未配置</span></td>'
-    : '<td class="cell-num">' + v + '</td>';
-
   const rows = packages.map(p => {
     const u = usageOf(p.id);
     return '<tr>' +
       '<td class="cell-strong nw">' + esc(p.name) +
       (p.note ? '<div class="cell-sub">' + esc(p.note) + '</div>' : '') + '</td>' +
-      POSITIONS.map(pos => priceCell(p.prices[pos])).join('') +
+      PRICE_KEYS.map(k => '<td class="cell-num">' + p.prices[k] + '</td>').join('') +
       '<td class="cell-num">' + num(p.monthlyMinimum) + '</td>' +
       '<td>' + (u.industries.length ? esc(u.industries.join('、')) : '<span class="text-3">—</span>') + '</td>' +
-      '<td>' + (u.stores.length ? esc(u.stores.map(s => s.name).join('、')) : '<span class="text-3">—</span>') + '</td>' +
       '<td class="col-op">' +
+      '<span class="link" data-pkg-ind="' + p.id + '">关联行业</span>' +
       '<span class="link" data-pkg-edit="' + p.id + '">编辑</span>' +
       '<span class="link link--danger" data-pkg-del="' + p.id + '">删除</span>' +
       '</td></tr>';
-  }).join('');
-
-  const indRows = INDUSTRIES.map(i => {
-    const cur = industryPackage[i];
-    const opts = ['<option value="">未关联</option>'].concat(
-      packages.map(p => '<option value="' + p.id + '"' + (cur === p.id ? ' selected' : '') + '>' +
-        esc(p.name) + '</option>')).join('');
-    const pkg = packageById(cur);
-    return '<tr>' +
-      '<td class="cell-strong nw">' + esc(i) + '</td>' +
-      '<td><select class="select" data-pkg-industry="' + esc(i) + '">' + opts + '</select></td>' +
-      '<td class="cell-num">' + (pkg ? num(pkg.monthlyMinimum) : '<span class="text-3">—</span>') + '</td>' +
-      '<td class="cell-num">' + num(stores.filter(s => s.industry === i && !s.packageId).length) + '</td>' +
-      '</tr>';
   }).join('');
 
   return '<div class="card card--flush">' +
@@ -1276,19 +1321,17 @@ function renderPackages() {
     '<div class="card-actions"><button class="btn btn--primary" data-action="pkg-add">新增套餐包</button></div></div>' +
     '<div class="card-body" style="padding-top:0">' +
     '<div class="table-wrap"><table class="table"><thead><tr>' +
-    '<th>套餐名称</th>' + POSITIONS.map(p => '<th>' + esc(p) + '</th>').join('') +
-    '<th>月最低消耗</th><th>关联行业</th><th>关联门店</th><th class="col-op">操作</th>' +
-    '</tr></thead><tbody>' + (rows || '<tr><td colspan="9"><div class="empty">暂无数据</div></td></tr>') + '</tbody></table></div>' +
+    '<th rowspan="2">套餐名称</th>' +
+    '<th rowspan="2">' + esc(POSITIONS[0]) + '</th>' +
+    '<th rowspan="2">' + esc(POSITIONS[1]) + '</th>' +
+    '<th colspan="2" class="th-group">' + esc(POSITIONS[2]) + '<small>按转化线索类型分档</small></th>' +
+    '<th rowspan="2">' + esc(POSITIONS[3]) + '</th>' +
+    '<th rowspan="2">月最低消耗</th><th rowspan="2">关联行业</th><th rowspan="2" class="col-op">操作</th>' +
+    '</tr><tr>' + LEAD_TYPES.map(lt => '<th class="th-sub">' + esc(lt) + '</th>').join('') + '</tr></thead>' +
+    '<tbody>' + (rows || '<tr><td colspan="9"><div class="empty">暂无数据</div></td></tr>') + '</tbody></table></div>' +
     '<div class="field-hint" style="padding:12px 0 0">' +
-    '门店关联套餐后四个岗位整包生效；套餐内留空的岗位按刊例价计费。</div>' +
-    '</div></div>' +
-
-    '<div class="card card--flush" style="margin-top:14px">' +
-    '<div class="card-head"><div class="card-title">行业默认配置</div></div>' +
-    '<div class="card-body" style="padding-top:0">' +
-    '<div class="table-wrap"><table class="table"><thead><tr>' +
-    '<th>行业</th><th>默认套餐</th><th>月最低消耗（电力值）</th><th>跟随本行业的门店</th>' +
-    '</tr></thead><tbody>' + indRows + '</tbody></table></div>' +
+    '计费起点是行业预置的默认套餐，门店关联套餐后整包覆盖；五个计价项均为必配项。' +
+    '客服专员按转化线索类型分两档——会话里 AI 有回复按「AI转化线索」计费，全程无 AI 回复按「自然转化线索」计费。</div>' +
     '</div></div>';
 }
 
@@ -1435,10 +1478,21 @@ function openPkgEdit(pkgId) {
   const pkg = packageById(pkgId);
   const u = pkg ? usageOf(pkg.id) : { industries: [], stores: [] };
 
-  const priceRows = POSITIONS.map(p =>
-    formRow(p, '<input class="input input--sm" type="number" min="1" step="1" data-pkg-price="' + esc(p) + '"' +
-      ' value="' + (pkg && pkg.prices[p] != null ? pkg.prices[p] : '') + '" placeholder="留空按刊例价">' +
-      '<span class="inline-note">刊例价 ' + LIST_PRICE[p] + '</span>')).join('');
+  // 客服专员按转化线索类型拆成两行；两行的标注都带岗位名，避免被读成两个独立岗位
+  const priceRows = POSITIONS.map(pos => {
+    const items = pos === '客服专员' ? LEAD_TYPES : [null];
+    return items.map(lt => {
+      const label = lt ? pos + ' · ' + lt : pos;
+      return formRow(label,
+        '<input class="input input--sm" type="number" min="1" step="1" data-pkg-price="' +
+          esc(priceKeyOf(pos, lt)) + '" value="' +
+          (pkg && pkg.prices[priceKeyOf(pos, lt)] != null ? pkg.prices[priceKeyOf(pos, lt)] : '') +
+          '" placeholder="请输入">' +
+        '<span class="inline-note">刊例价 ' + LIST_PRICE[pos] +
+          (lt ? ' / 转化线索' : '') + '</span>',
+        false, lt ? 'is-sub' : '');
+    }).join('');
+  }).join('');
 
   const body =
     (u.industries.length || u.stores.length
@@ -1447,10 +1501,13 @@ function openPkgEdit(pkgId) {
       : '') +
     formRow('套餐名称', '<input class="input input--block" id="pkgName" value="' + esc(pkg ? pkg.name : '') + '" placeholder="请输入套餐名称">', true) +
     formRow('备注', '<input class="input input--block" id="pkgNote" value="' + esc(pkg ? pkg.note : '') + '" placeholder="选填">') +
-    '<div class="form-block"><div class="form-block-title">岗位实际消耗单价<small>留空 = 该岗位按刊例价计费</small></div>' +
+    '<div class="form-block"><div class="form-block-title">岗位实际消耗单价' +
+      '<small>五个计价项均为必配项；客服专员按转化线索类型分两档</small></div>' +
     priceRows + '</div>' +
-    formRow('月最低消耗', '<input class="input input--sm" type="number" min="1" step="1" id="pkgMin" value="' +
-      (pkg ? pkg.monthlyMinimum : '') + '" placeholder="请输入"><span class="inline-note">电力值</span>', true);
+    '<div class="form-block"><div class="form-block-title">月最低消耗<small>账户级参数，与岗位单价相互独立</small></div>' +
+    formRow('数值', '<input class="input input--sm" type="number" min="1" step="1" id="pkgMin" value="' +
+      (pkg ? pkg.monthlyMinimum : '') + '" placeholder="请输入"><span class="inline-note">电力值</span>', true) +
+    '</div>';
 
   openModal(pkg ? '编辑套餐包' : '新增套餐包', body,
     '<button class="btn" data-close="1">取消</button>' +
@@ -1476,6 +1533,36 @@ function openPkgDelete(pkgId) {
     'modal--sm');
 }
 
+/* ---------- 弹窗：关联行业 ----------
+   每个行业恰好一个默认套餐（系统预置），一个套餐可同时是多个行业的默认。
+   已在用本套餐的行业行锁定勾选态——行业不能没有默认套餐，更换只能在目标套餐上改选。 */
+function openPkgIndustries(pkgId) {
+  const pkg = packageById(pkgId);
+  if (!pkg) return;
+
+  const rows = INDUSTRIES.map(ind => {
+    const cur = packageById(industryPackage[ind]);
+    const isSelf = !!(cur && cur.id === pkg.id);
+    const note = isSelf
+      ? '当前默认套餐：本套餐，如需更换请在目标套餐上勾选本行业'
+      : '当前默认套餐：' + esc(cur ? cur.name : '—') + '，勾选后改选为本套餐';
+    return '<label class="pick-row' + (isSelf ? ' is-locked' : '') + '">' +
+      '<input type="checkbox" data-ind-pick="' + esc(ind) + '"' + (isSelf ? ' checked disabled' : '') + '>' +
+      '<span class="pick-name">' + esc(ind) + '</span>' +
+      '<span class="pick-note">' + note + '</span></label>';
+  }).join('');
+
+  const body =
+    '<div class="field-hint" style="padding:0 0 6px">每个行业必有一个默认套餐，已在用本套餐的行业不能取消；' +
+    '勾选其他行业即把该行业改选为本套餐。门店已单独关联套餐时不受影响。</div>' +
+    '<div class="pick-list">' + rows + '</div>';
+
+  openModal('关联行业', body,
+    '<button class="btn" data-close="1">取消</button>' +
+    '<button class="btn btn--primary" data-action="pkg-ind-save" data-id="' + pkg.id + '">保存</button>',
+    'modal--sm');
+}
+
 /* ---------- 渲染调度 ---------- */
 function render() {
   renderTopbar();
@@ -1496,7 +1583,7 @@ document.addEventListener('click', function (e) {
     '[data-store-edit],[data-store-login],[data-store-menu],[data-menu-act],' +
     '[data-open-platform],' +
     '[data-acct-edit],[data-acct-human],[data-acct-more],' +
-    '[data-senior-config],[data-pkg-edit],[data-pkg-del],[data-page],' +
+    '[data-senior-config],[data-pkg-ind],[data-pkg-edit],[data-pkg-del],[data-page],' +
     '[data-senior-toggle],[data-senior-budget],[data-senior-brand]');
   if (!t) return;
 
@@ -1532,6 +1619,7 @@ document.addEventListener('click', function (e) {
   if (t.dataset.seniorConfig) { openSeniorConfig(t.dataset.seniorConfig); return; }
 
   // 套餐包管理
+  if (t.dataset.pkgInd) { openPkgIndustries(t.dataset.pkgInd); return; }
   if (t.dataset.pkgEdit) { openPkgEdit(t.dataset.pkgEdit); return; }
   if (t.dataset.pkgDel) { openPkgDelete(t.dataset.pkgDel); return; }
 
@@ -1574,17 +1662,19 @@ document.addEventListener('click', function (e) {
     const min = parseInt($('#pkgMin').value, 10);
     if (!min || min < 1) { toast('请输入大于 0 的整数月最低消耗', true); return; }
 
-    // 岗位单价留空 = 未配置，实际计费回落刊例价
+    // 四个岗位单价均为必配项，留空即不予保存（§10.3）
     const prices = {};
+    const blank = [];
     let invalid = null;
     $$('[data-pkg-price]').forEach(i => {
       const raw = i.value.trim();
-      if (raw === '') { prices[i.dataset.pkgPrice] = null; return; }
+      if (raw === '') { blank.push(i.dataset.pkgPrice); prices[i.dataset.pkgPrice] = null; return; }
       const v = parseInt(raw, 10);
       if (!v || v < 1) invalid = i.dataset.pkgPrice;
       prices[i.dataset.pkgPrice] = v || null;
     });
-    if (invalid) { toast('「' + invalid + '」的单价需为大于 0 的整数，留空表示按刊例价计费', true); return; }
+    if (blank.length) { toast('「' + blank.join('、') + '」的单价不能为空', true); return; }
+    if (invalid) { toast('「' + invalid + '」的单价需为大于 0 的整数', true); return; }
 
     const note = $('#pkgNote').value.trim();
     const old = packageById(t.dataset.id);
@@ -1599,6 +1689,21 @@ document.addEventListener('click', function (e) {
     closeOverlay();
     toast(old && (u.industries.length || u.stores.length)
       ? '已保存，对' + usageText(u) + '立即生效' : '已保存');
+    render(); return;
+  }
+  if (act === 'pkg-ind-save') {
+    const pkg = packageById(t.dataset.id);
+    if (!pkg) return;
+    // 行业只能改选、不能为空，故这里只会新增关联
+    const picked = $$('[data-ind-pick]').filter(i => i.checked).map(i => i.dataset.indPick);
+    const added = [];
+    INDUSTRIES.forEach(ind => {
+      if (picked.indexOf(ind) >= 0 && industryPackage[ind] !== pkg.id) {
+        industryPackage[ind] = pkg.id; added.push(ind);
+      }
+    });
+    closeOverlay();
+    toast(added.length ? '已关联「' + added.join('、') + '」行业，立即生效' : '未变更');
     render(); return;
   }
   if (act === 'pkg-reload') { openPkgDrawer(t.dataset.id); return; }
@@ -1684,15 +1789,6 @@ document.addEventListener('input', function (e) {
   if (f) state[f] = e.target.value;
 });
 document.addEventListener('change', function (e) {
-  // 行业换绑默认套餐：立即生效，被关联的门店跟着变
-  const ind = e.target.dataset.pkgIndustry;
-  if (ind) {
-    const after = packageById(e.target.value);
-    if (industryPackage[ind] === (after ? after.id : null)) return;
-    industryPackage[ind] = after ? after.id : null;
-    toast(after ? ind + '默认套餐已切换为「' + after.name + '」' : ind + '已解除默认套餐关联');
-    render(); return;
-  }
   const ps = e.target.dataset.pagesize;
   if (ps === 'data-page') { state.perPage = parseInt(e.target.value, 10); state.page = 1; render(); return; }
   const f = e.target.dataset.filter;
