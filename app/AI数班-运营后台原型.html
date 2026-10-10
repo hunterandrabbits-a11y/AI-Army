@@ -388,6 +388,21 @@ textarea.input{height:auto;padding:6px 10px;resize:vertical;line-height:1.5}
 .switch.is-on::after{transform:translateX(20px)}
 .switch.is-disabled{opacity:.5;cursor:not-allowed}
 
+/* ---------- 单选组（付费状态 / 充值类型） ----------
+   卡片式单选而非原生圆点：VIP 编辑里这两组是「选一个再填数字」的开关，
+   卡片可以把选项文字放大到 13px，比原生 12px 圆点好认 */
+.radio-group{display:flex;flex-wrap:wrap;gap:8px}
+.radio{
+  display:inline-flex;align-items:center;height:32px;padding:0 12px;
+  border:1px solid var(--border);border-radius:var(--radius);background:#fff;
+  font-size:13px;color:var(--text-2);cursor:pointer;transition:border-color .2s,color .2s,background .2s;
+}
+.radio:hover{border-color:var(--text-4)}
+/* 真 input 留在 DOM 里承载选中态，只是不画出来——圆点在 12px 下辨识度太低 */
+.radio input{position:absolute;width:0;height:0;opacity:0;pointer-events:none}
+.radio.is-on{border-color:var(--primary);color:var(--primary);background:var(--bg-active)}
+.radio:focus-within{box-shadow:0 0 0 2px rgba(64,158,255,.2)}
+
 /* ---------- 预览块 ---------- */
 .preview{
   background:var(--border-lighter);border-radius:var(--radius);padding:14px 16px;font-size:13px;
@@ -504,43 +519,43 @@ const GARAGE = [
    都是必配项，留空即不予保存（§9.3）——因此计费链路上不存在"该计价项未
    配置、回落刊例价"的分支。
    套餐归属唯一一个行业（所属行业必填，§9.3）；一个行业名下可以有多个
-   套餐包，其中恰好一个被指定为默认套餐（§2.4）。计费起点是该行业的
-   默认套餐，必然存在；门店单独关联套餐后，生效套餐整包改为门店关联套餐，
-   默认套餐对本店失效（§2.2）。
+   套餐包，其中恰好一个被指定为默认套餐（§2.4）。门店账号恒关联一个套餐包、
+   不存在"未关联"态：新建门店时系统把该行业的默认套餐写为初始关联，
+   此后本店生效套餐恒为本店关联套餐，行业改选默认套餐不回溯本店（§2.5）。
    月最低消耗随生效套餐走，账户级结算（§4.2）。 */
 const packages = [
   {
-    id: 'p1', name: '二手车标准套餐', industry: '二手车', note: '预置默认套餐，主号与副号按刊例价',
+    id: 'p1', name: '二手车标准套餐', industry: '二手车', note: '',
     prices: { '主号获客专家': 50, '副号获客专家': 50, '客服专员·自然转化线索': 5,
       '客服专员·AI转化线索': 10, '矩阵视频发布专员': 2 },
     monthlyMinimum: 1200
   },
   {
-    id: 'p2', name: '新车标准套餐', industry: '新车', note: '预置默认套餐，获客专家按 45 电力值',
+    id: 'p2', name: '新车标准套餐', industry: '新车', note: '',
     prices: { '主号获客专家': 45, '副号获客专家': 45, '客服专员·自然转化线索': 5,
       '客服专员·AI转化线索': 10, '矩阵视频发布专员': 2 },
     monthlyMinimum: 1500
   },
   {
-    id: 'p3', name: '家居标准套餐', industry: '家居', note: '预置默认套餐，主号与副号按刊例价',
+    id: 'p3', name: '家居标准套餐', industry: '家居', note: '',
     prices: { '主号获客专家': 50, '副号获客专家': 50, '客服专员·自然转化线索': 5,
       '客服专员·AI转化线索': 10, '矩阵视频发布专员': 2 },
     monthlyMinimum: 800
   },
   {
-    id: 'p4', name: '房地产标准套餐', industry: '房地产', note: '预置默认套餐，主号与副号按刊例价',
+    id: 'p4', name: '房地产标准套餐', industry: '房地产', note: '',
     prices: { '主号获客专家': 50, '副号获客专家': 50, '客服专员·自然转化线索': 5,
       '客服专员·AI转化线索': 10, '矩阵视频发布专员': 2 },
     monthlyMinimum: 600
   },
   {
-    id: 'p5', name: '骏驰专属套餐', industry: '二手车', note: '商务协议价，主号获客专家 30 电力值',
+    id: 'p5', name: '骏驰专属套餐', industry: '二手车', note: '商务协议价',
     prices: { '主号获客专家': 30, '副号获客专家': 50, '客服专员·自然转化线索': 5,
       '客服专员·AI转化线索': 10, '矩阵视频发布专员': 2 },
     monthlyMinimum: 1200
   },
   {
-    id: 'p6', name: '二手车高配套餐', industry: '二手车', note: '高配备选，可作二手车行业的默认套餐',
+    id: 'p6', name: '二手车高配套餐', industry: '二手车', note: '高配备选',
     prices: { '主号获客专家': 60, '副号获客专家': 60, '客服专员·自然转化线索': 6,
       '客服专员·AI转化线索': 12, '矩阵视频发布专员': 3 },
     monthlyMinimum: 1500
@@ -559,15 +574,15 @@ const stores = [
   {
     id: 's1', name: '老杨名车汇', industry: '二手车', phone: '18158137110',
     storeNo: '623823117043564544', accountTotal: 4, douyinTotal: 4,
-    status: 'normal', expiresAt: '2027-06-15 23:59:59',
+    status: 'normal', payStatus: '付费', expiresAt: '2027-06-15 23:59:59',
     firstRechargeAt: '2026-07-28 10:20:00',
     cycleStartAt: '2026-07-28', cycleEndAt: '2026-08-27',
-    packageId: null               // 未关联套餐，跟随行业默认套餐
+    packageId: 'p1'               // 建店时按行业默认套餐写入，此后恒为本店关联套餐
   },
   {
     id: 's2', name: '骏驰汽车', industry: '二手车', phone: '13906531782',
     storeNo: '623855012334993408', accountTotal: 2, douyinTotal: 2,
-    status: 'normal', expiresAt: '2026-09-02 23:59:59',
+    status: 'normal', payStatus: '付费', expiresAt: '2026-09-02 23:59:59',
     firstRechargeAt: '2026-06-19 14:05:00',
     cycleStartAt: '2026-08-20', cycleEndAt: '2026-09-19',
     // 关联专属套餐：主号获客专家 30 电力值（商务协议价）
@@ -576,27 +591,27 @@ const stores = [
   {
     id: 's3', name: '星耀家居', industry: '家居', phone: '13675820194',
     storeNo: '623901447728821760', accountTotal: 3, douyinTotal: 3,
-    status: 'normal', expiresAt: '2027-02-18 23:59:59',
+    status: 'normal', payStatus: '付费', expiresAt: '2027-02-18 23:59:59',
     // 透支态（§5.2）：首充 500 低于月低消 800，周期 1 末必然转负
     firstRechargeAt: '2026-07-26 09:12:00',
     cycleStartAt: '2026-07-26', cycleEndAt: '2026-08-25',
-    packageId: null
+    packageId: 'p3'
   },
   {
     id: 's4', name: '恒信地产', industry: '房地产', phone: '13857194426',
     storeNo: '623779005512441856', accountTotal: 2, douyinTotal: 2,
-    status: 'normal', expiresAt: '2027-05-21 23:59:59',
+    status: 'normal', payStatus: '付费', expiresAt: '2027-05-21 23:59:59',
     firstRechargeAt: '2026-06-19 10:30:00',
     cycleStartAt: '2026-08-20', cycleEndAt: '2026-09-19',
-    packageId: null
+    packageId: 'p4'
   },
   {
     id: 's5', name: '子龙测试', industry: '新车', phone: '13858126084',
     storeNo: '623609280545566720', accountTotal: 0, douyinTotal: 0,
-    status: 'frozen', expiresAt: '2025-01-06 23:59:59',
+    status: 'frozen', payStatus: '试用', expiresAt: '2025-01-06 23:59:59',
     firstRechargeAt: '2024-03-11 16:40:00',
     cycleStartAt: '2024-03-11', cycleEndAt: '2024-04-10',
-    packageId: null
+    packageId: 'p2'
   }
 ];
 
@@ -630,28 +645,46 @@ const platformAccounts = {
   s5: []
 };
 
-/* ---------- 充值记录（§2.7 运营后台侧完整记录项） ---------- */
+/* ---------- 充值记录（§2.7 运营后台侧完整记录项） ----------
+   type 为充值类型（付费充值 / 试用充值 / 赠送 / 延期付费），在 VIP 编辑里选定后随
+   记录一并存下（§9.1）；负数调整不是充值，type 记 '—'。 */
 const recharges = {
   // 与客户端原型同口径：到账合计 8,000 − 业务 1,000 − 补扣 200 = 6,800
   // 第 2 条为「抵扣负值」入账：周期 1 末补扣后账户转负 −200，本笔到账先抵扣这 200
   s1: [
-    { id: 'R20260728102000', amount: 1000, arrivedAt: '2026-07-28 10:20:00', loggedAt: '2026-07-28 10:22:13', operator: '王敏', remark: '补充电力值' },
-    { id: 'R20260923102000', amount: 5000, arrivedAt: '2026-09-23 10:20:00', loggedAt: '2026-09-23 10:23:41', operator: '王敏', remark: '补充电力值，抵扣200电力值' },
-    { id: 'R20260924143500', amount: 2000, arrivedAt: '2026-09-24 14:35:00', loggedAt: '2026-09-24 14:37:26', operator: '王敏', remark: '补充电力值' }
+    { id: 'R20260728102000', amount: 1000, type: '付费充值', arrivedAt: '2026-07-28 10:20:00', loggedAt: '2026-07-28 10:22:13', operator: '王敏', remark: '补充电力值' },
+    { id: 'R20260923102000', amount: 5000, type: '付费充值', arrivedAt: '2026-09-23 10:20:00', loggedAt: '2026-09-23 10:23:41', operator: '王敏', remark: '补充电力值，抵扣200电力值' },
+    { id: 'R20260924143500', amount: 2000, type: '付费充值', arrivedAt: '2026-09-24 14:35:00', loggedAt: '2026-09-24 14:37:26', operator: '王敏', remark: '补充电力值' }
   ],
   s2: [
-    { id: 'R20260619140500', amount: 2000, arrivedAt: '2026-06-19 14:05:00', loggedAt: '2026-06-19 14:08:22', operator: '陈昊', remark: '补充电力值' },
-    { id: 'R20260821101800', amount: 2000, arrivedAt: '2026-08-21 10:18:00', loggedAt: '2026-08-21 10:20:05', operator: '陈昊', remark: '补充电力值' }
+    { id: 'R20260619140500', amount: 2000, type: '付费充值', arrivedAt: '2026-06-19 14:05:00', loggedAt: '2026-06-19 14:08:22', operator: '陈昊', remark: '补充电力值' },
+    { id: 'R20260821101800', amount: 2000, type: '付费充值', arrivedAt: '2026-08-21 10:18:00', loggedAt: '2026-08-21 10:20:05', operator: '陈昊', remark: '补充电力值' }
   ],
   s3: [
-    { id: 'R20260726091200', amount: 500, arrivedAt: '2026-07-26 09:12:00', loggedAt: '2026-07-26 09:15:37', operator: '王敏', remark: '补充电力值' }
+    { id: 'R20260726091200', amount: 500, type: '付费充值', arrivedAt: '2026-07-26 09:12:00', loggedAt: '2026-07-26 09:15:37', operator: '王敏', remark: '补充电力值' }
   ],
   s4: [
-    { id: 'R20260619103000', amount: 5000, arrivedAt: '2026-06-19 10:30:00', loggedAt: '2026-06-19 10:33:11', operator: '陈昊', remark: '补充电力值' }
+    { id: 'R20260619103000', amount: 5000, type: '付费充值', arrivedAt: '2026-06-19 10:30:00', loggedAt: '2026-06-19 10:33:11', operator: '陈昊', remark: '补充电力值' }
   ],
+  // 子龙测试为试用账户，历史入账按试用充值计
   s5: [
-    { id: 'R20240311164000', amount: 2000, arrivedAt: '2024-03-11 16:40:00', loggedAt: '2024-03-11 16:42:58', operator: '陈昊', remark: '补充电力值' }
+    { id: 'R20240311164000', amount: 2000, type: '试用充值', arrivedAt: '2024-03-11 16:40:00', loggedAt: '2024-03-11 16:42:58', operator: '陈昊', remark: '补充电力值' }
   ]
+};
+
+/* ---------- VIP 编辑的两个新字段（§9.1） ----------
+   付费状态：账户性质，试用到付费的转换入口就在 VIP 编辑里，默认「试用」。
+   充值类型：本次这笔入账的性质，默认「付费充值」。
+   两者共同驱动两条连带规则，且只在这笔入账真的发生时生效（电力值调整为正数）：
+   ① 重置 31 天低消周期；② 「到期天数调整」前端自动填 365 天。
+   「赠送」是纯电力值赠与，两条都不触发——低消周期刷新只认充值（§4.1）。 */
+const VIP_PAY_STATUS = ['试用', '付费'];
+const VIP_RECHARGE_TYPES = ['付费充值', '试用充值', '赠送', '延期付费'];
+const RECHARGE_RENEWS = { '付费充值': true, '试用充值': true, '赠送': false, '延期付费': true };
+const VIP_SERVICE_DAYS = 365;
+const RECHARGE_TYPE_TAG = {
+  '付费充值': 'tag--success', '试用充值': 'tag--primary',
+  '赠送': 'tag--info', '延期付费': 'tag--warning'
 };
 
 /* ---------- 费用记录 ---------- */
@@ -740,15 +773,16 @@ fees.forEach(f => { f.snap = priceOfFee(f); });
 
 /* ---------- 取价与快照 ---------- */
 // 门店生效套餐：计费起点是所属行业的默认套餐（必然存在），
-// 门店单独关联套餐后整包改为门店关联套餐（§2.2）。
-// 末尾的 || null 只是防御：按规则每个行业都有默认套餐，正常取不到 null。
+// 门店恒关联一个套餐包（§2.5），生效套餐就是本店关联套餐。
+// 回落到行业默认套餐只是数据异常时的防御：即便走到那一步，
+// 行业默认套餐也必然存在，所以链路上不会出现"没有生效套餐"的账户。
 function effectivePackage(store) {
   return packageById(store.packageId) || packageById(industryDefault[store.industry]) || null;
 }
 // 基础结算：取生效套餐的计价项单价（§2.2）。五个计价项单价都是套餐的必配项，
 // 不存在"该计价项未配置"；LIST_PRICE 分支是数据异常时的兜底，正常取不到。
 // 客服专员还要看转化类型——自然与 AI 两档在套餐里是两个独立的格子（§3.4）。
-// 套餐是整包的——门店一旦关联了自己的套餐，就不再回看行业默认套餐
+// 套餐是整包的，且门店恒有关联，所以本店生效单价恒取本店关联套餐
 function basePriceOf(store, position, leadType) {
   const own = packageById(store.packageId);
   const pkg = own || packageById(industryDefault[store.industry]);
@@ -804,8 +838,8 @@ function serviceRemainDays(store) {
 function cycleRemainDays(store) {
   return daysBetween(TODAY, store.cycleEndAt);
 }
-// 月最低消耗随生效套餐走，与单价同一条链路（§4.2）：行业默认套餐是计费起点
-// 且系统预置、必然存在，所以每个账户都有月最低消耗，不存在不设低消的账户。
+// 月最低消耗随生效套餐走，与单价同一条链路（§4.2）：门店恒有关联套餐，
+// 所以每个账户都有月最低消耗，不存在不设低消的账户。
 // 末尾的 || 0 只是防御：按规则取不到 null。
 function monthlyMinimumOf(store) {
   const pkg = effectivePackage(store);
@@ -1143,50 +1177,41 @@ function openPkgDrawer(storeId) {
 }
 function pkgFoot(s) {
   return '<span class="foot-note">月最低消耗 <b>' + num(monthlyMinimumOf(s)) + '</b> 电力值</span>' +
-    '<button class="btn" data-action="pkg-reload" data-id="' + s.id + '">重置</button>' +
     '<button class="btn btn--primary" data-action="pkg-assign" data-id="' + s.id + '">保存</button>';
 }
 function pkgBody(s) {
-  const indPkg = packageById(industryDefault[s.industry]);
-
-  // 只能关联本行业的套餐包——其他行业的套餐不出现在下拉里（§9.4）
-  const opts = ['<option value="">未关联（跟随行业默认套餐）</option>'].concat(
-    packages.filter(p => p.industry === s.industry).map(p =>
-      '<option value="' + p.id + '"' + (s.packageId === p.id ? ' selected' : '') + '>' +
-      esc(p.name) + '</option>')).join('');
+  // 门店恒有绑定，下拉里没有"未关联"这一项；只列本行业的套餐包（§9.4）
+  const opts = packages.filter(p => p.industry === s.industry).map(p =>
+    '<option value="' + p.id + '"' + (s.packageId === p.id ? ' selected' : '') + '>' +
+    esc(p.name) + '</option>').join('');
 
   // 一行一个岗位；客服专员的两档单价在同一格里并排，本店按哪一档计费一目了然
   const rows = POSITIONS.map(pos => {
     const tiers = pos === '客服专员' ? LEAD_TYPES : [null];
-    const priced = tiers.map(lt => ({ lt: lt, r: basePriceOf(s, pos, lt) }));
+    const priced = tiers.map(lt => basePriceOf(s, pos, lt));
     const cell = tiers.length === 1
-      ? '<td class="cell-num">' + priced[0].r.price + '</td>'
-      : '<td class="cell-num"><span class="tier-pair">' + priced.map(x =>
-          '<span><b>' + x.r.price + '</b><small>' + esc(x.lt) + '</small></span>').join('') + '</span></td>';
+      ? '<td class="cell-num">' + priced[0].price + '</td>'
+      : '<td class="cell-num"><span class="tier-pair">' + priced.map((x, i) =>
+          '<span><b>' + x.price + '</b><small>' + esc(tiers[i]) + '</small></span>').join('') + '</span></td>';
     return '<tr>' +
       '<td class="cell-strong nw">' + esc(pos) + '</td>' +
       cell +
-      '<td>' + esc(priced[0].r.source) + '</td>' +
       '</tr>';
   }).join('');
 
   return '<div class="card card--flush" style="margin-bottom:0">' +
     '<div class="card-head">' +
     '<div class="card-title">关联套餐<small>' + esc(s.name) + ' · ' + esc(s.industry) + '</small></div>' +
-    '<span class="link" data-open-platform="' + s.id + '">平台账号结算</span>' +
     '</div>' +
     '<div class="card-body">' +
     '<select class="select select--block" id="pkgSelect">' + opts + '</select>' +
-    '<div class="field-hint" style="margin-top:8px">行业默认套餐：' +
-    (indPkg ? esc(indPkg.name) : '<span class="text-3">未关联</span>') +
-    '；下拉只出「' + esc(s.industry) + '」行业的套餐包，单位电力值</div>' +
     '</div></div>' +
 
     '<div class="card card--flush" style="margin:14px 0 0">' +
     '<div class="card-head"><div class="card-title">本店生效单价</div></div>' +
     '<div class="card-body" style="padding-top:0">' +
     '<div class="table-wrap"><table class="table"><thead><tr>' +
-    '<th>岗位</th><th>生效单价（电力值）</th><th>取价来源</th>' +
+    '<th>岗位</th><th>生效单价（电力值）</th>' +
     '</tr></thead><tbody>' + rows + '</tbody></table></div>' +
     '</div></div>';
 }
@@ -1217,9 +1242,9 @@ function accountBody(s) {
   const cycleCard = frozen
     ? '<div class="card"><div class="card-title" style="margin-bottom:12px">月度最低消耗周期</div>' +
       '<div class="alert alert--danger" style="margin:0"><span class="alert-icon">!</span><span>' +
-      '账户已冻结，低消周期暂停。增加付费时间后自动解冻。</span></div></div>'
+      '账户已冻结，低消周期暂停。</span></div></div>'
     : '<div class="card">' +
-      '<div class="card-title" style="margin-bottom:12px">月度最低消耗周期<small>31 天 · 账户级结算</small></div>' +
+      '<div class="card-title" style="margin-bottom:12px">月度最低消耗周期</div>' +
       '<div class="metric-row">' +
       metricItem('本周期', s.cycleStartAt + ' ~ ' + s.cycleEndAt) +
       // 周期已过结束时点但尚未结转：直接写天数会出现「剩余 -2 天」
@@ -1241,13 +1266,17 @@ function accountBody(s) {
       '<td class="mono">' + esc(r.id) + '</td>' +
       // VIP 调整可以为负，此时不能再硬拼「+」，颜色也要跟着翻
       '<td class="cell-num cell-strong ' + (r.amount < 0 ? 'text-danger' : 'text-success') + '">' + signed(r.amount) + '</td>' +
-      // 充值前/后合成一格：抽屉比弹窗窄，八列并排会把备注挤成一字一行
+      // 充值类型是本笔入账的性质；负数调整不是充值，数据侧记的是「—」
+      '<td><span class="tag ' + (RECHARGE_TYPE_TAG[r.type] || 'tag--plain') + '">' + esc(r.type || '—') + '</span></td>' +
+      // 充值前/后合成一格、到账/登记也合成一格：抽屉只有 920px，
+      // 拆成八列会把备注挤成一字一行
       '<td class="cell-num" title="充值前 ' + num(r.before) + ' → 充值后 ' + num(r.after) + '">' +
       '<span' + (r.before < 0 ? ' class="text-danger"' : '') + '>' + num(r.before) + '</span>' +
       ' <span class="text-3">→</span> ' + num(r.after) + '</td>' +
-      // 抽屉比弹窗窄，两个时间列去掉秒，完整值放 title 里
-      '<td class="cell-num" title="' + esc(r.arrivedAt) + '">' + esc(r.arrivedAt.slice(0, 16)) + '</td>' +
-      '<td class="cell-num" title="' + esc(r.loggedAt) + '">' + esc(r.loggedAt.slice(0, 16)) + '</td>' +
+      // 两个时间都去掉秒，完整值放 title 里
+      '<td class="cell-num" title="到账 ' + esc(r.arrivedAt) + ' · 登记 ' + esc(r.loggedAt) + '">' +
+      esc(r.arrivedAt.slice(0, 16)) +
+      '<div class="field-hint">登记 ' + esc(r.loggedAt.slice(0, 16)) + '</div></td>' +
       '<td>' + esc(r.operator) + '</td>' +
       '<td>' + (deduct ? '补充电力值，抵扣 <b class="text-danger">' + num(deduct[1].replace(/,/g, '')) + '</b> 电力值' : esc(r.remark)) + '</td>' +
       '</tr>';
@@ -1270,7 +1299,10 @@ function accountBody(s) {
     svcFoot + '</div>' +
 
     '<div class="stat"><div class="stat-label">账户状态</div>' +
-    '<div class="stat-value">' + (frozen ? '<span class="text-danger">已冻结</span>' : '<span class="text-success">正常</span>') + '</div>' +
+    '<div class="stat-value">' + (frozen ? '<span class="text-danger">已冻结</span>' : '<span class="text-success">正常</span>') +
+    // 付费状态在 VIP 编辑里可切，跟账户状态并排摆出来，免得要开弹窗才看得到
+    '<span class="tag ' + (s.payStatus === '付费' ? 'tag--success' : 'tag--info') +
+    '" style="margin-left:8px;vertical-align:3px">' + esc(s.payStatus) + '</span></div>' +
     '<div class="stat-foot">首次充值到账日 ' + esc(s.firstRechargeAt.slice(0, 10)) + '</div></div>' +
     '</div>' +
 
@@ -1280,8 +1312,8 @@ function accountBody(s) {
     '<div class="card-head"><div class="card-title">充值记录<small>共 ' + allRc.length + ' 笔</small></div>' +
     '<span class="link" data-action="export-recharge" data-id="' + s.id + '">导出</span></div>' +
     '<div class="card-body" style="padding-top:0"><div class="table-wrap"><table class="table"><thead><tr>' +
-    '<th>记录标识</th><th>到账电力值</th><th>可用电力值</th>' +
-    '<th>到账时间</th><th>登记时间</th><th>操作人</th><th>备注</th>' +
+    '<th>记录标识</th><th>到账电力值</th><th>充值类型</th><th>可用电力值</th>' +
+    '<th>到账 / 登记时间</th><th>操作人</th><th>备注</th>' +
     '</tr></thead><tbody>' +
     (rcRows || '<tr><td colspan="7"><div class="empty">暂无充值记录</div></td></tr>') +
     '</tbody></table></div></div></div>';
@@ -1337,22 +1369,19 @@ function renderPackages() {
   }).join('');
 
   return '<div class="card card--flush">' +
-    '<div class="card-head"><div class="card-title">套餐包列表<small>单位：电力值</small></div>' +
+    '<div class="card-head"><div class="card-title">套餐包列表</div>' +
     '<div class="card-actions"><button class="btn btn--primary" data-action="pkg-add">新增套餐包</button></div></div>' +
     '<div class="card-body" style="padding-top:0">' +
     '<div class="table-wrap"><table class="table"><thead><tr>' +
     '<th rowspan="2">套餐名称</th><th rowspan="2">备注</th>' +
     '<th rowspan="2">' + esc(POSITIONS[0]) + '</th>' +
     '<th rowspan="2">' + esc(POSITIONS[1]) + '</th>' +
-    '<th colspan="2" class="th-group">' + esc(POSITIONS[2]) + '<small>按转化线索类型分档</small></th>' +
+    '<th colspan="2" class="th-group">' + esc(POSITIONS[2]) + '</th>' +
     '<th rowspan="2">' + esc(POSITIONS[3]) + '</th>' +
     '<th rowspan="2">月最低消耗</th><th rowspan="2">所属行业</th><th rowspan="2">行业默认</th>' +
     '<th rowspan="2" class="col-op">操作</th>' +
     '</tr><tr>' + LEAD_TYPES.map(lt => '<th class="th-sub">' + esc(lt) + '</th>').join('') + '</tr></thead>' +
     '<tbody>' + (rows || '<tr><td colspan="11"><div class="empty">暂无数据</div></td></tr>') + '</tbody></table></div>' +
-    '<div class="field-hint" style="padding:12px 0 0">' +
-    '套餐包归属唯一一个行业；计费起点是该行业指定的默认套餐，门店关联套餐后整包覆盖。' +
-    '五个计价项均为必配项。客服专员按转化线索类型分两档——会话里 AI 有回复按「AI转化线索」计费，全程无 AI 回复按「自然转化线索」计费。</div>' +
     '</div></div>';
 }
 
@@ -1389,6 +1418,19 @@ function formRow(label, control, required, extraCls) {
     '<span class="field-label' + (required ? ' is-required' : '') + '">' + esc(label) + '</span>' +
     '<span class="form-control">' + control + '</span></div>';
 }
+/* 卡片式单选组：真 input 承载选中态（保存时读 :checked），.is-on 只管样式 */
+function radioGroup(name, options, checked) {
+  return '<div class="radio-group" data-radio-group="' + esc(name) + '">' +
+    options.map(o =>
+      '<label class="radio' + (o === checked ? ' is-on' : '') + '">' +
+      '<input type="radio" name="' + esc(name) + '" value="' + esc(o) + '"' + (o === checked ? ' checked' : '') + '>' +
+      '<span>' + esc(o) + '</span></label>').join('') +
+    '</div>';
+}
+function radioValue(name) {
+  const el = document.querySelector('input[name="' + name + '"]:checked');
+  return el ? el.value : '';
+}
 
 /* ---------- 抽屉：获客专家配置（高级结算，按平台账号） ---------- */
 function openSeniorConfig(accountId) {
@@ -1408,12 +1450,11 @@ function openSeniorConfig(accountId) {
 
   const body =
     '<div class="form-block">' +
-    formRow('高级结算', '<span class="switch' + (on ? ' is-on' : '') + '" data-senior-toggle="1"></span>' +
-      '<span class="inline-note">' + (on ? '已开启，该账号优先走高级结算，基础结算不生效' : '未开启，该账号走基础结算') + '</span>') +
+    formRow('高级结算', '<span class="switch' + (on ? ' is-on' : '') + '" data-senior-toggle="1"></span>') +
     '</div>' +
 
     '<div class="form-block">' +
-    '<div class="form-block-title">结算金额配置<small>单位：电力值</small></div>' + priceRows +
+    '<div class="form-block-title">结算金额配置</div>' + priceRows +
     '</div>' +
 
     '<div class="form-block">' +
@@ -1453,45 +1494,79 @@ function openGarageDocs(storeId) {
     '<div class="table-wrap"><table class="table"><thead><tr>' +
     '<th>品牌车系</th><th>配置</th><th>挂牌价</th><th>状态</th><th>最近更新</th>' +
     '</tr></thead><tbody>' + rows + '</tbody></table></div>' +
-    '<div class="field-hint" style="margin-top:10px">共 <b>' + GARAGE.length + '</b> 个在库车型。</div>',
+    '<div class="field-hint" style="margin-top:10px">共 <b>' + GARAGE.length + '</b> 个在库车型</div>',
     '<button class="btn btn--primary" data-close="1">关闭</button>', 'modal--lg');
 }
 
-/* ---------- 弹窗：VIP 编辑（服务期 + 电力值） ---------- */
+/* ---------- 弹窗：VIP 编辑（付费状态 · 充值类型 · 服务期 · 电力值） ---------- */
 function openVipEdit(storeId) {
   const s = stores.find(x => x.id === storeId) || currentStore();
-  const ownPkg = packageById(s.packageId);
+  const ownPkg = effectivePackage(s);
   const body =
-    (ownPkg
-      ? '<div class="alert alert--warning" style="margin-bottom:14px"><span class="alert-icon">!</span>' +
-        '<span>该门店已关联「' + esc(ownPkg.name) + '」，调整电力值时注意避免重复让利。</span></div>'
-      : '') +
     formRow('当前到期时间', '<span class="form-static is-num">' + esc(s.expiresAt) + '</span>') +
     formRow('当前剩余电力值', '<span class="form-static is-num' + (s.balance < 0 ? ' text-danger' : '') + '">' + num(s.balance) + '</span>') +
+    formRow('当前低消周期起始日', '<span class="form-static is-num">' + esc(s.cycleStartAt) + '</span>') +
+    formRow('付费状态', radioGroup('vipStatus', VIP_PAY_STATUS, s.payStatus)) +
+    formRow('充值类型', radioGroup('vipType', VIP_RECHARGE_TYPES, '付费充值')) +
     formRow('到期天数调整', '<input class="input input--block" id="vipDays" placeholder="正数增加，负数减少">') +
     formRow('电力值调整', '<input class="input input--block" id="vipPower" placeholder="正数增加，负数减少">') +
-    formRow('员工消耗套餐包', '<span class="form-static">' + (ownPkg ? esc(ownPkg.name) : '未关联（跟随行业）') + '</span>') +
-    '<div class="form-row form-row--top"><span class="field-label"></span><span class="form-control">' +
-    '<span class="field-hint">填写电力值调整后，保存时自动生成一条充值记录；不填则不产生记录。</span>' +
-    '</span></div>' +
+    formRow('员工消耗套餐包', '<span class="form-static">' + esc(ownPkg ? ownPkg.name : '—') + '</span>') +
     '<div class="preview" style="margin-top:6px">' +
-    '预计到期时间：<b id="vipPreviewDate">' + esc(s.expiresAt) + '</b><br>' +
-    '预计剩余电力值：<b id="vipPreviewPower">' + num(s.balance) + '</b><br>' +
+    '预计到期时间：<b id="vipPreviewDate">' + esc(s.expiresAt) + '</b>' +
+    '<div class="field-hint" id="vipDateHint"></div>' +
+    '预计剩余电力值：<b id="vipPreviewPower">' + num(s.balance) + '</b>' +
+    '预计低消周期起始日：<b id="vipPreviewCycle">' + esc(s.cycleStartAt) + '</b>' +
     '预计月最低消耗：<b>' + num(monthlyMinimumOf(s)) + ' 电力值</b>' +
     '</div>';
 
   openModal('VIP编辑', body,
     '<button class="btn" data-close="1">取消</button>' +
-    '<button class="btn btn--primary" data-action="vip-save" data-id="' + s.id + '">保存</button>', 'modal--sm');
+    '<button class="btn btn--primary" data-action="vip-save" data-id="' + s.id + '">保存</button>', 'modal--md');
+
+  const daysInput = $('#vipDays');
+  const powerInput = $('#vipPower');
+  // 365 是不是系统替运营填的：只有自动填进去的才允许被自动收回，运营手改过的不覆盖
+  let autoFilled = false;
+  // 本次动作的性质由「充值类型」决定：三类续约型 → 顺延服务期 + 重置低消周期，
+  // 「赠送」只入账、两条都不触发。唯一被排除在充值之外的是负数的电力值调整——那是扣减
+  const isDeduction = () => (parseInt(powerInput.value, 10) || 0) < 0;
+  const renews = () => !isDeduction() && !!RECHARGE_RENEWS[radioValue('vipType')];
+  // 基准日：切换了付费状态按「当日」重算，未切换才在原到期时间上顺延（§9.1）
+  const switched = () => radioValue('vipStatus') !== s.payStatus;
+  const baseDate = () => switched() ? TODAY : s.expiresAt.slice(0, 10);
 
   const upd = () => {
-    const d = parseInt($('#vipDays').value, 10) || 0;
-    const p = parseInt($('#vipPower').value, 10) || 0;
-    $('#vipPreviewDate').textContent = d ? addDays(s.expiresAt.slice(0, 10), d) + ' 23:59:59' : s.expiresAt;
+    const d = parseInt(daysInput.value, 10) || 0;
+    const p = parseInt(powerInput.value, 10) || 0;
+    $('#vipPreviewDate').textContent = d ? addDays(baseDate(), d) + ' 23:59:59' : s.expiresAt;
+    $('#vipDateHint').textContent = !d
+      ? '服务期不变'
+      : (switched()
+        ? '按当日 ' + TODAY + ' 顺延 ' + d + ' 天'
+        : '按当前到期时间 ' + s.expiresAt.slice(0, 10) + ' 顺延 ' + d + ' 天');
     $('#vipPreviewPower').textContent = num(s.balance + p);
+    // 低消周期直接出日期，不写「是否重置」的规则说明
+    $('#vipPreviewCycle').textContent = renews() ? TODAY : s.cycleStartAt;
   };
-  $('#vipDays').addEventListener('input', upd);
-  $('#vipPower').addEventListener('input', upd);
+  // 充值类型 → 「到期天数调整」自动填 365。填进去的才允许被自动收回，
+  // 运营手改过的不覆盖；换成「赠送」或改成负数扣减时把自动值收回
+  const syncDays = () => {
+    if (renews()) {
+      if (daysInput.value === '' || autoFilled) { daysInput.value = String(VIP_SERVICE_DAYS); autoFilled = true; }
+    } else if (autoFilled) {
+      daysInput.value = ''; autoFilled = false;
+    }
+  };
+  // 只重画样式：选中态由真 input 承载，保存时读 :checked
+  const paint = () => $$('#modalRoot .radio').forEach(l =>
+    l.classList.toggle('is-on', l.querySelector('input').checked));
+
+  $$('#modalRoot .radio input').forEach(inp => inp.addEventListener('change', () => { paint(); syncDays(); upd(); }));
+  daysInput.addEventListener('input', () => { autoFilled = false; upd(); });
+  powerInput.addEventListener('input', () => { syncDays(); upd(); });
+  // 默认的「付费充值」本身就是一次续约，所以弹窗一开就带上 365
+  syncDays();
+  upd();
 }
 
 /* ---------- 弹窗：新建 / 编辑套餐包 ---------- */
@@ -1522,9 +1597,7 @@ function openPkgEdit(pkgId) {
           '<input class="input" ' + attrs + ' placeholder="必填"></span>'
         : '<input class="input input--sm" ' + attrs + ' placeholder="请输入">';
     }).join('');
-    return formRow(pos, controls +
-      '<span class="inline-note">刊例价 ' + LIST_PRICE[pos] +
-        (pos === '客服专员' ? ' / 转化线索' : '') + '</span>');
+    return formRow(pos, controls);
   }).join('');
 
   const body =
@@ -1535,10 +1608,9 @@ function openPkgEdit(pkgId) {
     formRow('套餐名称', '<input class="input input--block" id="pkgName" value="' + esc(pkg ? pkg.name : '') + '" placeholder="请输入套餐名称">', true) +
     formRow('所属行业', indField, true) +
     formRow('备注', '<input class="input input--block" id="pkgNote" value="' + esc(pkg ? pkg.note : '') + '" placeholder="选填">') +
-    '<div class="form-block"><div class="form-block-title">岗位实际消耗单价' +
-      '<small>四个数字员工均为必配项；客服专员按线索类型分两档</small></div>' +
+    '<div class="form-block"><div class="form-block-title">岗位实际消耗单价</div>' +
     priceRows + '</div>' +
-    '<div class="form-block"><div class="form-block-title">月最低消耗<small>账户级参数，与岗位单价相互独立</small></div>' +
+    '<div class="form-block"><div class="form-block-title">月最低消耗</div>' +
     formRow('数值', '<input class="input input--sm" type="number" min="1" step="1" id="pkgMin" value="' +
       (pkg ? pkg.monthlyMinimum : '') + '" placeholder="请输入"><span class="inline-note">电力值</span>', true) +
     '</div>';
@@ -1573,23 +1645,18 @@ function openPkgDelete(pkgId) {
 
 /* ---------- 弹窗：设为默认套餐 ----------
    默认套餐只能从本行业名下的套餐里指定，每个行业恰好一个（§2.4）。
-   切换即时生效：该行业下未单独关联套餐的门店立即改按新套餐计费；
+   默认位只决定"本行业新建门店的初始关联套餐"，不回溯已建门店——
+   门店恒关联一个套餐包，本店生效套餐恒为本店关联套餐（§2.5）。
    原默认套餐本身不删除，只是默认位改挂到本套餐。 */
 function openPkgSetDefault(pkgId) {
   const pkg = packageById(pkgId);
   if (!pkg) return;
   const cur = packageById(industryDefault[pkg.industry]);
   if (cur && cur.id === pkg.id) return;
-  const followers = stores.filter(s => s.industry === pkg.industry && !s.packageId);
-  const impact = followers.length
-    ? '本行业未单独关联套餐的 ' + followers.length + ' 家门店（' +
-      followers.map(s => esc(s.name)).join('、') + '）立即改按本套餐计费'
-    : '本行业当前没有未单独关联套餐的门店，切换只影响新建门店的默认关联';
-
   const body =
     '<div class="field-hint" style="font-size:13px;line-height:1.8">' +
     '「' + esc(pkg.industry) + '」行业当前的默认套餐是「' + (cur ? esc(cur.name) : '—') + '」。' +
-    '设为默认后，' + impact + '；已单独关联套餐的门店不受影响。<br>' +
+    '设为默认后，本行业新建的门店账号默认关联本套餐；已建门店各按本店关联套餐计费，不受影响。<br>' +
     '原默认套餐不会被删除，只是默认位改挂到「' + esc(pkg.name) + '」。</div>';
 
   openModal('设为默认套餐', body,
@@ -1616,7 +1683,6 @@ document.addEventListener('click', function (e) {
 
   const t = e.target.closest('[data-nav-toggle],[data-route],[data-close],[data-action],[data-store-detail],' +
     '[data-store-edit],[data-store-login],[data-store-menu],[data-menu-act],' +
-    '[data-open-platform],' +
     '[data-acct-edit],[data-acct-human],[data-acct-more],' +
     '[data-senior-config],[data-pkg-default],[data-pkg-edit],[data-pkg-del],[data-page],' +
     '[data-senior-toggle],[data-senior-budget],[data-senior-brand]');
@@ -1662,8 +1728,6 @@ document.addEventListener('click', function (e) {
   if (t.dataset.seniorToggle) {
     const on = t.classList.toggle('is-on');
     $$('.drawer-body .input').forEach(i => { if (i.dataset.seniorPrice) i.disabled = !on; });
-    const note = t.parentElement.querySelector('.inline-note');
-    if (note) note.textContent = on ? '已开启，该账号优先走高级结算，基础结算不生效' : '未开启，该账号走基础结算';
     return;
   }
   if (t.dataset.seniorBudget) { t.classList.toggle('is-on'); return; }
@@ -1745,16 +1809,15 @@ document.addEventListener('click', function (e) {
       (before && before.id !== pkg.id ? '，原「' + before.name + '」不再作为默认' : '') + '，立即生效');
     render(); return;
   }
-  if (act === 'pkg-reload') { openPkgDrawer(t.dataset.id); return; }
   if (act === 'pkg-assign') {
     const s = stores.find(x => x.id === t.dataset.id) || currentStore();
-    const sel = $('#pkgSelect').value;
     const before = packageById(s.packageId);
-    s.packageId = sel || null;
-    const after = packageById(s.packageId);
+    // 门店恒有绑定，下拉不给"未关联"，所以这里拿到的一定是个有效套餐 id
+    const after = packageById($('#pkgSelect').value);
+    if (!after) { toast('请选择一个套餐包', true); return; }
+    s.packageId = after.id;
     closeOverlay();
-    toast(after ? '已关联「' + after.name + '」' + (before ? '' : '，不再跟随行业默认套餐')
-      : '已解除关联，跟随行业默认套餐');
+    toast('已关联「' + after.name + '」' + (before && before.id !== after.id ? '，原「' + before.name + '」不再生效' : ''));
     render(); openPkgDrawer(s.id); return;
   }
   if (act === 'senior-save') {
@@ -1783,14 +1846,22 @@ document.addEventListener('click', function (e) {
         brandEnabled: document.querySelector('[data-senior-brand]').classList.contains('is-on')
       }
     };
-    closeOverlay(); toast('已保存，该账号优先走高级结算'); render(); return;
+    closeOverlay(); toast('已保存'); render(); return;
   }
   if (act === 'vip-save') {
     const s = stores.find(x => x.id === t.dataset.id);
+    const prevStatus = s.payStatus;
+    const payStatus = radioValue('vipStatus') || prevStatus;
+    const rcType = radioValue('vipType') || '付费充值';
+    const switched = payStatus !== prevStatus;
     const d = parseInt($('#vipDays').value, 10) || 0;
     const p = parseInt($('#vipPower').value, 10) || 0;
     if (!d && !p) { toast('请填写到期天数或电力值调整', true); return; }
-    if (d) s.expiresAt = addDays(s.expiresAt.slice(0, 10), d) + ' 23:59:59';
+    // 切换了付费状态 → 以「当日」为基准重算到期时间；未切换 → 在原到期时间上顺延（§9.1）
+    if (d) s.expiresAt = addDays(switched ? TODAY : s.expiresAt.slice(0, 10), d) + ' 23:59:59';
+    s.payStatus = payStatus;
+    // 负数的电力值调整是扣减，不是充值：账本里类型记「—」，也不重置低消周期
+    const isDeduction = p < 0;
     if (p) {
       const before = s.balance;
       // 只有正向入账才可能抵扣负值；负数调整是扣减，不产生「抵扣」
@@ -1800,10 +1871,19 @@ document.addEventListener('click', function (e) {
       const now = TODAY + ' ' + new Date().toTimeString().slice(0, 8);
       list.push({
         id: 'R' + now.replace(/[-: ]/g, '') + '-VIP', amount: p, before: before, after: s.balance,
+        type: isDeduction ? '—' : rcType,
         arrivedAt: now, loggedAt: now, operator: '王敏',
         remark: p < 0 ? 'VIP 调整，扣减电力值'
           : (deduct > 0 ? '补充电力值，抵扣' + num(deduct) + '电力值' : '补充电力值')
       });
+    }
+    // 低消周期只在「触发重置的充值」时重新起算（§4.1）：三类续约型重置、「赠送」不重置、
+    // 负数扣减不算充值。周期的刷新点全部收在这里——冻结/解冻本身不再改写周期（§5.3）
+    const cycleReset = !isDeduction && RECHARGE_RENEWS[rcType];
+    if (cycleReset) {
+      s.cycleStartAt = TODAY;
+      s.cycleEndAt = addDays(TODAY, 30);
+      s.cycleConsumed = sumPower(cycleFeesOf(s));   // 按新窗口重算，不手填 0
     }
     // 减少付费时间导致截止日早于当前时间 → 立即冻结（§9.2）
     if (serviceRemainDays(s) <= 0) {
@@ -1814,10 +1894,13 @@ document.addEventListener('click', function (e) {
       render(); return;
     }
     const thawed = s.status === 'frozen';
-    if (thawed) { s.status = 'normal'; s.cycleStartAt = TODAY; s.cycleEndAt = addDays(TODAY, 30); s.cycleConsumed = 0; }
+    if (thawed) { s.status = 'normal'; s.frozenPower = 0; }
+    const bits = [];
+    if (p) bits.push('已自动生成充值记录');
+    if (cycleReset) bits.push('低消周期重新起算 31 天');
+    else if (thawed) bits.push('低消周期未重置');
     closeOverlay();
-    toast(thawed ? '已解冻，低消周期重新起算 31 天'
-      : 'VIP 信息已保存' + (p ? '，已自动生成充值记录' : ''));
+    toast((thawed ? '已解冻' : 'VIP 信息已保存') + (bits.length ? '，' + bits.join('，') : ''));
     render(); return;
   }
 });

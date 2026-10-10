@@ -9925,7 +9925,7 @@ html[data-theme="dark"] .demo-bubble--customer { color: #f2cf93; background: #38
       .consumption-table-wrap { overflow-x: auto; border: 1px solid var(--line); border-radius: 10px; background: var(--paper); }
       .consumption-table { width: 100%; min-width: 1090px; border-collapse: collapse; text-align: left; }
       .consumption-table--compact { min-width: 780px; }
-      .consumption-table--recharge { min-width: 560px; }
+      .consumption-table--recharge { min-width: 640px; }
       .consumption-table th { padding: 11px 12px; color: var(--muted); background: #f7f8fa; font-size: 12px; font-weight: 650; white-space: nowrap; }
       .consumption-table td { padding: 13px 12px; border-top: 1px solid var(--line); color: var(--ink-soft); font-size: 12px; white-space: nowrap; }
       .consumption-table tbody tr:hover { background: #fbfcfd; }
@@ -11879,13 +11879,14 @@ const accountPower = {
   cycleConsumed: 0,
   firstRechargeAt: "2026-07-28",
 };
-/* 充值记录：账户的入账账本，客户侧只读（见 PRD §2.7 / §6.4） */
+/* 充值记录：账户的入账账本，客户侧只读（见 PRD §2.7 / §6.4）
+   type 为充值类型（付费充值 / 试用充值 / 赠送 / 延期付费），由运营在 VIP 编辑里选定 */
 const consumptionRechargeRows = [
-  { at: "2026-07-28 10:20:00", power: 1000, before: 0, after: 1000, operator: "张敏", note: "补充电力值" },
+  { at: "2026-07-28 10:20:00", power: 1000, type: "付费充值", before: 0, after: 1000, operator: "张敏", note: "补充电力值" },
   /* 周期 1 只充了 1,000：业务消耗 985，周期末再补扣 215 → 账户转负 −200。
      09-23 这 5,000 先抵扣掉负值，实际计入可用余额 4,800（见 PRD §2.7 备注规则 / §5.2 透支规则） */
-  { at: "2026-09-23 10:20:00", power: 5000, before: -200, after: 4800, operator: "李锐", note: "补充电力值，抵扣200电力值" },
-  { at: "2026-09-24 14:35:00", power: 2000, before: 4800, after: 6800, operator: "张敏", note: "补充电力值" },
+  { at: "2026-09-23 10:20:00", power: 5000, type: "付费充值", before: -200, after: 4800, operator: "李锐", note: "补充电力值，抵扣200电力值" },
+  { at: "2026-09-24 14:35:00", power: 2000, type: "付费充值", before: 4800, after: 6800, operator: "张敏", note: "补充电力值" },
 ];
 /* 低消补扣：账户级费用，不属于任何岗位，只在「全部」视图出现。
    周期 1（2026-07-28 ~ 2026-08-27）业务消耗 985，周期末补扣至月低消 1,200，即 1,200 − 985 = 215。
@@ -13664,12 +13665,14 @@ function renderRechargeTable() {
   const head = $("#recharge-table-head");
   const body = $("#recharge-table-body");
   if (!head || !body) return;
-  /* 客户侧只展示 3 列：实收金额 / 优惠电力值 / 抵扣负值 / 计入可用余额 / 状态五个记录项、以及操作人一列均已删除（见 PRD-v1.4 §2.7） */
-  const headers = ["到账时间", "到账电力值", "备注"];
+  /* 客户侧只展示 4 列：到账时间 / 到账电力值 / 充值类型 / 备注；实收金额、优惠电力值、
+     抵扣负值、计入可用余额、状态五个记录项、以及操作人一列均已删除（见 PRD-v1.4 §2.7） */
+  const headers = ["到账时间", "到账电力值", "充值类型", "备注"];
   head.innerHTML = `<tr>${headers.map((header) => `<th scope="col">${header}</th>`).join("")}</tr>`;
   body.innerHTML = consumptionRechargeRows.length ? consumptionRechargeRows.map((row) => `<tr>
     <td>${escapeHTML(row.at)}</td>
     <td class="consumption-credit">+${formatPower(row.power)}</td>
+    <td>${escapeHTML(row.type)}</td>
     <td class="consumption-remark">${escapeHTML(row.note)}</td>
   </tr>`).join("") : `<tr><td colspan="${headers.length}" class="consumption-empty">暂无充值记录</td></tr>`;
 }
