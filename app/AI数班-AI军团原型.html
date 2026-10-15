@@ -1,5 +1,5 @@
 <!doctype html>
-<!-- 数班 · v67 · 低消卡片底部补出周期文案「本周期 起 ~ 止 · 剩余 N 天」：客户侧可见周期起止与剩余天数（PRD-v1.4 ㉚） -->
+<!-- 数班 · v68 · 新增数字员工「抖音触达专员」：获客类三方账号互斥、触达工作台（链路止于私信触达）、潜客记录并入潜客表（PRD-v1.5） -->
 <html lang="zh-CN">
   <head>
     <meta charset="UTF-8" />
@@ -7450,6 +7450,21 @@ html[data-theme="dark"] .talent-card__eyebrow > em.talent-card__hot { color: #ff
       .demo-live-view.is-lead-settings-route .demo-live-workspace { min-height: 0; }
       .lead-account-manager { margin-bottom: 12px; border: 1px solid var(--line); border-radius: 16px; background: var(--paper); box-shadow: var(--shadow-sm); }
       .lead-account-manager--page { margin-bottom: 0; }
+      .demo-live-view.is-touch-settings-route .demo-live-tabs { display: none; }
+      .demo-live-view.is-touch-settings-route .demo-live-workspace { min-height: 0; }
+      .lead-settings-layout.lead-settings-layout--single { grid-template-columns: minmax(0, 1fr); }
+      @media (min-width: 901px) { .demo-live-result-funnel.demo-live-result-funnel--three { grid-template-columns: repeat(3, minmax(0, 1fr)); } }
+      @media (min-width: 681px) { .lead-settings-overview.lead-settings-overview--four { grid-template-columns: repeat(4, minmax(0, 1fr)); } }
+      .demo-signal-empty { padding: 26px 14px; color: var(--muted); font-size: 12px; text-align: center; }
+      .lead-account-block { min-width: 0; display: flex; flex-direction: column; align-items: flex-end; gap: 6px; }
+      .lead-account-block em { color: var(--muted); font-size: 12px; font-style: normal; white-space: nowrap; }
+      .lead-account-block button, .touch-scope-confirm button { height: 30px; padding: 0 12px; border: 1px solid var(--line); border-radius: 8px; color: var(--ink); background: var(--paper); font-size: 12px; white-space: nowrap; cursor: pointer; }
+      .touch-scope-confirm { margin-top: 10px; padding: 12px 14px; display: flex; align-items: center; justify-content: space-between; gap: 12px; border: 1px solid rgba(163,106,0,.32); border-radius: 11px; background: rgba(163,106,0,.06); }
+      .touch-scope-confirm span { color: var(--ink); font-size: 12px; line-height: 1.5; }
+      .touch-scope-confirm div { display: flex; flex: none; gap: 8px; }
+      .touch-scope-confirm button[data-prd-touch-account-confirm] { border-color: #111111; color: #ffffff; background: #111111; }
+      .prd-account-occupancy { margin-top: 10px; padding-top: 10px; border-top: 1px dashed var(--line); color: var(--muted); font-size: 12px; }
+      .prd-account-occupancy b { color: var(--ink); font-weight: 600; }
       .lead-settings-page-head { padding: 15px 16px 0; }
       .lead-settings-page-head button { min-height: 30px; padding: 0 10px; border: 1px solid var(--line); border-radius: 8px; color: var(--ink-soft); background: var(--paper); font-size: 12px; cursor: pointer; }
       .lead-account-manager__head { min-height: 66px; padding: 13px 16px; display: flex; align-items: center; justify-content: space-between; gap: 16px; }
@@ -10141,7 +10156,7 @@ html[data-theme="dark"] .demo-bubble--customer { color: #f2cf93; background: #38
             <article class="panel panel--attention dashboard-todo-panel">
               <div class="panel-heading"><div><h3>需要你确认和处理</h3></div><button type="button" data-toast-title="待办已刷新" data-toast-message="待办已更新">刷新</button></div>
               <div class="attention-list">
-                <button type="button" data-route-target="accounts"><i class="attention-icon attention-icon--orange"><img src="data:image/gif;base64,R0lGODlhAQABAAAAACw=" data-talent-portrait="lead-hunter" alt="主号获客专家" /></i><span><strong>主号获客专家：营销授权待处理</strong><small>抖音主动私信暂时无法进行，完成平台或营销授权后即可恢复</small></span><em>刚刚</em></button>
+                <button type="button" data-route-target="accounts"><i class="attention-icon attention-icon--purple"><img src="data:image/gif;base64,R0lGODlhAQABAAAAACw=" data-talent-portrait="douyin-touch" alt="抖音触达专员" /></i><span><strong>抖音触达专员：可用账号待补充</strong><small>苏州专营店已启用，其余抖音账号完成营销授权后可加入触达</small></span></button><button type="button" data-route-target="accounts"><i class="attention-icon attention-icon--orange"><img src="data:image/gif;base64,R0lGODlhAQABAAAAACw=" data-talent-portrait="lead-hunter" alt="主号获客专家" /></i><span><strong>主号获客专家：营销授权待处理</strong><small>抖音主动私信暂时无法进行，完成平台或营销授权后即可恢复</small></span><em>刚刚</em></button>
                 <button type="button" data-toast-title="客服专员待您回复" data-toast-message="有 2 个客户的问题等待您的回复，处理后客服专员会继续跟进"><i class="attention-icon attention-icon--blue"><img src="data:image/gif;base64,R0lGODlhAQABAAAAACw=" data-talent-portrait="smart-reply" alt="客服专员" /></i><span><strong>客服专员：有 2 个客户需要您回复</strong><small>有 2 位客户的问题等待您确认回复</small></span><em>待处理</em></button>
               </div>
             </article>
@@ -10695,6 +10710,7 @@ html[data-theme="dark"] .demo-bubble--customer { color: #f2cf93; background: #38
               <div class="demo-live-tabs" role="tablist" aria-label="实时工作岗位">
               <div class="demo-live-tab-wrap" data-demo-live-job-wrap="douyin"><button class="is-active" type="button" role="tab" data-demo-live-job="douyin" aria-selected="true"><span class="demo-tab-avatar demo-tab-avatar--photo"><img src="data:image/gif;base64,R0lGODlhAQABAAAAACw=" data-talent-portrait="lead-hunter" alt="小周 · 主号获客专家" /></span><span class="demo-tab-copy"><strong>小周</strong><small class="demo-tab-role">主号获客专家</small></span><i aria-hidden="true"></i></button><div class="demo-live-tab-menu-anchor"><button class="demo-live-tab-menu" type="button" data-demo-live-tab-menu="douyin" aria-label="小周更多操作" aria-haspopup="menu" aria-expanded="false" title="更多操作">···</button><div class="demo-live-tab-menu-popover" data-demo-live-tab-menu-popover="douyin" role="menu" hidden><button type="button" role="menuitem" data-lead-account-settings>工作设置</button></div></div></div>
               <div class="demo-live-tab-wrap" data-demo-live-job-wrap="douyin-advanced"><button type="button" role="tab" data-demo-live-job="douyin-advanced" aria-selected="false"><span class="demo-tab-avatar demo-tab-avatar--photo"><img src="data:image/gif;base64,R0lGODlhAQABAAAAACw=" data-talent-portrait="lead-hunter" alt="阿陈 · 副号获客专家" /></span><span class="demo-tab-copy"><strong>阿陈</strong><small class="demo-tab-role">副号获客专家</small></span><i aria-hidden="true"></i></button><div class="demo-live-tab-menu-anchor"><button class="demo-live-tab-menu" type="button" data-demo-live-tab-menu="douyin-advanced" aria-label="阿陈更多操作" aria-haspopup="menu" aria-expanded="false" title="更多操作">···</button><div class="demo-live-tab-menu-popover" data-demo-live-tab-menu-popover="douyin-advanced" role="menu" hidden><button type="button" role="menuitem" data-lead-account-settings>工作设置</button></div></div></div>
+              <div class="demo-live-tab-wrap" data-demo-live-job-wrap="douyin-touch"><button type="button" role="tab" data-demo-live-job="douyin-touch" aria-selected="false"><span class="demo-tab-avatar demo-tab-avatar--photo"><img src="data:image/gif;base64,R0lGODlhAQABAAAAACw=" data-talent-portrait="lead-hunter" alt="小拓 · 抖音触达专员" /></span><span class="demo-tab-copy"><strong>小拓</strong><small class="demo-tab-role">抖音触达专员</small></span><i aria-hidden="true"></i></button><div class="demo-live-tab-menu-anchor"><button class="demo-live-tab-menu" type="button" data-demo-live-tab-menu="douyin-touch" aria-label="小拓更多操作" aria-haspopup="menu" aria-expanded="false" title="更多操作">···</button><div class="demo-live-tab-menu-popover" data-demo-live-tab-menu-popover="douyin-touch" role="menu" hidden><button type="button" role="menuitem" data-touch-account-settings>工作设置</button></div></div></div>
               <button type="button" role="tab" data-demo-live-job="kuaishou" aria-selected="false"><span class="demo-tab-avatar demo-tab-avatar--photo"><img src="data:image/gif;base64,R0lGODlhAQABAAAAACw=" data-talent-portrait="kuaishou-leads" alt="刘快 · 快手获客运营" /></span><span class="demo-tab-copy"><strong>刘快</strong><small class="demo-tab-role">快手获客运营</small></span><i aria-hidden="true"></i></button>
               <button type="button" role="tab" data-demo-live-job="xhs" aria-selected="false"><span class="demo-tab-avatar demo-tab-avatar--photo"><img src="data:image/gif;base64,R0lGODlhAQABAAAAACw=" data-talent-portrait="xhs-intent-comment" alt="周红 · 小红书获客运营" /></span><span class="demo-tab-copy"><strong>周红</strong><small class="demo-tab-role">小红书获客运营</small></span><i aria-hidden="true"></i></button>
               <div class="demo-live-tab-wrap" data-demo-live-job-wrap="service"><button type="button" role="tab" data-demo-live-job="service" aria-selected="false"><span class="demo-tab-avatar demo-tab-avatar--photo"><img src="data:image/gif;base64,R0lGODlhAQABAAAAACw=" data-talent-portrait="smart-reply" alt="小智 · 客服专员" /></span><span class="demo-tab-copy"><strong>小智</strong><small class="demo-tab-role">客服专员</small></span><i aria-hidden="true"></i></button><div class="demo-live-tab-menu-anchor"><button class="demo-live-tab-menu" type="button" data-demo-live-tab-menu="service" aria-label="小智更多操作" aria-haspopup="menu" aria-expanded="false" title="更多操作">···</button><div class="demo-live-tab-menu-popover" data-demo-live-tab-menu-popover="service" role="menu" hidden><button type="button" role="menuitem" data-service-settings>工作设置</button></div></div></div>
@@ -10982,6 +10998,7 @@ document.querySelectorAll("[data-portrait]").forEach((image) => {
 
 const portrait = (name) => __portraitData[name];
 const officePortrait = (name) => __teamOfficeData[name];
+__talentPortraitData["douyin-touch"] = __talentPortraitData["lead-hunter"];
 const talentPortrait = (name) => __talentPortraitData[name];
 document.querySelectorAll("[data-talent-portrait]").forEach((image) => {
   image.src = talentPortrait(image.dataset.talentPortrait);
@@ -11330,8 +11347,27 @@ const employees = [
     intro: "我是副号获客专家，负责副账号获客。我会独立从账号和直播弹幕里发现潜客，分析需求、主动私信，把购车信息变成有效线索。",
   },
   {
-    id: "sales-assistant",
+    id: "douyin-touch",
     index: "16",
+    name: "抖音触达专员",
+    persona: "抖音触达专员",
+    role: "全域获客",
+    categories: ["leads", "operations"],
+    image: portrait("lead-hunter"),
+    description: "从直播间弹幕、短视频评论和粉丝关注中发现有购车意向的抖音用户，判断意向等级后主动私信触达；触达之后由门店继续跟进。",
+    price: "¥20 / 有效触达",
+    priceNote: "按业务结果计费：成功发出首轮私信才计费，同一个客户只计一次，实际结算以平台配置为准",
+    billing: "按业务结果计费",
+    billingShort: "按有效触达计费",
+    status: "正在从直播间弹幕发现潜客",
+    skills: ["挖掘直播潜客", "挖掘短视频潜客", "挖掘粉丝潜客", "判断潜客意向", "私信触达潜客", "数据报告"],
+    stats: [["418", "账号浏览"], ["96", "潜客发现"], ["41", "已触达"]],
+    mission: "从今日直播与短视频互动中发现高意向潜客并完成首轮私信触达",
+    intro: "我是抖音触达专员，负责抖音全域触达。我会从直播间弹幕、短视频评论和粉丝关注里找出有购车意向的用户，判断意向等级后主动私信，触达完成就交给门店跟进。",
+  },
+  {
+    id: "sales-assistant",
+    index: "17",
     name: "销售运营专员",
     persona: "林助",
     role: "销售支持",
@@ -11366,6 +11402,7 @@ const employeeVoiceProfiles = {
   "xhs-customer-search": { gender: "male", rate: 0.99, pitch: 0.92 },
   "lead-hunter": { gender: "male", rate: 0.98, pitch: 0.87 },
   "lead-hunter-advanced": { gender: "male", rate: 0.98, pitch: 0.87 },
+  "douyin-touch": { gender: "female", rate: 0.99, pitch: 1.03 },
   "sales-assistant": { gender: "male", rate: 0.97, pitch: 0.93 },
 };
 
@@ -11386,6 +11423,7 @@ const employeePlatformMap = {
   "xhs-customer-search": ["xiaohongshu"],
   "lead-hunter": ["douyin"],
   "lead-hunter-advanced": ["douyin"],
+  "douyin-touch": ["douyin"],
   "sales-assistant": ["douyin", "kuaishou", "xiaohongshu"],
 };
 const platformAuthState = { douyin: false, kuaishou: true, xiaohongshu: true };
@@ -11795,6 +11833,7 @@ const workProfiles = {
   "smart-reply": { state: "实时回评中", progress: 86, count: 316, mission: employees[2].mission, spent: "¥324.00", billing: "本月 108 项有效回复" },
   "xhs-notes": { state: "内容运营中", progress: 82, count: 6, mission: employees[8].mission, spent: "¥288.00", billing: "本月 16 篇审核通过" },
   "lead-hunter": { state: "潜客发现中", progress: 76, count: 36, mission: employees[13].mission, spent: "¥360.00", billing: "本月 36 条有效线索" },
+  "douyin-touch": { state: "潜客触达中", progress: 68, count: 41, mission: "从今日直播与短视频互动中发现高意向潜客并完成首轮私信触达", spent: "¥820.00", billing: "本月 41 次有效触达" },
 };
 const teamOutputByEmployee = {
   "live-control": "已服务直播 12 场",
@@ -11811,6 +11850,7 @@ const teamOutputByEmployee = {
   "platform-report": "已生成新媒体日报 28 份",
   "xhs-customer-search": "已发现潜客 1,042 位",
   "lead-hunter": "已获取线索 342 条",
+  "douyin-touch": "已触达潜客 41 位",
   "sales-assistant": "已完成销售支持 126 项",
 };
 
@@ -11820,6 +11860,7 @@ const officeScreenData = {
   "smart-reply": { eyebrow: "客服专员", title: "客服互动台", feed: ["互动消息 1,284", "有效回复 316", "平均响应 3.2 秒"] },
   "xhs-notes": { eyebrow: "小红书内容运营", title: "内容创作与发布台", feed: ["今日交付 6 篇", "累计发布 20 条", "单篇曝光 8.6 万"] },
   "lead-hunter": { eyebrow: "主号获客专家", title: "线索获取台", feed: ["累计获取 342", "高意向 46", "首轮私信 29"] },
+  "douyin-touch": { eyebrow: "抖音触达专员", title: "潜客触达台", feed: ["获取潜客 96", "高意向 26", "已触达 41"] },
 };
 
 const employeeConfigs = {
@@ -11851,6 +11892,7 @@ const routeTitles = {
   accounts: "账号绑定",
   "demo-live": "实时工作 Demo",
   "lead-account-settings": "主号获客专家工作设置",
+  "touch-account-settings": "抖音触达专员工作设置",
   "service-settings": "客服专员工作设置",
   "demo-config": "对话策略",
   "demo-live-xudou": "实时工作",
@@ -12592,17 +12634,17 @@ function currentRoute() {
 
 function navigate() {
   const route = currentRoute();
-  if (!["live", "lead-account-settings", "service-settings"].includes(route)) clearDemoLiveReturnEntry();
+  if (!["live", "lead-account-settings", "touch-account-settings", "service-settings"].includes(route)) clearDemoLiveReturnEntry();
   if (route === "demo-live-xudou") {
     demoLiveJob = "douyin";
     window.location.hash = "live";
     return;
   }
-  const viewRoute = { live: "demo-live", "lead-account-settings": "demo-live", "service-settings": "demo-live", "digital-human": "demo-config" }[route] || route;
+  const viewRoute = { live: "demo-live", "lead-account-settings": "demo-live", "touch-account-settings": "demo-live", "service-settings": "demo-live", "digital-human": "demo-config" }[route] || route;
   document.body.classList.toggle("is-demo-xudou-agent-workspace", route === "demo-live-xudou");
   if (route !== "digital-human") setRobotConfigHint(false);
   $$(".app-view").forEach((view) => view.classList.toggle("is-active", view.dataset.view === viewRoute));
-  $$("[data-route]").forEach((link) => link.classList.toggle("is-active", link.dataset.route === route || (["lead-account-settings", "service-settings"].includes(route) && link.dataset.route === "live")));
+  $$("[data-route]").forEach((link) => link.classList.toggle("is-active", link.dataset.route === route || (["lead-account-settings", "touch-account-settings", "service-settings"].includes(route) && link.dataset.route === "live")));
   const routeTitle = route === "lead-account-settings" && (window.demoLeadSettingsJob === "douyin-advanced" || demoLiveJob === "douyin-advanced")
     ? "副号获客专家工作设置"
     : routeTitles[route];
@@ -12613,7 +12655,7 @@ function navigate() {
   if (route === "dashboard") {
     if (!maybeShowFirstRunOnboarding()) maybeShowMorningReport();
   }
-  if (["live", "lead-account-settings", "service-settings"].includes(route)) renderDemoLiveJob(demoLiveJob);
+  if (["live", "lead-account-settings", "touch-account-settings", "service-settings"].includes(route)) renderDemoLiveJob(demoLiveJob);
   if (route === "demo-live-xudou") renderXudouDemo();
 }
 
@@ -15720,7 +15762,7 @@ document.addEventListener("click", (event) => {
         demoLiveSelectedSignal = 0;
         demoLiveDetailStep = null;
         demoLiveTransferIndex = 0;
-        if (["douyin", "douyin-advanced"].includes(liveJob)) demoXuDouWorksiteStageByJob[liveJob] = "private-touch";
+        if (["douyin", "douyin-advanced"].includes(liveJob)) demoXuDouWorksiteStageByJob[liveJob] = "lead-mining";
         window.location.hash = "live";
       } else {
         window.location.hash = "live";
@@ -16793,6 +16835,23 @@ const demoLiveJobs = {
       { initial: "苏", name: "苏州小周", meta: "苏州 · 星途 E7", city: "苏州", intentModel: "星途 E7", copy: "关注后又看了两次续航视频", tag: "中意向", source: "关注", processStatus: "意向判断中", detail: "副号获客专家已合并连续浏览行为，等待更明确信息。" }
     ],
   },
+  "douyin-touch": {
+    title: "抖音触达专员",
+    copy: "从直播间弹幕、短视频评论和粉丝关注中发现有购车意向的用户，判断意向等级后主动私信触达；触达之后交给门店继续跟进。",
+    account: "抖音 · 鸿途汽车苏州专营店",
+    media: "assets/demo-v57-legacy-v40-v66/assets/douyin-lead-video.mp4",
+    mediaType: "douyin-live",
+    stageLabel: "触达作业",
+    funnel: [["获取潜客", "96", "去重潜客"], ["判断意向", "68", "完成判断"], ["私信触达", "41", "首轮送达"], ["本次计费", "41", "有效触达"]],
+    sceneTitle: "抖音触达专员触达作业中",
+    sceneBadge: "持续读取",
+    sceneCopy: "直播间弹幕、短视频评论与粉丝关注进入同一队列，链路止于首轮私信触达。",
+    sceneMetric: "12.9 万在线",
+    workflow: "lead-pool",
+    workflowTitle: "抖音触达专员潜客识别已开启",
+    workflowCopy: "来源原话、意向判断与触达内容按本岗位账号独立记录。",
+    signals: [],
+  },
   kuaishou: {
     title: "快手获客运营 · 刘快",
     copy: "从关注、直播弹幕和短视频评论中识别购车信息，判断意向后决定私信时机与话术。",
@@ -16889,7 +16948,7 @@ const demoLiveCosts = { douyin: "¥168.00", kuaishou: "¥96.00", service: "¥42.
 demoLiveCosts["douyin-advanced"] = "¥90.00";
 let demoLiveJob = "douyin";
 let demoLivePaused = false;
-const demoLivePausedByJob = { douyin: false, "douyin-advanced": false, service: false, wujian: false };
+const demoLivePausedByJob = { douyin: false, "douyin-advanced": false, "douyin-touch": false, service: false, wujian: false };
 const demoLiveStatusParam = new URLSearchParams(window.location.search).get("demoLiveStatus");
 const demoLiveStatusDemoMode = new URLSearchParams(window.location.search).get("demo") === "1";
 let demoLiveStatus = demoLiveStatusDemoMode && ["live", "ended"].includes(demoLiveStatusParam) ? demoLiveStatusParam : "live";
@@ -16901,11 +16960,11 @@ let demoLiveTransferIndex = 0;
 let demoLiveTransferRunning = false;
 let demoXuDouBarrageFilter = "all";
 const demoXuDouWorksiteStages = [
-  { key: "lead-mining", label: "潜客发现" },
-  { key: "private-touch", label: "发送私信" },
+  { key: "lead-mining", label: "潜客挖掘" },
+  { key: "private-touch", label: "私信触达" },
   { key: "continuous-conversion", label: "持续转化" },
 ];
-const demoXuDouWorksiteStageByJob = { douyin: "private-touch", "douyin-advanced": "private-touch" };
+const demoXuDouWorksiteStageByJob = { douyin: "lead-mining", "douyin-advanced": "lead-mining" };
 let demoLiveQueueScrollHoldUntil = 0;
 const demoLiveFocusHoldDuration = 90000;
 let demoServiceFilter = "all";
@@ -17300,7 +17359,7 @@ function renderDemoWorkflow(data, selected) {
 
 function demoXuDouWorksiteStage(job = demoLiveJob) {
   const stage = demoXuDouWorksiteStageByJob[job];
-  return demoXuDouWorksiteStages.some((item) => item.key === stage) ? stage : "private-touch";
+  return demoXuDouWorksiteStages.some((item) => item.key === stage) ? stage : "lead-mining";
 }
 
 function renderXuDouWorksiteStageTabs(activeStage) {
@@ -17430,23 +17489,39 @@ function renderXuDouWorksiteStage(stage, data, employeeName, selected, selectedI
   return renderXuDouStagePlaceholder(stage);
 }
 
+const demoXuDouStageEmptyCopy = { "lead-mining": "暂无待判断潜客", "private-touch": "暂无待触达客户", "continuous-conversion": "暂无持续转化客户" };
+
+/* 阶段状态浮标：只有潜客挖掘阶段有弹幕列表驱动动画，其余阶段停在初始文案，所以要随阶段给 */
+const demoXuDouStageStatusCopy = { "lead-mining": "正在读取抖音直播弹幕", "private-touch": "正在处理潜客私信", "continuous-conversion": "正在跟进持续转化客户" };
+
+function demoXuDouItemStage(item) {
+  const node = demoLeadProcessState(item).currentNode;
+  return node <= 1 ? "lead-mining" : node === 2 ? "private-touch" : "continuous-conversion";
+}
+
+function demoXuDouStageEntries(stage, signalEntries) {
+  return signalEntries.filter(({ item }) => demoXuDouItemStage(item) === stage);
+}
+
 function renderXuDouWorksite(data, counters, signalEntries, selected, selectedIntentResult) {
-  const queueCount = signalEntries.length;
   const advanced = demoLiveJob === "douyin-advanced";
   const employeeName = advanced ? "副号获客专家" : "主号获客专家";
   const employeeRole = advanced ? "副号获客专家" : "主号获客专家";
   const activeStage = demoXuDouWorksiteStage();
+  const stageLabel = demoXuDouWorksiteStages.find((stage) => stage.key === activeStage)?.label || "";
+  const queueEntries = demoXuDouStageEntries(activeStage, signalEntries);
+  const queueCount = queueEntries.length;
   return `
     ${renderFirstRunLiveNotice()}
     ${renderDemoLiveStatusControl()}
-    <section class="live-result-funnel demo-live-result-funnel demo-live-result-funnel--four" aria-label="实时工作结果漏斗"><article><span>获取潜客</span><strong id="demo-live-kpi-audience">${counters.input.toLocaleString("zh-CN")}</strong><b>→</b></article><article><span>私信触达</span><strong id="demo-live-kpi-comments">${counters.touch.toLocaleString("zh-CN")}</strong><b>→</b></article><article><span>客户回复</span><strong id="demo-live-kpi-intent">${counters.reply.toLocaleString("zh-CN")}</strong><b>→</b></article><article><span>留资结果</span><strong id="demo-live-kpi-contact">${counters.result.toLocaleString("zh-CN")}</strong></article></section>
+    <section class="live-result-funnel demo-live-result-funnel demo-live-result-funnel--three" aria-label="实时工作结果漏斗"><article><span>获取潜客</span><strong id="demo-live-kpi-audience">${counters.input.toLocaleString("zh-CN")}</strong><b>→</b></article><article><span>私信触达</span><strong id="demo-live-kpi-comments">${counters.touch.toLocaleString("zh-CN")}</strong><b>→</b></article><article><span>留资结果</span><strong id="demo-live-kpi-contact">${counters.result.toLocaleString("zh-CN")}</strong></article></section>
     <section class="xudou-worksite" aria-label="${employeeName}实时工作现场">
       <div class="xudou-worksite__transfer-layer" id="demo-live-transfer-layer" aria-hidden="true"></div>
-      <div class="xudou-worksite__transfer-status" id="demo-live-transfer-status" aria-live="polite"><i></i>正在读取抖音直播弹幕</div>
+      <div class="xudou-worksite__transfer-status" id="demo-live-transfer-status" aria-live="polite"><i></i>${demoXuDouStageStatusCopy[activeStage]}</div>
       <aside class="demo-live-card demo-live-queue-card xudou-worksite__queue" aria-label="实时跟进">
-        <header><div><strong>实时跟进</strong></div><span class="demo-live-queue-count" data-demo-queue-count>${queueCount} 位</span><button class="demo-live-history-action" type="button" data-demo-live-history title="查看${employeeName}历史潜客">历史工作<span aria-hidden="true">→</span></button></header>
+        <header><div><strong>${stageLabel}</strong></div><span class="demo-live-queue-count" data-demo-queue-count>${queueCount} 位</span><button class="demo-live-history-action" type="button" data-demo-live-history title="查看${employeeName}历史潜客">历史工作<span aria-hidden="true">→</span></button></header>
         <div class="demo-queue-summary"><strong>${queueCount} 位潜客正在同时推进</strong></div>
-        <div class="demo-signal-list" id="demo-signal-list">${signalEntries.map(({ item, index }) => renderDemoQueueSignal(item, index)).join("")}</div>
+        <div class="demo-signal-list" id="demo-signal-list">${queueCount ? queueEntries.map(({ item, index }) => renderDemoQueueSignal(item, index)).join("") : `<div class="demo-signal-empty">${demoXuDouStageEmptyCopy[activeStage]}</div>`}</div>
       </aside>
       <section class="xudou-worksite__scene" aria-label="工作现场">
         <header class="xudou-worksite__header">
@@ -17642,6 +17717,106 @@ function renderLeadHunterAccountManager({ page = false } = {}) {
   </section>`;
 }
 
+/* ===== 抖音触达专员 · 触达工作台（PRD-v1.5 第四章） =====
+   顶部三张指标卡（获取潜客 / 判断意向 / 私信触达，不出转化类指标）；
+   两个阶段 Tab（潜客挖掘 / 私信触达）；队列三状态（待判断 / 待触达 / 已触达，已触达为终态）；
+   右侧触达流程五节点，终点为私信触达。 */
+let demoTouchStage = "mine";
+let demoTouchSelectedId = "";
+const demoTouchStages = { mine: { label: "潜客挖掘", states: ["待判断"] }, touch: { label: "私信触达", states: ["待触达", "已触达"] } };
+const demoTouchFunnel = [["获取潜客", 96], ["判断意向", 68], ["私信触达", 41]];
+const demoTouchSignals = [
+  { id: "tt-01", name: "苏州奶爸选车", initial: "苏", source: "直播弹幕", city: "苏州", model: "星途 E7", account: "鸿途汽车苏州专营店", at: "今天 10:24", quote: "后排装两个安全座椅，长途坐着挤不挤？", state: "待判断", level: "", reason: "" },
+  { id: "tt-02", name: "无锡小周", initial: "无", source: "短视频评论", city: "无锡", model: "捷途 X70L", account: "鸿途汽车苏州专营店", at: "今天 10:31", quote: "这条视频里的优惠到什么时候结束？", state: "待判断", level: "", reason: "" },
+  { id: "tt-03", name: "常州老赵", initial: "常", source: "粉丝关注", city: "常州", model: "暂未识别", account: "鸿途汽车苏州专营店", at: "今天 10:36", follow: "关注了鸿途汽车苏州专营店", state: "待判断", level: "", reason: "" },
+  { id: "tt-04", name: "南京小顾", initial: "南", source: "直播弹幕", city: "南京", model: "星途 E7", account: "鸿途汽车苏州专营店", at: "今天 10:12", quote: "周六下午能安排试驾吗？", state: "待触达", level: "高意向", reason: "预算、车型和到店时间都问到了，南京在服务范围内。" },
+  { id: "tt-05", name: "合肥老王", initial: "合", source: "短视频评论", city: "合肥", model: "捷途 X70L", account: "鸿途汽车苏州专营店", at: "今天 10:18", quote: "首付 5 万月供大概多少？", state: "待触达", level: "中意向", reason: "有明确预算和金融诉求，还没问到店时间。" },
+  { id: "tt-06", name: "嘉兴阿峰", initial: "嘉", source: "直播弹幕", city: "嘉兴", model: "捷途 X70L", account: "鸿途汽车苏州专营店", at: "今天 09:48", quote: "旧车开了 6 年还能置换吗？", state: "已触达", level: "高意向", reason: "置换诉求明确，车龄与预算信息完整。", touchTime: "今天 09:52", touchText: "阿峰你好，这台 X70L 支持旧车置换，6 年车龄可以走评估流程。把上牌城市和大概里程发我，我帮你算一份置换加金融的方案。" },
+  { id: "tt-07", name: "湖州小叶", initial: "湖", source: "粉丝关注", city: "湖州", model: "星途 E7", account: "鸿途汽车苏州专营店", at: "今天 09:36", follow: "关注并收藏了星途 E7 讲解视频", state: "已触达", level: "中意向", reason: "连续三天浏览 E7 内容，出现明确的车型偏好。", touchTime: "今天 09:41", touchText: "小叶你好，看到你在关注星途 E7。这台车后排空间和智驾是问得最多的两点，需要的话我把配置和到店试驾安排一起发你。" },
+];
+
+function demoTouchAccountName() { const record = (window.prdLeadTouchAccount?.() || [])[0]; return record ? record.nickname : "抖音账号待启用"; }
+function demoTouchQueue() { const states = demoTouchStages[demoTouchStage].states; return demoTouchSignals.filter((item) => states.includes(item.state)); }
+function demoTouchCurrent() { const queue = demoTouchQueue(); return queue.find((item) => item.id === demoTouchSelectedId) || queue[0] || null; }
+function demoTouchStateClass(state) { return state === "已触达" ? "is-done" : state === "待触达" ? "is-running" : ""; }
+
+function renderDemoTouchFunnel() {
+  return `<section class="live-result-funnel demo-live-result-funnel demo-live-result-funnel--three" aria-label="触达工作台指标">${demoTouchFunnel.map((item, index) => `<article><span>${escapeHTML(item[0])}</span><strong>${escapeHTML(String(item[1]))}</strong>${index < demoTouchFunnel.length - 1 ? "<b>→</b>" : ""}</article>`).join("")}</section>`;
+}
+
+function renderDemoTouchStageTabs() {
+  return `<nav class="xudou-worksite__tabs" role="tablist" aria-label="触达阶段">${Object.entries(demoTouchStages).map((entry) => `<button class="${entry[0] === demoTouchStage ? "is-active" : ""}" type="button" role="tab" aria-selected="${entry[0] === demoTouchStage}" data-demo-touch-stage="${entry[0]}">${entry[1].label}</button>`).join("")}</nav>`;
+}
+
+function renderDemoTouchQueueItem(item) {
+  const selected = demoTouchCurrent()?.id === item.id;
+  const content = item.source === "粉丝关注" ? `<p class="demo-signal-action">${escapeHTML(item.follow)}</p>` : `<p>“${escapeHTML(item.quote)}”</p>`;
+  return `<button class="demo-signal-item${selected ? " is-selected" : ""}" type="button" data-demo-touch-signal="${item.id}"><span>${escapeHTML(item.initial)}</span><div class="demo-signal-copy"><div class="demo-signal-line"><strong>${escapeHTML(item.name)}</strong>${item.level ? `<b class="${demoIntentClass(item.level)}">${escapeHTML(item.level)}</b>` : ""}</div><small class="demo-signal-source"><b>${escapeHTML(item.source)}</b> · ${escapeHTML(item.at)}</small>${content}<div class="demo-signal-foot"><em>${escapeHTML(item.state)}</em><span class="demo-signal-results"><i class="${demoTouchStateClass(item.state)}">${escapeHTML(item.model)}</i></span></div></div></button>`;
+}
+
+function demoTouchFlowNodes(item) {
+  if (!item) return [];
+  const judged = item.state !== "待判断";
+  const touched = item.state === "已触达";
+  const followed = item.source === "粉丝关注";
+  return [
+    { state: "done", title: "获取潜客", time: item.at, copy: `已从${item.source}识别到该潜客并入队，按触达账号「${item.account}」独立记录。` },
+    { state: "done", title: "获取来源信号", time: item.at, copy: `来源平台：抖音 · ${item.source}`, quote: followed ? item.follow : item.quote },
+    { state: "done", title: "历史互动分析", time: item.at, copy: `引用车型知识「${item.model}」与门店知识「${item.account}」，并结合该账号最近三天的历史互动。` },
+    judged
+      ? { state: "done", title: "判断潜客意向", time: item.at, copy: `判断为${item.level}。${item.reason}` }
+      : { state: "current", title: "判断潜客意向", time: "处理中", copy: "正在结合互动内容、历史行为、城市与车型信息给出意向等级。" },
+    touched
+      ? { state: "done", title: "私信触达", time: item.touchTime, copy: `触达账号：${item.account}。第 1 次私信已送达，本次计费 20 电力值，本客户流程到此结束。`, quote: item.touchText }
+      : { state: judged ? "current" : "pending", title: "私信触达", time: judged ? "待发送" : "—", copy: judged ? "已按账号「对话策略 → 进私设置」生成第 1 次触达内容，等待发送。" : "意向判断完成后，按账号「进私设置」发送第 1 次私信。" },
+  ];
+}
+
+function renderDemoTouchFlow(item) {
+  const nodes = demoTouchFlowNodes(item);
+  if (!nodes.length) return "";
+  const running = nodes.some((node) => node.state === "current");
+  return `<section class="demo-live-workflow demo-live-workflow--diagram-only"><header class="demo-live-workflow__head"><div><strong>触达流程</strong></div><span class="demo-process-status demo-process-status--${running ? "current" : "done"}"><i></i>${running ? "进行中" : "已触达"}</span></header><ol class="prd-prospect-process">${nodes.map((node, index) => `<li class="is-${node.state}"><i class="prd-prospect-process__icon">${node.state === "done" ? "✓" : index + 1}</i><div class="prd-prospect-process__head"><strong>${escapeHTML(node.title)}</strong><time>${escapeHTML(node.time)}</time></div><p>${escapeHTML(node.copy)}</p>${node.quote ? `<blockquote>${escapeHTML(node.quote)}</blockquote>` : ""}</li>`).join("")}</ol></section>`;
+}
+
+function renderDemoTouchScene() {
+  const account = demoTouchAccountName();
+  if (demoTouchStage === "touch") return renderXuDouPrivateTouchStage("抖音触达专员");
+  return `<div class="xudou-cloud-computer" data-demo-touch-stage-panel="mine">
+    <header class="xudou-cloud-computer__chrome"><div><i></i><i></i><i></i></div><span><b></b>抖音直播现场 · ${escapeHTML(account)}</span><small>直播中</small></header>
+    <div class="xudou-cloud-computer__screen">
+      <video src="assets/demo-v57-legacy-v40-v66/assets/douyin-lead-video.mp4" autoplay muted loop playsinline preload="metadata" poster="assets/demo-v57/live-room-poster.jpg" aria-label="${escapeHTML(account)}的抖音直播现场"></video>
+      <div class="xudou-cloud-computer__shade"></div>
+      <div class="xudou-cloud-computer__status"><i></i><span>正在读取直播间弹幕与短视频评论</span><b>三类来源在线</b></div>
+    </div>
+  </div>`;
+}
+
+function renderDemoTouchWorkspace() {
+  const queue = demoTouchQueue();
+  const current = demoTouchCurrent();
+  const stage = demoTouchStages[demoTouchStage];
+  const emptyCopy = demoTouchStage === "mine" ? "暂无待判断潜客" : "暂无待触达客户";
+  return `${renderFirstRunLiveNotice()}
+    ${renderDemoTouchFunnel()}
+    <section class="xudou-worksite" aria-label="抖音触达专员实时工作现场">
+      <aside class="demo-live-card demo-live-queue-card xudou-worksite__queue" aria-label="实时跟进">
+        <header><div><strong>${stage.label}</strong></div><span class="demo-live-queue-count" data-demo-touch-count>${queue.length} 位</span><button class="demo-live-history-action" type="button" data-demo-live-history title="查看抖音触达专员历史工作">历史工作<span aria-hidden="true">→</span></button></header>
+        <div class="demo-queue-summary"><strong>${queue.length} 位客户处于「${stage.states.join(" / ")}」</strong></div>
+        <div class="demo-signal-list" id="demo-touch-signal-list">${queue.length ? queue.map(renderDemoTouchQueueItem).join("") : `<div class="demo-signal-empty">${emptyCopy}</div>`}</div>
+      </aside>
+      <section class="xudou-worksite__scene" aria-label="工作现场">
+        <header class="xudou-worksite__header"><div><h3>抖音触达专员工作现场</h3></div>${renderDemoTouchStageTabs()}</header>
+        <div class="xudou-worksite__panel xudou-worksite__panel--combined is-active">
+          ${renderDemoTouchScene()}
+          <div class="demo-current-card xudou-worksite__detail-content" id="demo-touch-detail">
+            ${current ? `<div class="demo-current-card__identity"><span aria-label="${escapeHTML(current.name)} 的头像">${escapeHTML(current.initial)}</span><div><strong>${escapeHTML(current.name)}</strong><small>意向车型：${escapeHTML(current.model)} · ${escapeHTML(current.city)} · 来源 ${escapeHTML(current.source)}</small></div><b class="${current.level ? demoIntentClass(current.level) : "demo-intent-badge--neutral"}">${escapeHTML(current.level || current.state)}</b></div>${renderDemoTouchFlow(current)}` : `<div class="prd-empty-state">${emptyCopy}</div>`}
+          </div>
+        </div>
+      </section>
+    </section>`;
+}
+
 function renderDemoQueueSignal(item, index) {
   const rawStatus = item.status || "正在推进";
   const process = isDemoDouyinLeadJob() ? demoLeadProcessState(item) : null;
@@ -17761,18 +17936,21 @@ function streamDemoQueueSignal() {
   } else {
     demoLiveSelectedSignal = Math.min(demoLiveSelectedSignal, Math.max(0, data.signals.length - 1));
   }
-  list.innerHTML = signalEntries.map(({ item, index }) => renderDemoQueueSignal(item, index)).join("");
+  const activeStage = demoXuDouWorksiteStage();
+  const stageEntries = demoXuDouStageEntries(activeStage, signalEntries);
+  list.innerHTML = stageEntries.length ? stageEntries.map(({ item, index }) => renderDemoQueueSignal(item, index)).join("") : `<div class="demo-signal-empty">${demoXuDouStageEmptyCopy[activeStage]}</div>`;
   if (!isDemoLiveQueueScrollHeld()) {
     list.scrollTo({ top: list.scrollHeight, behavior: "smooth" });
   }
   syncDemoBarrageToQueue(root, data, !isDemoLiveQueueScrollHeld());
-  const incoming = list.lastElementChild;
+  /* 只有新卡落在当前阶段时才闪，否则闪到的是别人的卡片 */
+  const incoming = Number(list.lastElementChild?.dataset?.demoSignalIndex) === data.signals.length - 1 ? list.lastElementChild : null;
   incoming?.classList.add("is-new");
   window.setTimeout(() => incoming?.classList.remove("is-new"), 900);
   const count = root.querySelector("[data-demo-queue-count]");
-  if (count) count.textContent = `${signalEntries.length} 位`;
+  if (count) count.textContent = `${stageEntries.length} 位`;
   const summary = root.querySelector(".demo-queue-summary strong");
-  if (summary) summary.textContent = `${signalEntries.length} 位潜客正在同时推进`;
+  if (summary) summary.textContent = `${stageEntries.length} 位潜客正在同时推进`;
 }
 
 function syncDemoLiveCurrentCard(item, index) {
@@ -18240,7 +18418,7 @@ function renderDemoLiveJob(job = demoLiveJob) {
   syncDemoLiveReturnControl(root);
   if (job === "wujian") {
     demoLiveJob = "wujian";
-    root.classList.remove("is-lead-settings-route", "is-service-settings-route");
+    root.classList.remove("is-lead-settings-route", "is-service-settings-route", "is-touch-settings-route");
     root.querySelectorAll("[data-demo-live-job]").forEach((button) => {
       const active = button.dataset.demoLiveJob === "wujian";
       button.classList.toggle("is-active", active);
@@ -18248,6 +18426,21 @@ function renderDemoLiveJob(job = demoLiveJob) {
       button.closest("[data-demo-live-job-wrap]")?.classList.toggle("is-active", active);
     });
     if (typeof window.renderWuJianLiveWorkspace === "function") window.renderWuJianLiveWorkspace(root);
+    return;
+  }
+  if (job === "douyin-touch") {
+    demoLiveJob = "douyin-touch";
+    const isTouchSettingsRoute = currentRoute() === "touch-account-settings";
+    root.classList.remove("is-lead-settings-route", "is-service-settings-route");
+    root.classList.toggle("is-touch-settings-route", isTouchSettingsRoute);
+    root.querySelectorAll("[data-demo-live-job]").forEach((button) => {
+      const active = button.dataset.demoLiveJob === "douyin-touch";
+      button.classList.toggle("is-active", active);
+      button.setAttribute("aria-selected", String(active));
+      button.closest("[data-demo-live-job-wrap]")?.classList.toggle("is-active", active);
+    });
+    const touchWorkspace = $("#demo-live-workspace");
+    if (touchWorkspace) touchWorkspace.innerHTML = isTouchSettingsRoute ? (window.prdRenderTouchAccountScope?.() || "") : renderDemoTouchWorkspace();
     return;
   }
   const isServiceSettingsRoute = currentRoute() === "service-settings";
@@ -18611,7 +18804,7 @@ function initializeDemoModules() {
       openDemoLeadConversation();
       return;
     }
-    if (event.target.closest("[data-demo-live-history]") && ["douyin", "douyin-advanced"].includes(demoLiveJob)) {
+    if (event.target.closest("[data-demo-live-history]") && ["douyin", "douyin-advanced", "douyin-touch"].includes(demoLiveJob)) {
       event.preventDefault();
       openLeadHistoryFromLive();
       return;
@@ -18709,6 +18902,39 @@ function initializeDemoModules() {
       demoLiveDetailStep = null;
       demoLiveTransferIndex = 0;
       renderDemoLiveJob(demoLiveJob);
+      return;
+    }
+    const touchAccountSettings = event.target.closest("[data-touch-account-settings]");
+    if (touchAccountSettings) {
+      event.preventDefault();
+      event.stopPropagation();
+      if (typeof closeDemoLiveTabMenus === "function") closeDemoLiveTabMenus();
+      window.location.hash = "touch-account-settings";
+      return;
+    }
+    const touchSettingsBack = event.target.closest("[data-demo-touch-settings-back]");
+    if (touchSettingsBack) {
+      event.preventDefault();
+      event.stopPropagation();
+      window.location.hash = "live";
+      return;
+    }
+    const touchStageTab = event.target.closest("[data-demo-touch-stage]");
+    if (touchStageTab) {
+      event.preventDefault();
+      event.stopPropagation();
+      const key = touchStageTab.dataset.demoTouchStage;
+      demoTouchStage = demoTouchStages[key] ? key : "mine";
+      demoTouchSelectedId = "";
+      renderDemoLiveJob("douyin-touch");
+      return;
+    }
+    const touchSignalCard = event.target.closest("[data-demo-touch-signal]");
+    if (touchSignalCard) {
+      event.preventDefault();
+      event.stopPropagation();
+      demoTouchSelectedId = touchSignalCard.dataset.demoTouchSignal;
+      renderDemoLiveJob("douyin-touch");
       return;
     }
     const leadSettings = event.target.closest("[data-lead-account-settings]");
@@ -19497,7 +19723,7 @@ function openXudouRealtimeWorkspace(employee = "xudou") {
   demoLiveSelectedSignal = 0;
   demoLiveDetailStep = null;
   demoLiveTransferIndex = 0;
-  demoXuDouWorksiteStageByJob[demoLiveJob] = "private-touch";
+  demoXuDouWorksiteStageByJob[demoLiveJob] = "lead-mining";
   if (typeof window.markDemoLiveFromOffice === "function") window.markDemoLiveFromOffice(isChenfu ? "smart-reply" : isHuangfu ? "lead-hunter-advanced" : "lead-hunter");
   window.location.hash = "live";
   if (currentRoute() === "live") renderDemoLiveJob(demoLiveJob);
@@ -20328,13 +20554,13 @@ window.setInterval(streamDemoQueueSignal, 4200);
     /* Account binding */
     const prdAccountKey = "ai-legion-prd-accounts-v1";
     const prdDouyinExtraAccounts = [
-      { id:"douyin-shanghai", platform:"douyin", nickname:"鸿途汽车上海店", account:"59610782345", type:"企业号", auth:{ platform:true, marketing:true }, service:{ "smart-reply":true, "lead-hunter":true }, lastAuth:"2026-08-02 10:12", expiry:"长期有效" },
-      { id:"douyin-hangzhou", platform:"douyin", nickname:"鸿途汽车杭州城西店", account:"68351209477", type:"企业号", auth:{ platform:true, marketing:true }, service:{ "smart-reply":true, "lead-hunter":true }, lastAuth:"2026-08-04 16:38", expiry:"长期有效" },
-      { id:"douyin-suzhou", platform:"douyin", nickname:"鸿途汽车苏州专营店", account:"74125698031", type:"企业号", auth:{ platform:true, marketing:true }, service:{ "smart-reply":true, "lead-hunter":true }, lastAuth:"2026-08-05 09:24", expiry:"长期有效" },
-      { id:"douyin-content", platform:"douyin", nickname:"鸿途汽车内容号", account:"80567413209", type:"企业号", auth:{ platform:true, marketing:false }, service:{ "smart-reply":true, "lead-hunter":true }, lastAuth:"2026-08-06 14:51", expiry:"长期有效" },
+      { id:"douyin-shanghai", platform:"douyin", nickname:"鸿途汽车上海店", account:"59610782345", type:"企业号", auth:{ platform:true, marketing:true }, service:{ "smart-reply":true, "lead-hunter":true, "lead-hunter-advanced":false, "douyin-touch":false }, lastAuth:"2026-08-02 10:12", expiry:"长期有效" },
+      { id:"douyin-hangzhou", platform:"douyin", nickname:"鸿途汽车杭州城西店", account:"68351209477", type:"企业号", auth:{ platform:true, marketing:true }, service:{ "smart-reply":true, "lead-hunter":false, "lead-hunter-advanced":true, "douyin-touch":false }, lastAuth:"2026-08-04 16:38", expiry:"长期有效" },
+      { id:"douyin-suzhou", platform:"douyin", nickname:"鸿途汽车苏州专营店", account:"74125698031", type:"企业号", auth:{ platform:true, marketing:true }, service:{ "smart-reply":true, "lead-hunter":false, "lead-hunter-advanced":false, "douyin-touch":false }, lastAuth:"2026-08-05 09:24", expiry:"长期有效" },
+      { id:"douyin-content", platform:"douyin", nickname:"鸿途汽车内容号", account:"80567413209", type:"企业号", auth:{ platform:true, marketing:false }, service:{ "smart-reply":true, "lead-hunter":false, "lead-hunter-advanced":false, "douyin-touch":false }, lastAuth:"2026-08-06 14:51", expiry:"长期有效" },
     ];
     const prdAccountDefaults = {
-      douyin: [{ id:"douyin-demo", platform:"douyin", nickname:"鸿途汽车官方旗舰店", account:"46524370874", type:"企业号", auth:{ platform:true, marketing:true }, service:{ "smart-reply":true, "lead-hunter":true }, lastAuth:"2026-07-27 13:49", expiry:"长期有效" }, ...prdDouyinExtraAccounts],
+      douyin: [{ id:"douyin-demo", platform:"douyin", nickname:"鸿途汽车官方旗舰店", account:"46524370874", type:"企业号", auth:{ platform:true, marketing:true }, service:{ "smart-reply":true, "lead-hunter":true, "lead-hunter-advanced":false, "douyin-touch":false }, lastAuth:"2026-07-27 13:49", expiry:"长期有效" }, ...prdDouyinExtraAccounts],
       kuaishou: [{ id:"kuaishou-demo", platform:"kuaishou", nickname:"鸿途汽车快手官方号", account:"HTAUTO88", type:"企业号", auth:{ platform:true }, service:{ "smart-reply":true }, lastAuth:"2026-07-26 10:30", expiry:"7天后" }],
       xiaohongshu: [{ id:"xhs-demo", platform:"xiaohongshu", nickname:"鸿途汽车品牌号", account:"946238815", type:"专业号", auth:{ platform:true, jiguang:false }, service:{ "smart-reply":true }, lastAuth:"2026-07-25 09:16", expiry:"长期有效" }],
     };
@@ -20356,6 +20582,37 @@ window.setInterval(streamDemoQueueSignal, 4200);
     if (prdLegacyAuthCleaned) prdSaveAccounts();
     const prdDefaultServices = { "douyin-demo": { "smart-reply": true, "lead-hunter": true }, "kuaishou-demo": { "smart-reply": true }, "xhs-demo": { "smart-reply": true } };
     prdRecords().forEach((record) => { if ((!record.service || !Object.keys(record.service).length) && prdDefaultServices[record.id]) record.service = { ...prdDefaultServices[record.id] }; if (record.platform === "douyin" && record.service && record.service["ai-video"] === undefined) record.service["ai-video"] = false; });
+    /* 获客类三方互斥（v1.5 §2.2.1 / §2.2.2）：主号获客专家、副号获客专家、抖音触达专员共用同一批
+       抖音账号，一个账号在三者中只能被一方启用。授权与占用分开记——auth 管授权，service 管「谁在用它」；
+       可用只看营销授权 + 是否被另两方占用，平台授权不参与判定（§2.2.1）。 */
+    const prdLeadPositions = ["lead-hunter", "lead-hunter-advanced", "douyin-touch"];
+    const prdLeadPositionLabel = { "lead-hunter": "主号获客专家", "lead-hunter-advanced": "副号获客专家", "douyin-touch": "抖音触达专员" };
+    /* 老数据里主号与副号合用一个 service["lead-hunter"] 标志位，首次加载按账号拆成三方占用 */
+    const prdLeadSeedOwner = { "douyin-demo": "lead-hunter", "douyin-shanghai": "lead-hunter", "douyin-hangzhou": "lead-hunter-advanced" };
+    let prdLeadOccupancyMigrated = false;
+    prdRecords().forEach((record) => {
+      if (record.platform !== "douyin") return;
+      if (!record.service) record.service = {};
+      if (!Object.prototype.hasOwnProperty.call(record.service, "lead-hunter-advanced")) {
+        const owner = prdLeadSeedOwner[record.id] || "";
+        prdLeadPositions.forEach((position) => { record.service[position] = position === owner; });
+        prdLeadOccupancyMigrated = true;
+      }
+      /* 雇佣后新增的账号默认关闭（§9.1 验收 5） */
+      prdLeadPositions.forEach((position) => { if (record.service[position] === undefined) record.service[position] = false; });
+    });
+    if (prdLeadOccupancyMigrated) prdSaveAccounts();
+    const prdAccountOccupant = (record) => prdLeadPositions.find((position) => record?.service?.[position] === true) || "";
+    /* 本岗位的可用账号 = 营销授权已完成 且 未被主号获客专家、副号获客专家启用（§2.2.1） */
+    const prdDouyinTouchAvailable = () => prdRecords().filter((record) => record.platform === "douyin" && prdCapabilityReady(record, "marketing") && !["lead-hunter", "lead-hunter-advanced"].includes(prdAccountOccupant(record)));
+    /* 开启即独占：置位时把同一账号上的另两个岗位一并关掉，一方关闭不影响其它岗位（§2.2.2） */
+    function prdSetLeadAccountService(record, employeeId, value) {
+      if (!record) return;
+      if (!record.service) record.service = {};
+      if (value) prdLeadPositions.forEach((position) => { record.service[position] = position === employeeId; });
+      else record.service[employeeId] = false;
+      prdSaveAccounts();
+    }
     const kuaishouDemo = prdRecords().find((record) => record.id === "kuaishou-demo"); if (kuaishouDemo && kuaishouDemo.expiry === "2027-07-26") { kuaishouDemo.expiry = "7天后"; prdSaveAccounts(); }
     const prdPrivateReady = (record) => record && record.auth?.platform === true;
     const prdCapabilityReady = (record, capability) => Boolean(record?.auth?.[capability]);
@@ -20382,7 +20639,7 @@ window.setInterval(streamDemoQueueSignal, 4200);
           const dot = tone === "is-on" ? "is-green" : tone === "is-warning" ? "is-orange" : "is-gray";
           return `<div class="prd-account-auth-row ${tone}"><span>${label}</span><p><i class="prd-account-auth-dot ${dot}"></i><strong>${status}</strong><small>${note}</small></p></div>`;
         }).join("");
-        return `<article class="prd-account-card${warning ? " prd-account-card--warning" : ""}" data-prd-account-card="${record.id}"><div class="prd-account-card__head">${prdAccountIcon(record.platform)}<div><strong>${prdEsc(record.nickname)}</strong><small><b>${prdEsc(record.type || "平台账号")}</b><span>${info.label}号 ${prdEsc(record.account)}</span></small></div></div><div class="prd-account-auth-list">${capabilityMarkup}</div><div class="prd-account-card__actions"><button type="button" data-prd-manage-account="${record.id}">${warning ? (expiringSoon ? "扫码续期" : "重新授权") : "管理授权"}</button></div></article>`;
+        return `<article class="prd-account-card${warning ? " prd-account-card--warning" : ""}" data-prd-account-card="${record.id}"><div class="prd-account-card__head">${prdAccountIcon(record.platform)}<div><strong>${prdEsc(record.nickname)}</strong><small><b>${prdEsc(record.type || "平台账号")}</b><span>${info.label}号 ${prdEsc(record.account)}</span></small></div></div><div class="prd-account-auth-list">${capabilityMarkup}</div>${prdAccountOccupant(record) ? `<div class="prd-account-occupancy">获客占用 · <b>${prdEsc(prdLeadPositionLabel[prdAccountOccupant(record)])}</b></div>` : ""}<div class="prd-account-card__actions"><button type="button" data-prd-manage-account="${record.id}">${warning ? (expiringSoon ? "扫码续期" : "重新授权") : "管理授权"}</button></div></article>`;
       }).join("");
       host.innerHTML = cards || `<div class="prd-empty-state">还没有绑定平台账号，请先绑定新账号。</div>`;
       const count = prd$("#authorized-account-count"); if (count) count.textContent = prdRecords().length;
@@ -20445,7 +20702,55 @@ window.setInterval(streamDemoQueueSignal, 4200);
       const save = event.target.closest("[data-prd-save-bind]"); if (save) { event.preventDefault(); event.stopImmediatePropagation(); prdSaveBindAccount(); return; }
       const auth = event.target.closest("[data-prd-authorize]"); if (auth) { event.preventDefault(); event.stopImmediatePropagation(); prdAuthorize(auth.dataset.prdAuthorize); return; }
       const success = event.target.closest("[data-prd-qr-success]"); if (success) { event.preventDefault(); event.stopImmediatePropagation(); prdAuthorizeSuccess(); return; }
+      const touchToggle = event.target.closest("[data-prd-touch-account-toggle]"); if (touchToggle) { event.preventDefault(); event.stopImmediatePropagation(); const record = prdRecords().find((item) => item.id === touchToggle.dataset.prdTouchAccountToggle); if (record) { const on = record.service?.["douyin-touch"] === true; if (on) { const rest = prdRecords().filter((item) => item.platform === "douyin" && item.id !== record.id && item.service?.["douyin-touch"] === true && prdCapabilityReady(item, "marketing")); if (!rest.length) { prdTouchLastAccountId = record.id; prdRenderTouchAccountScopeInto(); return; } } prdTouchLastAccountId = ""; prdSetLeadAccountService(record, "douyin-touch", !on); prdRenderTouchAccountScopeInto(); } return; }
+      const touchConfirm = event.target.closest("[data-prd-touch-account-confirm]"); if (touchConfirm) { event.preventDefault(); event.stopImmediatePropagation(); const record = prdRecords().find((item) => item.id === touchConfirm.dataset.prdTouchAccountConfirm); prdTouchLastAccountId = ""; if (record) prdSetLeadAccountService(record, "douyin-touch", false); prdRenderTouchAccountScopeInto(); return; }
+      const touchCancel = event.target.closest("[data-prd-touch-account-cancel]"); if (touchCancel) { event.preventDefault(); event.stopImmediatePropagation(); prdTouchLastAccountId = ""; prdRenderTouchAccountScopeInto(); return; }
+      const touchJump = event.target.closest("[data-prd-touch-account-jump]"); if (touchJump) { event.preventDefault(); event.stopImmediatePropagation(); const target = touchJump.dataset.prdTouchAccountJump; prdToast("账号已被占用", `该账号正在被${prdLeadPositionLabel[target]}使用，请先到它的工作设置里关闭`); if (target === "lead-hunter" || target === "lead-hunter-advanced") { window.demoLeadSettingsJob = target === "lead-hunter-advanced" ? "douyin-advanced" : "douyin"; window.location.hash = "lead-account-settings"; } return; }
     }, true);
+
+    /* 抖音触达专员 · 账号范围（PRD-v1.5 §2.2 / §2.3.3）：只展示营销授权与获客占用，不展示平台授权 */
+    let prdTouchLastAccountId = "";
+    const prdTouchScopeRecords = () => prdRecords().filter((record) => record.platform === "douyin");
+    window.prdLeadTouchAccount = () => prdTouchScopeRecords().filter((record) => record.service?.["douyin-touch"] === true);
+    function prdRenderTouchAccountScope() {
+      const records = prdTouchScopeRecords();
+      const enabled = records.filter((record) => record.service?.["douyin-touch"] === true);
+      const available = prdDouyinTouchAvailable();
+      const rows = records.map((record) => {
+        const occupant = prdAccountOccupant(record);
+        const mine = occupant === "douyin-touch";
+        const other = occupant && !mine ? occupant : "";
+        const marketingReady = prdCapabilityReady(record, "marketing");
+        const usable = marketingReady && !other;
+        const reason = other ? `已被${prdLeadPositionLabel[other]}使用` : marketingReady ? "" : "营销授权未完成";
+        const action = other
+          ? `<button type="button" data-prd-touch-account-jump="${other}">去${prdLeadPositionLabel[other]}关闭</button>`
+          : marketingReady ? "" : `<button type="button" data-prd-manage-account="${record.id}">去授权</button>`;
+        const control = usable
+          ? `<label class="lead-account-toggle"><input type="checkbox" data-prd-touch-account-toggle="${record.id}" ${mine ? "checked" : ""}><i></i><span>${mine ? "已开启" : "已关闭"}</span></label>`
+          : `<div class="lead-account-block"><em>${prdEsc(reason)}</em>${action}</div>`;
+        return `<article class="lead-account-row lead-account-row--rich${mine ? " is-enabled" : " is-disabled"}">
+          <div class="lead-account-row__identity"><span class="lead-account-avatar">${prdEsc(String(record.nickname || "").slice(0, 1))}</span><div><strong>${prdEsc(record.nickname)}</strong><small>${prdEsc(record.account)}</small></div></div>
+          <span class="lead-account-role"><b>${mine ? "抖音触达专员" : other ? prdLeadPositionLabel[other] : "未占用"}</b><small>${mine ? "触达作业中" : other ? "已被其它获客岗位启用" : "尚未分配"}</small></span>
+          <div class="lead-account-row__auth">${marketingReady ? "" : `<span class="lead-account-auth-warning" title="营销授权异常" aria-label="营销授权异常">!</span>`}</div>
+          ${control}
+        </article>`;
+      }).join("");
+      const confirmRow = prdTouchLastAccountId
+        ? `<div class="touch-scope-confirm"><span>需要至少保留1个账号，账号全部关闭后该员工将被解雇，是否继续</span><div><button type="button" data-prd-touch-account-cancel>取消</button><button type="button" data-prd-touch-account-confirm="${prdTouchLastAccountId}">继续关闭</button></div></div>`
+        : "";
+      return `<section class="lead-account-manager lead-account-manager--redesign lead-account-manager--page lead-account-manager--touch" aria-label="抖音触达专员专属账号管理">
+        <header class="lead-settings-topbar"><div><button class="lead-settings-back" type="button" data-demo-touch-settings-back><span aria-hidden="true">←</span> 返回实时工作</button><div class="lead-settings-title"><span class="section-kicker">抖音触达专员专属设置</span><h3>账号范围</h3><p>为抖音触达专员挑选用哪个抖音账号挖掘潜客、发送私信。</p></div></div></header>
+        <div class="lead-settings-overview lead-settings-overview--four" aria-label="账号范围概览"><div><span>抖音账号</span><strong>${records.length}</strong><small>已绑定账号</small></div><div><span>当前开启</span><strong>${enabled.length}</strong><small>账号正在工作</small></div><div><span>可用账号</span><strong>${available.length}</strong><small>营销授权已完成</small></div><div class="${enabled.length ? "is-ok" : "is-warning"}"><span>运行状态</span><strong>${enabled.length ? "正常" : "待处理"}</strong><small>${enabled.length ? "账号已在工作" : "先开启 1 个账号"}</small></div></div>
+        <div class="lead-settings-layout lead-settings-layout--single"><section class="lead-settings-panel lead-settings-panel--accounts"><header class="lead-settings-panel__head"><div><span class="lead-settings-step">01</span><div><strong>账号开关</strong><small>开启后，抖音触达专员才会使用该账号挖掘潜客并发送私信。</small></div></div><b>${enabled.length}/${records.length} 已开启</b></header><div class="lead-settings-account-head"><span>账号</span><span>启用归属</span><span>营销授权</span><span>工作状态</span></div><div class="lead-settings-account-list">${rows}</div>${confirmRow}</section></div>
+      </section>`;
+    }
+    function prdRenderTouchAccountScopeInto() {
+      if (currentRoute() !== "touch-account-settings") return;
+      if (typeof window.renderDemoLiveJob === "function") window.renderDemoLiveJob("douyin-touch");
+      else { const host = document.querySelector("#demo-live-workspace"); if (host) host.innerHTML = prdRenderTouchAccountScope(); }
+    }
+    window.prdRenderTouchAccountScope = prdRenderTouchAccountScope;
 
     /* Vehicle library */
     const prdVehicleCacheKey = "ai-legion-prd-vehicle-image-cache-v1";
@@ -20466,10 +20771,10 @@ window.setInterval(streamDemoQueueSignal, 4200);
     try {
       const savedHires = JSON.parse(localStorage.getItem(prdHiredEmployeesKey) || "[]");
       hiredEmployees.clear();
-      if (Array.isArray(savedHires)) savedHires.filter((id) => ["smart-reply", "lead-hunter", "lead-hunter-advanced", "ai-video"].includes(id)).forEach((id) => hiredEmployees.add(id));
+      if (Array.isArray(savedHires)) savedHires.filter((id) => ["smart-reply", "lead-hunter", "lead-hunter-advanced", "douyin-touch", "ai-video"].includes(id)).forEach((id) => hiredEmployees.add(id));
     } catch { try { hiredEmployees.clear(); } catch {} }
-    function prdPersistHiredEmployees() { try { localStorage.setItem(prdHiredEmployeesKey, JSON.stringify([...hiredEmployees].filter((id) => ["smart-reply", "lead-hunter", "lead-hunter-advanced", "ai-video"].includes(id)))); } catch {} }
-    const prdTalentReady = new Set(["smart-reply", "lead-hunter", "lead-hunter-advanced", "ai-video"]);
+    function prdPersistHiredEmployees() { try { localStorage.setItem(prdHiredEmployeesKey, JSON.stringify([...hiredEmployees].filter((id) => ["smart-reply", "lead-hunter", "lead-hunter-advanced", "douyin-touch", "ai-video"].includes(id)))); } catch {} }
+    const prdTalentReady = new Set(["smart-reply", "lead-hunter", "lead-hunter-advanced", "douyin-touch", "ai-video"]);
     /* 矩阵视频发布专员 · 矩阵账号运营数据（100 个抖音账号，确定性生成，供人才广场/办公室/实时工作/成果中心共用） */
     window.AIVideoMatrix = (function () {
       const matrixAccounts = [];
@@ -20524,6 +20829,7 @@ window.setInterval(streamDemoQueueSignal, 4200);
       "lead-hunter": { persona:"主号获客专家", name:"主号获客专家", description:"从抖音评论、直播弹幕和互动关注信息中，自动找出意向度高的客户并完成发送私信，持续转化。每个账号各自找客、各自跟进，客户从哪里来，就由哪个账号接着聊。", coreLabel:"核心功能 · 独立账号闭环", tags:["评论获客","直播获客","账号分别触达"], platform:"抖音", price:"50 电力值 / 有效线索", billingShort:"按有效线索计费", priceNote:"按业务结果计费：仅对判定为有效的线索计费，实际结算以平台配置为准" },
       "lead-hunter-advanced": { persona:"副号获客专家", name:"副号获客专家", description:"从抖音评论、直播弹幕和互动关注信息中，自动找出意向度高的客户并完成发送私信，持续转化。一个账号池专门找客，另一个账号池接力跟进，线索不混淆、每条都有承接。", coreLabel:"核心功能 · 主副号协同", tags:["评论获客","直播获客","主副号触达"], platform:"抖音", price:"50 电力值 / 条", billingShort:"按有效线索计费", priceNote:"按业务结果计费：仅对副号获客专家独立判定的有效线索计费，实际结算以平台配置为准" },
       "smart-reply": { persona:"客服专员", name:"客服专员", description:"承接账号私信，第一时间回应客户问题，留住主动咨询并持续守护账号回复率", tags:["AI客服","自定义人设","回复率保障"], platform:"抖音、快手、小红书", price:"10 电力值 / 转化线索", billingShort:"按转化线索计费", priceNote:"按业务结果计费：接待会话产生留资结果才计费，实际结算以平台配置为准" },
+      "douyin-touch": { persona:"抖音触达专员", name:"抖音触达专员", description:"从直播间弹幕、短视频评论和粉丝关注中找出有购车意向的抖音用户，判断意向等级后主动私信触达；只做触达，触达之后由门店继续跟进。", coreLabel:"核心功能 · 止于私信触达", tags:["弹幕挖掘","评论挖掘","粉丝关注","意向判断","私信触达"], platform:"抖音", price:"20 电力值 / 有效触达", billingShort:"按有效触达计费", priceNote:"按业务结果计费：成功发出首轮私信才计费，同一个客户只计一次，实际结算以平台配置为准" },
       "ai-video": { persona:"矩阵视频发布专员", name:"矩阵视频发布专员", description:"完成抖音平台短视频矩阵账号的快速孵化，按发布任务批量发布短视频并回收效果", tags:["矩阵管理","每周排期","统一审核","效果回收"], platform:"抖音", price:"2 电力值 / 次发布", billingShort:"按次发布计费", priceNote:"按业务结果计费：发布成功才扣费，实际结算以平台配置为准" },
     };
     function prdTalentData(employee) { return prdTalentCopy[employee.id] || { persona:employee.persona, name:employee.name, description:employee.description, tags:(employee.skills || []).slice(0,4), platform:"抖音、快手、小红书", price:"待上线后公布", billingShort:"预约上线", priceNote:"上线后公布具体收费方式" }; }
@@ -20531,7 +20837,7 @@ window.setInterval(streamDemoQueueSignal, 4200);
       const grid = prd$("#employee-grid");
       if (!grid) return;
       const all = employees.map((employee) => ({ ...employee, ...prdTalentData(employee) }));
-      const talentPlazaOrder = ["lead-hunter", "lead-hunter-advanced", "smart-reply", "ai-video"];
+      const talentPlazaOrder = ["lead-hunter", "lead-hunter-advanced", "douyin-touch", "smart-reply", "ai-video"];
       const visible = all
         .filter((employee) => filter === "all" || employee.categories?.includes(filter))
         .sort((a, b) => {
@@ -20636,7 +20942,7 @@ window.setInterval(streamDemoQueueSignal, 4200);
         : allReady ? `<span class="prd-douyin-auth-done"><i>✓</i>${prdEsc(doneLabel)}</span>` : `<button type="button" class="prd-douyin-auth-cta" ${actionAttrs(next)}>${prdEsc(pendingCta(pending.length))} <span aria-hidden="true">→</span></button>`;
       return `<section class="prd-douyin-auth-rail${allReady ? " is-complete" : ""}${selection ? " is-selection" : ""}" aria-label="${prdEsc(title)}进度"><header><div><span class="section-kicker">${prdEsc(kicker)}</span><strong>${prdEsc(title)} <b>${done}/${total}</b></strong><small>${allReady ? prdEsc(readyHint) : prdEsc(pendingHint)}</small></div><span class="prd-douyin-auth-meter"><i style="width:${percent}%"></i><b>${allReady ? "已完成" : "建议补齐"}</b></span></header><ul>${accountRows}</ul><footer>${footer}</footer></section>`;
     }
-    function prdEmployeeRequirements(id) { const balanceValue = typeof accountBalance === "undefined" ? 0 : accountBalance; const balanceItem = { id:"balance", label:"余额", blocking:true, ready:balanceValue >= 0, note:`当前可用电力值 ${formatPower(balanceValue)}${balanceValue < 0 ? "，充值抵平负值后才能雇佣" : ""}`, action:"联系运营充值" }; if (id === "ai-video") { const marketingReady = prdRecords().some((record) => record.platform === "douyin" && prdCapabilityReady(record, "marketing")); return [balanceItem, { id:"douyin-marketing", label:"抖音营销授权", ready:marketingReady, note:marketingReady ? "至少一个账号已授权，可参与发布" : "先完成 1 个抖音账号的营销授权", action:"去账号绑定/授权" }]; } const common = [balanceItem, { id:"vehicle", label:"车型库", ready:vehicleLibraryRows?.some((row) => vehicleState[row.id]?.on), note:"至少启用 1 款", action:"去车型库" }, { id:"digital", label:"数字人配置", ready:true, note:"默认人设已就绪", action:"去对话策略" }]; if (["lead-hunter", "lead-hunter-advanced"].includes(id)) { const douyinReady = prdRecords().some((record) => record.platform === "douyin" && ["platform", "marketing"].every((capability) => prdCapabilityReady(record, capability))); const authNote = douyinReady ? "最低运行门槛已满足" : "先完成 1 个账号的完整授权"; common.push({ id:"douyin-platform", label:"抖音平台授权", ready:douyinReady, note:authNote, action:"去授权" }, { id:"douyin-marketing", label:"抖音营销授权", ready:douyinReady, note:authNote, action:"去授权" }); } else { const ready = prdRecords().some(prdPrivateReady); common.push({ id:"private-any", label:"三平台任一平台授权", ready, note:"任一账号完成平台授权", action:"去授权" }); } return common; }
+    function prdEmployeeRequirements(id) { const balanceValue = typeof accountBalance === "undefined" ? 0 : accountBalance; const balanceItem = { id:"balance", label:"余额", blocking:true, ready:balanceValue >= 0, note:`当前可用电力值 ${formatPower(balanceValue)}${balanceValue < 0 ? "，充值抵平负值后才能雇佣" : ""}`, action:"联系运营充值" }; if (id === "ai-video") { const marketingReady = prdRecords().some((record) => record.platform === "douyin" && prdCapabilityReady(record, "marketing")); return [balanceItem, { id:"douyin-marketing", label:"抖音营销授权", ready:marketingReady, note:marketingReady ? "至少一个账号已授权，可参与发布" : "先完成 1 个抖音账号的营销授权", action:"去账号绑定/授权" }]; } if (id === "douyin-touch") { const available = prdDouyinTouchAvailable(); const ready = available.length > 0; const occupied = prdRecords().some((record) => record.platform === "douyin" && prdCapabilityReady(record, "marketing") && ["lead-hunter", "lead-hunter-advanced"].includes(prdAccountOccupant(record))); const note = ready ? `可用抖音账号 ${available.length} 个` : occupied ? "可用抖音账号已被主号获客专家或副号获客专家启用，先释放 1 个账号" : "先完成 1 个抖音账号的营销授权"; return [balanceItem, { id:"douyin-marketing", label:"抖音营销授权", blocking:true, ready, note, action:"去账号绑定/授权" }, { id:"vehicle", label:"车型库", blocking:false, ready:vehicleLibraryRows?.some((row) => vehicleState[row.id]?.on), note:"至少启用 1 款", action:"去车型库" }, { id:"digital", label:"数字人配置", blocking:false, ready:true, note:"默认人设已就绪", action:"去对话策略" }]; } const common = [balanceItem, { id:"vehicle", label:"车型库", ready:vehicleLibraryRows?.some((row) => vehicleState[row.id]?.on), note:"至少启用 1 款", action:"去车型库" }, { id:"digital", label:"数字人配置", ready:true, note:"默认人设已就绪", action:"去对话策略" }]; if (["lead-hunter", "lead-hunter-advanced"].includes(id)) { const douyinReady = prdRecords().some((record) => record.platform === "douyin" && ["platform", "marketing"].every((capability) => prdCapabilityReady(record, capability))); const authNote = douyinReady ? "最低运行门槛已满足" : "先完成 1 个账号的完整授权"; common.push({ id:"douyin-platform", label:"抖音平台授权", ready:douyinReady, note:authNote, action:"去授权" }, { id:"douyin-marketing", label:"抖音营销授权", ready:douyinReady, note:authNote, action:"去授权" }); } else { const ready = prdRecords().some(prdPrivateReady); common.push({ id:"private-any", label:"三平台任一平台授权", ready, note:"任一账号完成平台授权", action:"去授权" }); } return common; }
     let prdHireEmployeeId = "";
     function prdOpenHireCheck(id) { prdStartHireScan(id); }
     function prdCloseHire() { window.clearTimeout(prdHireScanTimer); prdHireScanTimer = 0; prdHireScanRunning = false; prd$("#first-run-modal")?.classList.remove("is-open"); prd$(".first-run-backdrop")?.classList.remove("is-open"); prd$("#first-run-modal")?.setAttribute("aria-hidden","true"); prd$(".first-run-backdrop")?.setAttribute("aria-hidden","true"); prd$(".first-run-close")?.removeAttribute("disabled"); prd$(".first-run-close")?.removeAttribute("aria-disabled"); prdHireEmployeeId = ""; }
@@ -20658,7 +20964,7 @@ window.setInterval(streamDemoQueueSignal, 4200);
     }
     const readyEmployee = (id) => prdTalentReady.has(id);
     function prdOpenEmployeeLive(id) {
-      const job = { "lead-hunter":"douyin", "lead-hunter-advanced":"douyin-advanced", "smart-reply":"service", "ai-video":"wujian" }[id] || "";
+      const job = { "lead-hunter":"douyin", "lead-hunter-advanced":"douyin-advanced", "douyin-touch":"douyin-touch", "smart-reply":"service", "ai-video":"wujian" }[id] || "";
       if (id === "lead-hunter-advanced") window.demoLeadEmployeeId = "lead-hunter-advanced";
       else if (id === "lead-hunter") window.demoLeadEmployeeId = "lead-hunter";
       if (job && typeof demoLiveJob !== "undefined") demoLiveJob = job;
@@ -20686,7 +20992,7 @@ window.setInterval(streamDemoQueueSignal, 4200);
       const recalibrate = event.target.closest("[data-prd-talent-recalibrate]"); if (recalibrate) { event.preventDefault(); event.stopImmediatePropagation(); const id = recalibrate.dataset.prdTalentRecalibrate; prdOpenHireCheck(id); return; }
       if (employeeCard && !event.target.closest("button")) { event.preventDefault(); event.stopImmediatePropagation(); prdOpenEmployeeModal(employeeCard.dataset.employeeId); return; }
       const hire = event.target.closest("#hire-button[data-prd-hire]"); if (hire) { event.preventDefault(); event.stopImmediatePropagation(); const id = hire.dataset.prdHire; if (hiredEmployees.has(id)) { if (window.confirm("解雇后排队发布的作品将会取消发布，但历史结果和计费记录会保留，是否继续？")) { hiredEmployees.delete(id); if (id === "ai-video") { prdRecords().filter((record) => record.platform === "douyin").forEach((record) => { record.service = { ...(record.service || {}), "ai-video": false }; }); prdSaveAccounts(); } prdPersistHiredEmployees(); prdOpenEmployeeModal(id); prdRenderTalentCards("all"); prdRenderDashboard(); prdRenderResults(); prdRenderLiveGate(); prdToast("数字员工已解雇", "历史结果已保留，可在岗位卡片中重新雇佣"); } } else prdOpenHireCheck(id); return; }
-      const confirmHire = event.target.closest("[data-prd-confirm-hire]"); if (confirmHire) { event.preventDefault(); event.stopImmediatePropagation(); const id = prdHireEmployeeId; if (!id || !prdHireBlockers(id).every((item) => item.ready)) return; if (id === "ai-video" && !prdVideoHireSelection().enabledRows.length) { prdToast("还差一步", "请至少开启 1 个账号"); prdRenderHireFlow(); return; } if (id !== "ai-video" && typeof prdHireStage !== "undefined" && prdHireStage !== "config") { prdHireStage = "config"; prdHireConfigDraft = id === "ai-video" ? { id, ...prdVideoHireConfig() } : prdHireConfigDraft; prdRenderHireFlow(); return; } if (typeof prdHireConfigValid === "function" && !prdHireConfigValid(id)) return; if (typeof prdApplyHireConfig === "function") prdApplyHireConfig(id); hiredEmployees.add(id); prdPersistHiredEmployees(); prdCloseHire(); prdRenderTalentCards("all"); prdRenderDashboard(); prdRenderResults(); prdRenderLiveGate(); prdToast("数字员工已雇佣", `${prdTalentData(employeeById(id)).persona}·${prdTalentData(employeeById(id)).name} 已创建，正在进入实时工作`); prdOpenEmployeeLive(id); return; }
+      const confirmHire = event.target.closest("[data-prd-confirm-hire]"); if (confirmHire) { event.preventDefault(); event.stopImmediatePropagation(); const id = prdHireEmployeeId; if (!id || !prdHireBlockers(id).every((item) => item.ready)) return; if (id === "ai-video" && !prdVideoHireSelection().enabledRows.length) { prdToast("还差一步", "请至少开启 1 个账号"); prdRenderHireFlow(); return; } if (!["ai-video", "douyin-touch"].includes(id) && typeof prdHireStage !== "undefined" && prdHireStage !== "config") { prdHireStage = "config"; prdHireConfigDraft = id === "ai-video" ? { id, ...prdVideoHireConfig() } : prdHireConfigDraft; prdRenderHireFlow(); return; } if (typeof prdHireConfigValid === "function" && !prdHireConfigValid(id)) return; if (typeof prdApplyHireConfig === "function") prdApplyHireConfig(id); hiredEmployees.add(id); prdPersistHiredEmployees(); prdCloseHire(); prdRenderTalentCards("all"); prdRenderDashboard(); prdRenderResults(); prdRenderLiveGate(); prdToast("数字员工已雇佣", `${prdTalentData(employeeById(id)).persona}·${prdTalentData(employeeById(id)).name} 已创建，正在进入实时工作`); prdOpenEmployeeLive(id); return; }
       const closeHire = event.target.closest("[data-prd-close-hire]"); if (closeHire) { event.preventDefault(); event.stopImmediatePropagation(); prdCloseHire(); return; }
       const dependency = event.target.closest("[data-prd-hire-dependency]"); if (dependency) { event.preventDefault(); event.stopImmediatePropagation(); const dep = dependency.dataset.prdHireDependency; if (dep.startsWith("douyin")) prdOpenAccountBind("douyin", prdAccounts.douyin?.[0]?.id || ""); else if (dep === "vehicle") window.location.hash = "vehicles"; else if (dep === "digital") window.location.hash = "digital-human"; else if (dep === "private-any") prdOpenAccountBind("douyin", prdAccounts.douyin?.[0]?.id || ""); else if (dep === "balance" && typeof openConsumptionDetails === "function") openConsumptionDetails(); return; }
     }, true);
@@ -20757,17 +21063,27 @@ window.setInterval(streamDemoQueueSignal, 4200);
     }, true);
 
     /* Results center: Xu Dou's prospect funnel and traceable four-node processing timeline. */
-    const prdProspectRecords = [
-      { id:"prospect-001", name:"用林****4", avatar:"assets/portraits/zhou-ye.jpg", tags:["新粉关注","高意向"], sourceType:"关注", sourceContent:"关注了鸿途汽车官方旗舰店", touchStatus:"私信已发送", model:"比亚迪", city:"呼和浩特市", touchTime:"2026-07-30 10:47", replyStatus:"已回复", leadStatus:"已留资", acquisitionAccount:"包头市鸿途汽车销售服务有限公司", searchedAt:"2026-07-30 10:45", intentTime:"2026-07-30 10:46", replyTime:"2026-07-30 10:51", leadTime:"2026-07-30 10:54", touchMessage:"你好，看到你关注了门店。比亚迪近期有到店权益，我可以按你的预算帮你筛选车型。" },
-      { id:"prospect-002", name:"m***＾", avatar:"assets/portraits/xhs-intent-comment.jpg", tags:["新粉关注","高意向"], sourceType:"关注", sourceContent:"关注了鸿途汽车官方旗舰店", touchStatus:"私信已发送", model:"—", city:"—", touchTime:"2026-07-30 10:04", replyStatus:"已回复", leadStatus:"已留资", acquisitionAccount:"包头市鸿途汽车销售服务有限公司", searchedAt:"2026-07-30 10:02", intentTime:"2026-07-30 10:03", replyTime:"2026-07-30 10:08", leadTime:"2026-07-30 10:12", touchMessage:"你好，感谢关注。想看轿车、SUV 还是新能源车型？我可以先把门店现车和优惠发你。" },
-      { id:"prospect-003", name:"林*a", avatar:"assets/portraits/gu-yan.jpg", tags:["新粉关注","高意向"], sourceType:"关注", trafficType:"广告流量", sourceContent:"关注了鸿途汽车官方旗舰店", touchStatus:"私信已发送", model:"捷途VS7", city:"—", touchTime:"2026-07-30 10:06", replyStatus:"已回复", leadStatus:"已留资", acquisitionAccount:"包头市鸿途汽车销售服务有限公司", searchedAt:"2026-07-30 10:02", intentTime:"2026-07-30 10:04", replyTime:"2026-07-30 10:10", leadTime:"2026-07-30 10:15", touchMessage:"你好，捷途 VS7 的配置和门店现车我已经整理好了，需要我把近期优惠一并发给你吗？", adPlan:{ type:"广告流量", adId:"7656831087356444713", advertiserName:"1.包头市鸿达汽车（大号）-ypc-本", planId:"1874198971059299", creativeId:"1874199048562906", advertiserAccountId:"1861700114881547", planName:"自动投放单元_包头鸿达二手车大黄鸟_06_29_22:53:24" } },
+/* 潜客记录的岗位归属：老记录没有 owner 字段，一律视为主号获客专家 */
+    const prdProspectOwner = (record) => record?.owner === "douyin-touch" ? "douyin-touch" : "lead-hunter";
+    /* 主号获客专家、副号获客专家、抖音触达专员任一在岗，潜客记录即出数据（PRD-v1.5 §5.1） */
+    const prdProspectGateOpen = () => ["lead-hunter", "lead-hunter-advanced", "douyin-touch"].some((id) => hiredEmployees.has(id));
+    /* 本岗位不跟踪回复与留资，成果表这两列留空 */
+    const prdProspectUntracked = (record) => prdProspectOwner(record) === "douyin-touch";
+        const prdProspectRecords = [
+      { id:"prospect-001", name:"用林****4", avatar:"assets/portraits/zhou-ye.jpg", tags:["新粉关注","高意向"], sourceType:"粉丝关注", sourceContent:"关注了鸿途汽车官方旗舰店", touchStatus:"私信已发送", model:"比亚迪", city:"呼和浩特市", touchTime:"2026-07-30 10:47", replyStatus:"已回复", leadStatus:"已留资", acquisitionAccount:"包头市鸿途汽车销售服务有限公司", searchedAt:"2026-07-30 10:45", intentTime:"2026-07-30 10:46", replyTime:"2026-07-30 10:51", leadTime:"2026-07-30 10:54", touchMessage:"你好，看到你关注了门店。比亚迪近期有到店权益，我可以按你的预算帮你筛选车型。" },
+      { id:"prospect-002", name:"m***＾", avatar:"assets/portraits/xhs-intent-comment.jpg", tags:["新粉关注","高意向"], sourceType:"粉丝关注", sourceContent:"关注了鸿途汽车官方旗舰店", touchStatus:"私信已发送", model:"—", city:"—", touchTime:"2026-07-30 10:04", replyStatus:"已回复", leadStatus:"已留资", acquisitionAccount:"包头市鸿途汽车销售服务有限公司", searchedAt:"2026-07-30 10:02", intentTime:"2026-07-30 10:03", replyTime:"2026-07-30 10:08", leadTime:"2026-07-30 10:12", touchMessage:"你好，感谢关注。想看轿车、SUV 还是新能源车型？我可以先把门店现车和优惠发你。" },
+      { id:"prospect-003", name:"林*a", avatar:"assets/portraits/gu-yan.jpg", tags:["新粉关注","高意向"], sourceType:"粉丝关注", trafficType:"广告流量", sourceContent:"关注了鸿途汽车官方旗舰店", touchStatus:"私信已发送", model:"捷途VS7", city:"—", touchTime:"2026-07-30 10:06", replyStatus:"已回复", leadStatus:"已留资", acquisitionAccount:"包头市鸿途汽车销售服务有限公司", searchedAt:"2026-07-30 10:02", intentTime:"2026-07-30 10:04", replyTime:"2026-07-30 10:10", leadTime:"2026-07-30 10:15", touchMessage:"你好，捷途 VS7 的配置和门店现车我已经整理好了，需要我把近期优惠一并发给你吗？", adPlan:{ type:"广告流量", adId:"7656831087356444713", advertiserName:"1.包头市鸿达汽车（大号）-ypc-本", planId:"1874198971059299", creativeId:"1874199048562906", advertiserAccountId:"1861700114881547", planName:"自动投放单元_包头鸿达二手车大黄鸟_06_29_22:53:24" } },
       { id:"prospect-004", name:"W*F", avatar:"assets/portraits/lu-yao.jpg", tags:["短视频评论","高意向"], sourceType:"短视频评论", sourceContent:"RAV4 荣放现在优惠多少？有现车吗？", touchStatus:"私信已发送", model:"RAV4荣放", city:"鄂尔多斯市", touchTime:"2026-07-29 22:56", replyStatus:"已回复", leadStatus:"已留资", acquisitionAccount:"包头市鸿途汽车销售服务有限公司", searchedAt:"2026-07-29 22:55", intentTime:"2026-07-29 22:55", replyTime:"2026-07-29 23:02", leadTime:"2026-07-29 23:06", touchMessage:"你好，RAV4 荣放目前有现车。我可以根据你关注的配置核对最新门店优惠，方便留个电话吗？" },
       { id:"prospect-005", name:"布*和", avatar:"assets/portraits/kuaishou-leads.jpg", tags:["直播弹幕","高意向"], sourceType:"直播弹幕", sourceContent:"劲客落地多少？今天去店里还能试驾吗？", touchStatus:"私信已发送", model:"劲客", city:"锡林郭勒盟", touchTime:"2026-07-29 19:52", replyStatus:"已回复", leadStatus:"已留资", acquisitionAccount:"包头市鸿途汽车销售服务有限公司", searchedAt:"2026-07-29 19:50", intentTime:"2026-07-29 19:51", replyTime:"2026-07-29 19:58", leadTime:"2026-07-29 20:03", touchMessage:"你好，劲客今天可以安排试驾。我先帮你核对落地方案和到店时间，方便留个联系方式吗？" },
       { id:"prospect-006", name:"杨*波", avatar:"assets/portraits/lin-xia.jpg", tags:["短视频评论","高意向"], sourceType:"短视频评论", sourceContent:"高山 DHT-PHEV 这款有试驾车吗？", touchStatus:"私信已发送", model:"高山DHT-PHEV", city:"鄂尔多斯市", touchTime:"2026-07-29 17:24", replyStatus:"已回复", leadStatus:"已留资", acquisitionAccount:"包头市鸿途汽车销售服务有限公司", searchedAt:"2026-07-29 17:23", intentTime:"2026-07-29 17:23", replyTime:"2026-07-29 17:29", leadTime:"2026-07-29 17:35", touchMessage:"你好，高山 DHT-PHEV 可以预约试驾。我可以先确认你方便到店的时间，再帮你锁定车辆。" },
-      { id:"prospect-007", name:"用***暴", avatar:"assets/portraits/su-he.jpg", tags:["关注","高意向"], sourceType:"关注", sourceContent:"关注了鸿途汽车官方旗舰店", touchStatus:"私信已发送", model:"红旗", city:"包头市", touchTime:"2026-07-29 15:39", replyStatus:"待回复", leadStatus:"未留资", acquisitionAccount:"包头市鸿途汽车销售服务有限公司", searchedAt:"2026-07-29 15:38", intentTime:"2026-07-29 15:38", replyTime:"—", leadTime:"—", touchMessage:"你好，感谢关注鸿途汽车。红旗在售车型和近期到店权益已经整理好，需要我发你看看吗？" },
+      { id:"prospect-007", name:"用***暴", avatar:"assets/portraits/su-he.jpg", tags:["关注","高意向"], sourceType:"粉丝关注", sourceContent:"关注了鸿途汽车官方旗舰店", touchStatus:"私信已发送", model:"红旗", city:"包头市", touchTime:"2026-07-29 15:39", replyStatus:"待回复", leadStatus:"未留资", acquisitionAccount:"包头市鸿途汽车销售服务有限公司", searchedAt:"2026-07-29 15:38", intentTime:"2026-07-29 15:38", replyTime:"—", leadTime:"—", touchMessage:"你好，感谢关注鸿途汽车。红旗在售车型和近期到店权益已经整理好，需要我发你看看吗？" },
       { id:"prospect-008", name:"虹**翔", avatar:"assets/portraits/cheng-ran.jpg", tags:["直播弹幕","高意向"], sourceType:"直播弹幕", sourceContent:"锋兰达最低配有白色现车吗？", touchStatus:"待回复", model:"锋兰达", city:"—", touchTime:"—", replyStatus:"未回复", leadStatus:"未留资", acquisitionAccount:"包头市鸿途汽车销售服务有限公司", searchedAt:"2026-07-29 14:24", intentTime:"2026-07-29 14:25", replyTime:"—", leadTime:"—", touchMessage:"你好，锋兰达白色现车我正在帮你核对，确认后第一时间同步配置和价格。" },
       { id:"prospect-009", name:"@*****", avatar:"assets/portraits/xhs-customer-search.jpg", tags:["短视频评论","高意向"], sourceType:"短视频评论", sourceContent:"帕萨特 330 精英版现在什么价格？", touchStatus:"跟进未成", model:"帕萨特", city:"—", touchTime:"2026-07-29 14:12", replyStatus:"未回复", leadStatus:"未留资", acquisitionAccount:"包头市鸿途汽车销售服务有限公司", searchedAt:"2026-07-29 14:11", intentTime:"2026-07-29 14:11", replyTime:"—", leadTime:"—", touchMessage:"你好，帕萨特 330 精英版近期有门店权益，我可以把配置差异和落地方案发你参考。" },
       { id:"prospect-010", name:"峰*哥", avatar:"assets/portraits/sales-assistant.jpg", tags:["直播弹幕","高意向"], sourceType:"直播弹幕", sourceContent:"奥迪 Q5 贷款方案怎么算？", touchStatus:"私信已发送", model:"奥迪Q5", city:"包头市", touchTime:"2026-07-29 12:53", replyStatus:"已回复", leadStatus:"未留资", acquisitionAccount:"包头市鸿途汽车销售服务有限公司", searchedAt:"2026-07-29 12:51", intentTime:"2026-07-29 12:52", replyTime:"2026-07-29 13:01", leadTime:"—", touchMessage:"你好，奥迪 Q5 可按首付和期限测算多套金融方案。你更关注低首付还是低月供？" },
+      { id:"prospect-011", owner:"douyin-touch", name:"小*鱼", avatar:"assets/portraits/gu-yan.jpg", tags:["直播弹幕","高意向"], sourceType:"直播弹幕", sourceContent:"这个车落地多少，首付能到几成？", touchStatus:"私信已发送", model:"RAV4荣放", city:"苏州市", touchTime:"2026-07-30 11:14", replyStatus:"—", leadStatus:"—", prospectAccount:"鸿途汽车苏州专营店", touchAccount:"鸿途汽车苏州专营店", searchedAt:"2026-07-30 11:08", intentTime:"2026-07-30 11:11", touchMessage:"你好，看到你在直播间问 RAV4 荣放的落地价，我把苏州店当前的首付方案整理给你。" },
+      { id:"prospect-012", owner:"douyin-touch", name:"阿*明", avatar:"assets/portraits/zhou-ye.jpg", tags:["短视频评论","中意向"], sourceType:"短视频评论", sourceContent:"后排空间看着挺大，有没有七座版本", touchStatus:"私信已发送", model:"劲客", city:"杭州市", touchTime:"2026-07-30 11:02", replyStatus:"—", leadStatus:"—", prospectAccount:"鸿途汽车苏州专营店", touchAccount:"鸿途汽车苏州专营店", searchedAt:"2026-07-30 10:55", intentTime:"2026-07-30 10:59", touchMessage:"看到你关注后排空间，劲客的乘坐空间和座椅布局我整理了一份，发你看看。" },
+      { id:"prospect-013", owner:"douyin-touch", name:"K***n", avatar:"assets/portraits/xhs-intent-comment.jpg", tags:["粉丝关注","低意向"], sourceType:"粉丝关注", touchStatus:"私信已发送", model:"红旗", city:"上海市", touchTime:"2026-07-30 10:46", replyStatus:"—", leadStatus:"—", prospectAccount:"鸿途汽车苏州专营店", touchAccount:"鸿途汽车苏州专营店", searchedAt:"2026-07-30 10:41", intentTime:"2026-07-30 10:44", touchMessage:"感谢关注，红旗车型的在售配置和权益我整理好了，有需要随时找我。" },
+      { id:"prospect-014", owner:"douyin-touch", name:"晚*风", avatar:"assets/portraits/gu-yan.jpg", tags:["直播弹幕","高意向"], sourceType:"直播弹幕", sourceContent:"置换补贴怎么算，我旧车是合资轿车", touchStatus:"私信已发送", model:"RAV4荣放", city:"苏州市", touchTime:"2026-07-30 10:28", replyStatus:"—", leadStatus:"—", prospectAccount:"鸿途汽车苏州专营店", touchAccount:"鸿途汽车苏州专营店", searchedAt:"2026-07-30 10:20", intentTime:"2026-07-30 10:24", touchMessage:"看到你在问置换补贴，合资轿车置换 RAV4 荣放的补贴口径我整理成一条发你。" },
     ];
     const prospectAccountAssignments = {
       "prospect-001": { prospectAccount: "鸿途汽车官方旗舰店", touchAccount: "鸿途汽车线索号" },
@@ -20800,7 +21116,7 @@ window.setInterval(streamDemoQueueSignal, 4200);
     window.prdLeadRecords = prdLeadRecords;
     function prdProspectStatus(status, type) { const tone = status === "私信已发送" ? "is-success" : status === "已回复" ? "is-replied" : status === "已留资" ? "is-lead" : status === "跟进未成" ? "is-failed" : "is-waiting"; return `<span class="prd-prospect-status ${tone}" data-status-type="${prdEsc(type)}">${prdEsc(status)}</span>`; }
     function prdFilteredProspects() { const filters = Object.fromEntries(prd$$('[data-prd-prospect-filter]').map((select) => [select.dataset.prdProspectFilter, select.value])); return prdProspectRecords.filter((record) => (!filters.account || record.prospectAccount === filters.account) && (!filters.source || record.sourceType === filters.source) && (!filters.model || record.model === filters.model) && (!filters.touch || record.touchStatus === filters.touch) && (!filters.reply || record.replyStatus === filters.reply) && (!filters.lead || record.leadStatus === filters.lead)); }
-    function prdRenderProspectRows() { const body = prd$("#lead-detail-body"); if (!body) return; const records = hiredEmployees.has("lead-hunter") ? prdFilteredProspects() : []; window.prdFilteredProspectRecords = records; body.innerHTML = records.length ? records.map((record) => `<tr data-prd-prospect-row="${prdEsc(record.id)}"><td><div class="prd-prospect-person"><img src="${prdEsc(record.avatar)}" alt="${prdEsc(record.name)}"><div><strong>${prdEsc(record.name)}</strong><small><em class="prd-prospect-tag">${prdEsc(record.tags[0])}</em><em class="prd-prospect-tag is-intent">${prdEsc(record.tags[1])}</em></small></div></div></td><td>${prdProspectStatus(record.touchStatus,"touch")}</td><td>${prdEsc(record.model)}</td><td>${prdEsc(record.city)}</td><td>${prdEsc(record.touchTime)}</td><td>${prdProspectStatus(record.replyStatus,"reply")}</td><td>${prdProspectStatus(record.leadStatus,"lead")}</td><td><span class="prd-prospect-account" title="${prdEsc(record.prospectAccount)}">${prdEsc(record.prospectAccount)}</span></td><td><span class="prd-prospect-account" title="${prdEsc(record.touchAccount)}">${prdEsc(record.touchAccount)}</span></td><td>${prdEsc(record.searchedAt)}</td><td><div class="prd-prospect-actions"><button class="prd-prospect-conversation-button" type="button" data-prd-prospect-conversation="${prdEsc(record.id)}">对话流</button><button class="prd-prospect-timeline-button" type="button" data-prd-prospect-timeline="${prdEsc(record.id)}">时间轴</button></div></td></tr>`).join("") : `<tr><td colspan="11" class="prd-prospect-empty">当前筛选条件下暂无潜客记录</td></tr>`; const resultCount = prd$("[data-prd-prospect-result-count]"); if (resultCount) resultCount.textContent = `当前展示 ${records.length} 条样例记录`; }
+    function prdRenderProspectRows() { const body = prd$("#lead-detail-body"); if (!body) return; const records = prdProspectGateOpen() ? prdFilteredProspects() : []; window.prdFilteredProspectRecords = records; body.innerHTML = records.length ? records.map((record) => `<tr data-prd-prospect-row="${prdEsc(record.id)}"><td><div class="prd-prospect-person"><img src="${prdEsc(record.avatar)}" alt="${prdEsc(record.name)}"><div><strong>${prdEsc(record.name)}</strong><small><em class="prd-prospect-tag">${prdEsc(record.tags[0])}</em><em class="prd-prospect-tag is-intent">${prdEsc(record.tags[1])}</em></small></div></div></td><td>${prdProspectStatus(record.touchStatus,"touch")}</td><td>${prdEsc(record.model)}</td><td>${prdEsc(record.city)}</td><td>${prdEsc(record.touchTime)}</td><td class="prd-prospect-untracked">${prdProspectUntracked(record) ? "—" : prdProspectStatus(record.replyStatus,"reply")}</td><td class="prd-prospect-untracked">${prdProspectUntracked(record) ? "—" : prdProspectStatus(record.leadStatus,"lead")}</td><td><span class="prd-prospect-account" title="${prdEsc(record.prospectAccount)}">${prdEsc(record.prospectAccount)}</span></td><td><span class="prd-prospect-account" title="${prdEsc(record.touchAccount)}">${prdEsc(record.touchAccount)}</span></td><td>${prdEsc(record.searchedAt)}</td><td><div class="prd-prospect-actions"><button class="prd-prospect-conversation-button" type="button" data-prd-prospect-conversation="${prdEsc(record.id)}">对话流</button><button class="prd-prospect-timeline-button" type="button" data-prd-prospect-timeline="${prdEsc(record.id)}">时间轴</button></div></td></tr>`).join("") : `<tr><td colspan="11" class="prd-prospect-empty">当前筛选条件下暂无潜客记录</td></tr>`; const resultCount = prd$("[data-prd-prospect-result-count]"); if (resultCount) resultCount.textContent = `当前展示 ${records.length} 条样例记录`; }
     function prdRenderLeadRows() { const body = prd$("#prd-lead-detail-body"); if (!body) return; const records = hiredEmployees.has("lead-hunter") ? prdLeadRecords : []; body.innerHTML = records.length ? records.map((record) => `<tr data-prd-lead-row="${prdEsc(record.id)}"><td><div class="prd-lead-person"><img src="${prdEsc(record.avatar)}" alt="${prdEsc(record.name)}"><div><strong>${prdEsc(record.name)}</strong><small><em class="prd-lead-tag">${prdEsc(record.leadTag)}</em></small></div></div></td><td><div class="prd-lead-contact"><span>${prdEsc(record.phone)}</span><small>${prdEsc(record.wechat)}</small></div></td><td><span class="prd-lead-platform"><i aria-hidden="true">抖</i>${prdEsc(record.platform)}</span></td><td>${prdEsc(record.model)}</td><td>${prdEsc(record.city)}</td><td>${prdEsc(record.latestAcquiredAt)}</td><td><span class="prd-lead-account" title="${prdEsc(record.acquisitionAccount)}">${prdEsc(record.acquisitionAccount)}</span></td><td>${prdEsc(record.adPlan?.type || record.trafficType || "自然流量")}</td><td><button class="prd-lead-conversation-button" type="button" data-prd-lead-conversation="${prdEsc(record.id)}">查看对话流</button></td></tr>`).join("") : `<tr><td colspan="9" class="prd-lead-empty">当前暂无线索记录</td></tr>`; const resultCount = prd$("[data-prd-lead-result-count]"); if (resultCount) resultCount.textContent = `当前展示 ${records.length} 条样例记录`; }
     function prdEnsureLeadConversationDrawer() { ensureDemoLeadConversationDrawer(); }
     function prdConversationDateLabel(record) { const raw = String(record.latestAcquiredAt || record.searchedAt || "").slice(0, 10); const parts = raw.split("-").map(Number); return parts.length === 3 && parts.every(Number.isFinite) ? `${parts[0]} 年 ${parts[1]} 月 ${parts[2]} 日` : raw; }
@@ -20809,13 +21125,17 @@ window.setInterval(streamDemoQueueSignal, 4200);
     function prdOpenLeadConversation(id) { prdOpenResultConversation(prdLeadRecords.find((item) => item.id === id)); }
     function prdOpenProspectConversation(id) { prdOpenResultConversation(prdProspectRecords.find((item) => item.id === id)); }
     function prdCloseLeadConversation() { closeDemoLeadConversation(); }
-    function prdEnsureProspectTimeline() { if (prd$("#prd-prospect-timeline-drawer")) return; document.body.insertAdjacentHTML("beforeend", `<div class="prd-prospect-timeline-backdrop" data-prd-prospect-timeline-close></div><aside class="prd-prospect-timeline-drawer" id="prd-prospect-timeline-drawer" aria-hidden="true" aria-labelledby="prd-prospect-timeline-title"><header><div><span class="section-kicker">主号获客专家</span><h3 id="prd-prospect-timeline-title">潜客处理时间轴</h3><p>同步实时工作中“当前处理潜客”的四个处理节点</p></div><button class="prd-prospect-timeline-close" type="button" data-prd-prospect-timeline-close aria-label="关闭">×</button></header><div class="prd-prospect-timeline-body"><div id="prd-prospect-timeline-content"></div></div><footer><span>记录来源、判断、私信与留资结果，便于追溯处理过程</span><button type="button" data-prd-prospect-timeline-close>完成查看</button></footer></aside>`); }
-    function prdOpenProspectTimeline(id) { const record = prdProspectRecords.find((item) => item.id === id); if (!record) return; prdEnsureProspectTimeline(); const touchDone = record.touchStatus === "私信已发送"; const touchFailed = record.touchStatus === "跟进未成"; const replied = record.replyStatus === "已回复"; const captured = record.leadStatus === "已留资"; const nodes = [
+    function prdEnsureProspectTimeline() { if (prd$("#prd-prospect-timeline-drawer")) return; document.body.insertAdjacentHTML("beforeend", `<div class="prd-prospect-timeline-backdrop" data-prd-prospect-timeline-close></div><aside class="prd-prospect-timeline-drawer" id="prd-prospect-timeline-drawer" aria-hidden="true" aria-labelledby="prd-prospect-timeline-title"><header><div><span class="section-kicker">主号获客专家</span><h3 id="prd-prospect-timeline-title">潜客处理时间轴</h3><p>同步实时工作中“当前处理潜客”的处理节点</p></div><button class="prd-prospect-timeline-close" type="button" data-prd-prospect-timeline-close aria-label="关闭">×</button></header><div class="prd-prospect-timeline-body"><div id="prd-prospect-timeline-content"></div></div><footer><span>记录来源、判断、私信与留资结果，便于追溯处理过程</span><button type="button" data-prd-prospect-timeline-close>完成查看</button></footer></aside>`); }
+    function prdOpenProspectTimeline(id) { const record = prdProspectRecords.find((item) => item.id === id); if (!record) return; prdEnsureProspectTimeline(); const touchDone = record.touchStatus === "私信已发送"; const touchFailed = record.touchStatus === "跟进未成"; const replied = record.replyStatus === "已回复"; const captured = record.leadStatus === "已留资"; const isTouchOwner = prdProspectUntracked(record); const touchNode = { state:touchDone ? "done" : touchFailed ? "failed" : "current", title:"发送私信", time:record.touchTime, copy:touchDone ? "个性化首轮私信已发送成功，本次计费 20 电力值，本客户流程到此结束。" : touchFailed ? "本次私信未成功送达，已保留处理信息并等待新的跟进机会。" : "个性化话术已生成，等待发送。", quote:record.touchMessage }; const nodes = isTouchOwner ? [
+      { state:"done", title:`获取潜客 · 获取${record.sourceType}`, time:record.searchedAt, copy:record.sourceContent ? `已从${record.sourceType}识别到潜客互动信息并保存原始依据。` : `已从${record.sourceType}识别到潜客行为并保存原始依据。`, quote:record.sourceContent },
+      { state:"done", title:"判断意向", time:record.intentTime, copy:`结合互动内容、历史行为、城市与车型信息，判断潜客意向等级；意向车型：${record.model}。` },
+      touchNode,
+    ] : [
       { state:"done", title:`获取潜客 · 获取${record.sourceType}`, time:record.searchedAt, copy:`已从${record.sourceType}识别到潜客互动信息并保存原始依据。`, quote:record.sourceContent },
       { state:"done", title:"判断意向", time:record.intentTime, copy:`结合互动内容、历史行为、城市与车型信息，判断为高意向潜客；意向车型：${record.model}。` },
       { state:touchDone ? "done" : touchFailed ? "failed" : "current", title:"发送私信", time:record.touchTime, copy:touchDone ? "个性化首轮私信已发送成功，进入回复等待。" : touchFailed ? "本次私信未成功送达，已保留处理信息并等待新的跟进机会。" : "个性化话术已生成，等待发送。", quote:record.touchMessage },
       { state:captured ? "done" : replied ? "current" : touchDone ? "current" : "pending", title:"留资结果", time:captured ? record.leadTime : record.replyTime, copy:captured ? "潜客已回复并提交有效联系方式，完成核对后写入留资结果。" : replied ? "潜客已回复，正在继续沟通并等待有效联系方式。" : touchDone ? "已发送私信，正在等待客户回复和留资结果。" : "私信完成后进入回复与留资等待。" },
-    ]; const content = prd$("#prd-prospect-timeline-content"); if (content) content.innerHTML = `<section class="prd-prospect-timeline-profile"><img src="${prdEsc(record.avatar)}" alt="${prdEsc(record.name)}"><div><strong>${prdEsc(record.name)}</strong><small>${prdEsc(record.sourceType)} · ${prdEsc(record.model)} · ${prdEsc(record.city)}<br>潜客账号：${prdEsc(record.prospectAccount)}<br>触达账号：${prdEsc(record.touchAccount)}</small></div></section><div class="prd-prospect-timeline-intro"><strong>处理节点</strong><small>${captured ? "流程已闭环" : "流程持续处理中"}</small></div><ol class="prd-prospect-process">${nodes.map((node,index) => `<li class="is-${node.state}"><i class="prd-prospect-process__icon">${node.state === "done" ? "✓" : node.state === "failed" ? "!" : index + 1}</i><div class="prd-prospect-process__head"><strong>${prdEsc(node.title)}</strong><time>${prdEsc(node.time || "—")}</time></div><p>${prdEsc(node.copy)}</p>${node.quote ? `<blockquote>${prdEsc(node.quote)}</blockquote>` : ""}</li>`).join("")}</ol>`; const drawer = prd$("#prd-prospect-timeline-drawer"); const backdrop = prd$(".prd-prospect-timeline-backdrop"); drawer?.classList.add("is-open"); backdrop?.classList.add("is-open"); drawer?.setAttribute("aria-hidden","false"); }
+    ]; const content = prd$("#prd-prospect-timeline-content"); if (content) content.innerHTML = `<section class="prd-prospect-timeline-profile"><img src="${prdEsc(record.avatar)}" alt="${prdEsc(record.name)}"><div><strong>${prdEsc(record.name)}</strong><small>${prdEsc(record.sourceType)} · ${prdEsc(record.model)} · ${prdEsc(record.city)}<br>潜客账号：${prdEsc(record.prospectAccount)}<br>触达账号：${prdEsc(record.touchAccount)}</small></div></section><div class="prd-prospect-timeline-intro"><strong>处理节点</strong><small>${isTouchOwner ? "触达完成，流程结束" : captured ? "流程已闭环" : "流程持续处理中"}</small></div><ol class="prd-prospect-process">${nodes.map((node,index) => `<li class="is-${node.state}"><i class="prd-prospect-process__icon">${node.state === "done" ? "✓" : node.state === "failed" ? "!" : index + 1}</i><div class="prd-prospect-process__head"><strong>${prdEsc(node.title)}</strong><time>${prdEsc(node.time || "—")}</time></div><p>${prdEsc(node.copy)}</p>${node.quote ? `<blockquote>${prdEsc(node.quote)}</blockquote>` : ""}</li>`).join("")}</ol>`; const drawer = prd$("#prd-prospect-timeline-drawer"); const backdrop = prd$(".prd-prospect-timeline-backdrop"); drawer?.classList.add("is-open"); backdrop?.classList.add("is-open"); drawer?.setAttribute("aria-hidden","false"); }
     function prdCloseProspectTimeline() { const drawer = prd$("#prd-prospect-timeline-drawer"); const backdrop = prd$(".prd-prospect-timeline-backdrop"); drawer?.classList.remove("is-open"); backdrop?.classList.remove("is-open"); drawer?.setAttribute("aria-hidden","true"); }
     function prdRenderResults() {
       const view = prd$("[data-view=results]"); if (!view) return;
@@ -20826,7 +21146,7 @@ window.setInterval(streamDemoQueueSignal, 4200);
       const headingCopy = prd$(".results-daily-heading span", view); if (headingCopy) headingCopy.textContent = "查看数字员工产生的正式业务结果，并追溯每一位潜客的处理过程。";
       const sectionHeading = prd$(".daily-report-section-heading h3", view); if (sectionHeading) sectionHeading.textContent = "2026 年 7 月 13 日 · 团队经营结果";
       const sectionNote = prd$(".daily-report-section-heading small", view); if (sectionNote) sectionNote.textContent = "从获取到留资，逐层查看转化结果";
-      const hasLead = hiredEmployees.has("lead-hunter"); const hasAdvancedLead = hiredEmployees.has("lead-hunter-advanced"); const leadEmployeeCount = Number(hasLead) + Number(hasAdvancedLead); const hasAnyLead = leadEmployeeCount > 0; const hasService = hiredEmployees.has("smart-reply"); const hasVideo = hiredEmployees.has("ai-video"); const prospectCount = leadEmployeeCount * 24; const employeeCount = ["lead-hunter","lead-hunter-advanced","smart-reply","ai-video"].filter((id) => hiredEmployees.has(id)).length; const conversationCount = hasService ? 204 : 0; const acquiredLeadCount = prospectCount; const spend = [["lead-hunter",90],["lead-hunter-advanced",90],["smart-reply",36],["ai-video", hasVideo ? prdVideoPublishCount() * 2 : 0]].reduce((total, [id, value]) => total + (hiredEmployees.has(id) ? value : 0), 0);
+      const hasLead = hiredEmployees.has("lead-hunter"); const hasAdvancedLead = hiredEmployees.has("lead-hunter-advanced"); const leadEmployeeCount = Number(hasLead) + Number(hasAdvancedLead); const hasAnyLead = leadEmployeeCount > 0; const hasService = hiredEmployees.has("smart-reply"); const hasVideo = hiredEmployees.has("ai-video"); const prospectCount = leadEmployeeCount * 24 + (hiredEmployees.has("douyin-touch") ? 41 : 0); const employeeCount = ["lead-hunter","lead-hunter-advanced","douyin-touch","smart-reply","ai-video"].filter((id) => hiredEmployees.has(id)).length; const conversationCount = hasService ? 204 : 0; const acquiredLeadCount = prospectCount; const spend = [["lead-hunter",90],["lead-hunter-advanced",90],["smart-reply",36],["douyin-touch", 820],["ai-video", hasVideo ? prdVideoPublishCount() * 2 : 0]].reduce((total, [id, value]) => total + (hiredEmployees.has(id) ? value : 0), 0);
       const summary = prd$("#daily-report-summary", view); if (summary) { summary.classList.remove("prd-results-funnel"); summary.classList.add("prd-results-overview"); summary.innerHTML = `<article><span>员工数量</span><strong>${employeeCount}</strong><small>${employeeCount ? "当前持续工作" : "暂无运行中的员工"}</small></article><article><span>客服会话数</span><strong>${conversationCount.toLocaleString("zh-CN")}</strong><small>${hasService ? "客服专员承接" : "暂无客服会话"}</small></article><article><span>获取线索数</span><strong>${acquiredLeadCount}</strong><small>${hasAnyLead ? "各获客员工独立去重" : "暂无获客记录"}</small></article><article class="is-cost"><span>昨日花费</span><strong>¥${spend.toFixed(2)}</strong><small>按结果计费</small></article>`; }
       const tabContent = prd$("[data-result-tab=content]", view); if (tabContent) tabContent.hidden = true;
       const contentView = prd$("[data-result-view=content]", view); if (contentView) contentView.hidden = true;
@@ -20835,10 +21155,11 @@ window.setInterval(streamDemoQueueSignal, 4200);
       const grid = prd$(".employee-report-grid", view); if (grid) grid.innerHTML = [
         ["lead-hunter", "主号获客专家", "主号获客专家", "成功转化 6 条留资", "从直播弹幕、短视频评论和关注信息中获取潜客，并完成意向判断、发送私信和留资转化。", [["获取潜客","24 个"],["发送私信","18 人"],["回复","10 人"],["留资","6 条"]]],
         ["lead-hunter-advanced", "副号获客专家", "副号获客专家", "成功转化 6 条留资", "复制主号获客专家的完整获客链路，列表、意向判断、跟进与结果均按副号获客专家独立记录。", [["获取潜客","24 个"],["发送私信","18 人"],["回复","10 人"],["留资","6 条"]]],
+        ["douyin-touch", "抖音触达专员", "抖音触达专员", "成功触达 41 位潜客", "从直播间弹幕、短视频评论与粉丝关注中发现潜客，判断意向等级后完成首轮私信触达；触达之后交给门店继续跟进。", [["发现潜客","96 人"],["高意向","26 人"],["已触达","41 人"],["今日计费","¥820.00"]]],
         ["smart-reply", "客服专员", "客服专员", "承接 204 个客服会话", "仅展示真实私信会话、有效回复和人工介入记录。", [["客服会话","204 个"],["有效回复","196 条"],["人工介入","8 次"],["计费金额","¥36.00"]]],
         ["ai-video", "矩阵视频发布专员", "矩阵视频发布专员", "本周已发布 168 条", "管理 14 个抖音账号矩阵，按发布任务批量发布短视频，并回收发布与效果数据。", [["接入账号","14 个"],["本周已发布","168 条"],["本周完成率","68%"],["昨日发布扣费",`¥${(prdVideoPublishCount() * 2).toFixed(2)}`]]],
-      ].filter(([id]) => hiredEmployees.has(id)).map(([id,persona,role,result,copy,metrics]) => { const employee = employeeById(id); const image = talentPlazaEmployee(employee)?.image || employee?.image || ""; const action = ["lead-hunter", "lead-hunter-advanced"].includes(id) ? `<button type="button" data-show-result="leads">查看潜客明细</button>` : id === "ai-video" ? `<button type="button" data-route-target="live">查看实时工作</button>` : `<button type="button" data-show-result="overview">查看日报概览</button>`; return `<article class="employee-report-card" data-daily-employee="${id}"><div class="employee-report-identity"><img src="${prdEsc(image)}" alt="${prdEsc(persona)} · ${prdEsc(role)}"/><div><span><i class="report-status-dot"></i> 正式结果</span><h3>${persona}</h3><p>${role}</p></div><strong>${result}</strong></div><div class="employee-report-conclusion"><span>结果口径</span><p>${copy}</p></div><dl class="employee-report-metrics">${metrics.map(([label,value]) => `<div><dt>${label}</dt><dd>${value}</dd></div>`).join("")}</dl><div class="employee-report-actions">${action}<button type="button" data-export-employee="${id}" data-toast-title="${persona}日报已导出" data-toast-message="正式结果日报已生成">导出员工日报 ↓</button></div></article>`; }).join("") || `<div class="prd-empty-state">暂无正式业务结果，雇佣并开启数字员工后这里会同步真实数据。</div>`;
-      const leadsView = prd$("[data-result-view=leads]", view); if (leadsView) leadsView.innerHTML = `<article class="panel detailed-result-panel prd-prospect-panel"><div class="panel-heading"><div><span class="section-kicker">主号获客专家获客结果</span><h3>2026 年 7 月 13 日 · 潜客明细</h3><small data-prd-prospect-result-count>当前展示 0 条样例记录</small></div><div class="table-actions"><button class="export-leads-button" type="button" data-prd-export-prospects>导出潜客明细 ↓</button></div></div><div class="prd-prospect-filters"><label><select data-prd-prospect-filter="account"><option value="">全部潜客账号</option><option value="鸿途汽车官方旗舰店">鸿途汽车官方旗舰店</option></select></label><label><select data-prd-prospect-filter="source"><option value="">全部潜客类型</option><option>直播弹幕</option><option>短视频评论</option><option>关注</option></select></label><label><select data-prd-prospect-filter="model"><option value="">全部意向车型</option><option>比亚迪</option><option>捷途VS7</option><option>RAV4荣放</option><option>劲客</option><option>高山DHT-PHEV</option><option>红旗</option><option>锋兰达</option><option>帕萨特</option><option>奥迪Q5</option></select></label><label><select data-prd-prospect-filter="touch"><option value="">全部触达状态</option><option>私信已发送</option><option>待回复</option><option>跟进未成</option></select></label><label><select data-prd-prospect-filter="reply"><option value="">全部回复状态</option><option>已回复</option><option>待回复</option><option>未回复</option></select></label><label><select data-prd-prospect-filter="lead"><option value="">全部留资状态</option><option>已留资</option><option>未留资</option></select></label></div><div class="result-table-wrap"><table class="lead-detail-table prd-prospect-table"><thead><tr><th>潜客信息</th><th>触达状态</th><th>车型</th><th>城市</th><th>触达时间</th><th>回复状态</th><th>留资状态</th><th>潜客账号</th><th>触达账号</th><th>发现时间</th><th>操作</th></tr></thead><tbody id="lead-detail-body"></tbody></table></div></article>`;
+      ].filter(([id]) => hiredEmployees.has(id)).map(([id,persona,role,result,copy,metrics]) => { const employee = employeeById(id); const image = talentPlazaEmployee(employee)?.image || employee?.image || ""; const action = ["lead-hunter", "lead-hunter-advanced", "douyin-touch"].includes(id) ? `<button type="button" data-show-result="leads">查看潜客明细</button>` : id === "ai-video" ? `<button type="button" data-route-target="live">查看实时工作</button>` : `<button type="button" data-show-result="overview">查看日报概览</button>`; return `<article class="employee-report-card" data-daily-employee="${id}"><div class="employee-report-identity"><img src="${prdEsc(image)}" alt="${prdEsc(persona)} · ${prdEsc(role)}"/><div><span><i class="report-status-dot"></i> 正式结果</span><h3>${persona}</h3><p>${role}</p></div><strong>${result}</strong></div><div class="employee-report-conclusion"><span>结果口径</span><p>${copy}</p></div><dl class="employee-report-metrics">${metrics.map(([label,value]) => `<div><dt>${label}</dt><dd>${value}</dd></div>`).join("")}</dl><div class="employee-report-actions">${action}<button type="button" data-export-employee="${id}" data-toast-title="${persona}日报已导出" data-toast-message="正式结果日报已生成">导出员工日报 ↓</button></div></article>`; }).join("") || `<div class="prd-empty-state">暂无正式业务结果，雇佣并开启数字员工后这里会同步真实数据。</div>`;
+      const leadsView = prd$("[data-result-view=leads]", view); if (leadsView) leadsView.innerHTML = `<article class="panel detailed-result-panel prd-prospect-panel"><div class="panel-heading"><div><span class="section-kicker">主号获客专家获客结果</span><h3>2026 年 7 月 13 日 · 潜客明细</h3><small data-prd-prospect-result-count>当前展示 0 条样例记录</small></div><div class="table-actions"><button class="export-leads-button" type="button" data-prd-export-prospects>导出潜客明细 ↓</button></div></div><div class="prd-prospect-filters"><label><select data-prd-prospect-filter="account"><option value="">全部潜客账号</option><option value="鸿途汽车官方旗舰店">鸿途汽车官方旗舰店</option><option value="鸿途汽车苏州专营店">鸿途汽车苏州专营店</option></select></label><label><select data-prd-prospect-filter="source"><option value="">全部潜客类型</option><option>直播弹幕</option><option>短视频评论</option><option>粉丝关注</option></select></label><label><select data-prd-prospect-filter="model"><option value="">全部意向车型</option><option>比亚迪</option><option>捷途VS7</option><option>RAV4荣放</option><option>劲客</option><option>高山DHT-PHEV</option><option>红旗</option><option>锋兰达</option><option>帕萨特</option><option>奥迪Q5</option></select></label><label><select data-prd-prospect-filter="touch"><option value="">全部触达状态</option><option>私信已发送</option><option>待回复</option><option>跟进未成</option></select></label><label><select data-prd-prospect-filter="reply"><option value="">全部回复状态</option><option>已回复</option><option>待回复</option><option>未回复</option></select></label><label><select data-prd-prospect-filter="lead"><option value="">全部留资状态</option><option>已留资</option><option>未留资</option></select></label></div><div class="result-table-wrap"><table class="lead-detail-table prd-prospect-table"><thead><tr><th>潜客信息</th><th>触达状态</th><th>车型</th><th>城市</th><th>触达时间</th><th>回复状态</th><th>留资状态</th><th>潜客账号</th><th>触达账号</th><th>发现时间</th><th>操作</th></tr></thead><tbody id="lead-detail-body"></tbody></table></div></article>`;
       const leadDetailsView = prd$("[data-result-view=lead-details]", view); if (leadDetailsView) leadDetailsView.innerHTML = `<article class="panel detailed-result-panel prd-lead-detail-panel"><div class="panel-heading"><div><span class="section-kicker">主号获客专家获客结果</span><h3>2026 年 7 月 13 日 · 线索明细</h3><small data-prd-lead-result-count>当前展示 0 条样例记录</small></div><div class="table-actions"><button class="export-leads-button" type="button" data-toast-title="线索明细已准备" data-toast-message="当前原型仅支持查看线索和对话流">导出线索明细 ↓</button></div></div><div class="prd-lead-detail-note">线索是已进入跟进范围的客户记录，点击“查看对话流”可查看该客户的历史沟通信息。</div><div class="result-table-wrap"><table class="lead-detail-table prd-lead-detail-table"><thead><tr><th>客户信息</th><th>联系方式(电话/微信)</th><th>平台</th><th>车系</th><th>城市</th><th>最新获客时间</th><th>获客账号</th><th>广告计划</th><th>操作</th></tr></thead><tbody id="prd-lead-detail-body"></tbody></table></div></article>`;
       prdEnsureProspectTimeline();
       prdEnsureLeadConversationDrawer();
@@ -20852,12 +21173,12 @@ window.setInterval(streamDemoQueueSignal, 4200);
 
     /* Workbench */
     const prdMetrics = { employees: { value:0, compare:0, unit:"位" }, actions:{ value:0, compare:0, unit:"次" }, leads:{ value:0, compare:0, unit:"条" }, cost:{ value:0, compare:0, unit:"元" } };
-    function prdWorkingEmployeeIds() { return ["lead-hunter", "lead-hunter-advanced", "smart-reply", "ai-video"].filter((id) => hiredEmployees.has(id)); }
+    function prdWorkingEmployeeIds() { return ["lead-hunter", "lead-hunter-advanced", "douyin-touch", "smart-reply", "ai-video"].filter((id) => hiredEmployees.has(id)); }
     /* 计费事件 = "发布完成"的作品条数（一次发布 = 一个账号成功发布一条作品）。aiVideoPublishResults 已只含发布完成行，故直接取长度 */
     function prdVideoPublishCount() { const rows = typeof window.aiVideoPublishResults === "function" ? window.aiVideoPublishResults() : []; return rows.length || 14; }
     function prdOutcomeSnapshot() { const hasLead = hiredEmployees.has("lead-hunter"); const hasAdvancedLead = hiredEmployees.has("lead-hunter-advanced"); const leadEmployeeCount = Number(hasLead) + Number(hasAdvancedLead); const hasService = hiredEmployees.has("smart-reply"); const hasVideo = hiredEmployees.has("ai-video"); const matrix = window.AIVideoMatrix || null; const videoDayActions = matrix ? Math.round(matrix.weekPublished / 7) + matrix.pendingCount : 48; const videoDayCost = hasVideo ? prdVideoPublishCount() * 2 : 0; return { employees:{ value:leadEmployeeCount + Number(hasService) + Number(hasVideo), compare:leadEmployeeCount || hasService || hasVideo ? 1 : 0, unit:"位" }, actions:{ value:(leadEmployeeCount * 122) + (hasService ? 204 : 0) + (hasVideo ? videoDayActions : 0), compare:(leadEmployeeCount * 100) + (hasService ? 184 : 0) + (hasVideo ? Math.max(36, Math.round(videoDayActions * 0.86)) : 0), unit:"次" }, leads:{ value:leadEmployeeCount * 24, compare:leadEmployeeCount * 18, unit:"条" }, cost:{ value:(leadEmployeeCount * 90) + (hasService ? 36 : 0) + (hasVideo ? videoDayCost : 0), compare:(leadEmployeeCount * 72) + (hasService ? 32 : 0) + (hasVideo ? Math.round(videoDayCost * 0.94) : 0), unit:"元" } }; }
     function prdMetric(label, key, note, tone) { const metric = prdMetrics[key]; const delta = metric.value - metric.compare; const ratio = metric.compare ? Math.round(delta / metric.compare * 1000) / 10 : null; const value = key === "cost" ? `¥${metric.value.toFixed(2)}` : metric.value.toLocaleString("zh-CN"); const change = `${delta >= 0 ? "↑" : "↓"} ${ratio === null ? "—" : Math.abs(ratio) + "%"}`; const absolute = key === "cost" ? `${delta >= 0 ? "+" : "-"}¥${Math.abs(delta).toFixed(2)}` : `${delta >= 0 ? "+" : "-"}${Math.abs(delta)} ${metric.unit}`; return `<article class="metric-card"><div><span>${label}</span><b class="trend ${delta >= 0 ? "trend--up" : ""}">${change}</b></div><strong>${value}</strong><p>较昨日 ${absolute}</p><i class="metric-spark metric-spark--${tone}"></i></article>`; }
-    function prdEmployeeOnline(id) { if (["lead-hunter", "lead-hunter-advanced"].includes(id)) return prdRecords().some((record) => record.platform === "douyin" && ["platform", "marketing"].every((capability) => record.auth?.[capability] === true)); if (id === "ai-video") return prdRecords().some((record) => record.platform === "douyin" && record.service?.["ai-video"] === true && prdCapabilityReady(record, "platform")); return prdRecords().some((record) => record.service?.["smart-reply"] === true && prdPrivateReady(record)); }
+    function prdEmployeeOnline(id) { if (["lead-hunter", "lead-hunter-advanced"].includes(id)) return prdRecords().some((record) => record.platform === "douyin" && ["platform", "marketing"].every((capability) => record.auth?.[capability] === true)); if (id === "ai-video") return prdRecords().some((record) => record.platform === "douyin" && record.service?.["ai-video"] === true && prdCapabilityReady(record, "platform")); if (id === "douyin-touch") return prdRecords().some((record) => record.platform === "douyin" && record.service?.["douyin-touch"] === true && prdCapabilityReady(record, "marketing")); return prdRecords().some((record) => record.service?.["smart-reply"] === true && prdPrivateReady(record)); }
     function prdRenderDashboard() { const view = prd$("[data-view=dashboard]"); if (!view) return; Object.assign(prdMetrics, prdOutcomeSnapshot()); const metrics = prd$(".metric-grid", view); if (metrics) metrics.innerHTML = [prdMetric("工作员工","employees","当前执行态数字员工","blue"), prdMetric("业务动作","actions","客服回复、获客与内容发布处理","green"), prdMetric("新增线索","leads","今日首次留资去重客户","purple"), prdMetric("昨日花费","cost","按发布结果计费","orange")].join(""); const list = prd$("#dashboard-working-list", view); const ids = prdWorkingEmployeeIds(); if (list) list.innerHTML = ids.length ? `<div class="prd-dashboard-employee-list">${ids.map((id) => { const employee = employeeById(id); const data = prdTalentData(employee); const online = prdEmployeeOnline(id); const status = online ? "在线" : "异常"; const recent = id === "lead-hunter" ? "持续搜索潜客中..." : id === "smart-reply" ? "正在帮您接待私信客户中..." : "正在推进账号矩阵的本周发布任务..."; return `<article class="prd-dashboard-employee"><img src="${prdEsc(talentPlazaEmployee(employee)?.image || employee.image)}" alt="${prdEsc(data.persona)}"><div><strong>${prdEsc(digitalEmployeeLabel(data))}</strong><small>${recent}</small></div><span class="prd-dashboard-employee__state"><b class="${online ? "" : "is-error"}">${status}</b><small>${online ? "功能正常触发" : "授权掉线，去修复"}</small></span></article>`; }).join("")}</div>` : `<div class="prd-empty-state">暂无执行中的数字员工，去人才广场雇佣已上线岗位。</div>`; const resultPanel = prd$(".recent-results-panel", view); if (resultPanel) { const body = prd$(".result-table-wrap", resultPanel); const resultCards = [ids.includes("lead-hunter") ? `<article class="prd-dashboard-result"><strong>主号获客专家</strong><small>昨日新增潜客 24 个，发送私信转化了 6 个留资</small><b>按有效线索计费</b></article>` : "", ids.includes("smart-reply") ? `<article class="prd-dashboard-result"><strong>客服专员</strong><small>昨日承接客户 204 个，转化了 8 条留资</small><b>正式客服结果</b></article>` : "", ids.includes("ai-video") ? `<article class="prd-dashboard-result"><strong>矩阵视频发布专员</strong><small>本周已为 14 个账号发布 168 条内容，回收发布与效果数据</small><b>按发布结果计费</b></article>` : ""].filter(Boolean).join(""); if (body) body.innerHTML = resultCards ? `<div class="prd-dashboard-results">${resultCards}</div>` : `<div class="prd-empty-state">暂无正式成果，雇佣并开启数字员工后这里会同步结果。</div>`; } const todo = prd$(".dashboard-todo-panel .attention-list", view); if (todo) { const todoItems = [ids.includes("lead-hunter") && !prdEmployeeOnline("lead-hunter") ? `<button type="button" data-prd-todo-account><i></i><span><strong>抖音营销授权待处理</strong><small>我暂时无法执行抖音主动触达；请完成平台或营销授权，恢复后我会继续工作。</small></span></button>` : "", ids.includes("smart-reply") ? `<button type="button" data-route-target="demo-live"><i></i><span><strong>客服专员：有客户需要您转人工处理</strong><small>转人工会话实时汇总，人工发送、托管 AI 或关闭会话后待办移除。</small></span></button>` : "", ids.includes("ai-video") && !prdEmployeeOnline("ai-video") ? `<button type="button" data-route-target="accounts"><i></i><span><strong>矩阵视频发布专员：抖音账号矩阵待处理</strong><small>完成平台授权后，矩阵视频发布专员才能继续排期与发布本周内容。</small></span></button>` : ""].filter(Boolean).join(""); todo.innerHTML = todoItems ? `<div class="prd-todo-list">${todoItems}</div>` : `<div class="prd-empty-state">暂无待处理事项，数字员工准备就绪后这里会实时更新。</div>`; } const yesterday = prd$(".dashboard-yesterday-panel", view); if (yesterday) { const dims = prd$(".dashboard-result-dimensions", yesterday); if (dims) dims.innerHTML = `<button type="button" data-open-results="overview"><span>工作员工</span><strong>${prdMetrics.employees.value} 位</strong><small>当前执行态</small><i>↗</i></button><button type="button" data-open-results="history"><span>业务动作</span><strong>${prdMetrics.actions.value} 次</strong><small>客服专员回复 + 主号获客专家 + 矩阵视频发布专员矩阵发布</small><i>↗</i></button><button type="button" data-open-results="leads"><span>新增线索</span><strong>${prdMetrics.leads.value} 条</strong><small>首次留资去重</small><i>↗</i></button><button type="button" data-open-results="overview"><span>昨日花费</span><strong>¥${prdMetrics.cost.value.toFixed(2)}</strong><small>正式计费事件</small><i>↗</i></button>`; } }
     window.renderDashboard = prdRenderDashboard;
     document.addEventListener("click", (event) => { const todo = event.target.closest("[data-prd-todo-account]"); if (todo) { event.preventDefault(); event.stopImmediatePropagation(); prdOpenAccountBind("douyin", prdAccounts.douyin?.[0]?.id || ""); } }, true);
@@ -20870,12 +21191,12 @@ window.setInterval(streamDemoQueueSignal, 4200);
     /* Keep only V1 live-work entries and remove legacy non-executable work surfaces. */
     prd$$('[data-demo-live-job="kuaishou"], [data-demo-live-job="xhs"]').forEach((node) => node.remove());
     prd$$('.demo-xudou-employee-card[data-xudou-employee="kuaishou"], .demo-xudou-employee-card[data-xudou-employee="xhs"]').forEach((node) => node.remove());
-    prd$$('[data-live-job]').forEach((node) => { if (!["lead-hunter","lead-hunter-advanced","smart-reply","ai-video"].includes(node.dataset.liveJob)) node.hidden = true; });
+    prd$$('[data-live-job]').forEach((node) => { if (!["lead-hunter","lead-hunter-advanced","douyin-touch","smart-reply","ai-video"].includes(node.dataset.liveJob)) node.hidden = true; });
     prd$$('[data-live-directory-filter]').forEach((node) => { if (!["all","hired"].includes(node.dataset.liveDirectoryFilter)) node.hidden = true; });
-    const prdLiveRoleMap = { douyin:"lead-hunter", "douyin-advanced":"lead-hunter-advanced", service:"smart-reply", wujian:"ai-video" };
-    function prdRenderLiveGate() { const view = prd$('[data-view="demo-live"]'); if (!view) return; const tabs = prd$$('[data-demo-live-job]', view); const available = tabs.map((tab) => ({ job:tab.dataset.demoLiveJob, id:prdLiveRoleMap[tab.dataset.demoLiveJob] })).filter((item) => item.id && hiredEmployees.has(item.id)); tabs.forEach((tab) => { const roleId = prdLiveRoleMap[tab.dataset.demoLiveJob]; const enabled = Boolean(roleId && hiredEmployees.has(roleId)); tab.hidden = !enabled; tab.closest("[data-demo-live-job-wrap]")?.toggleAttribute("hidden", !enabled); tab.setAttribute("aria-selected", String(enabled && tab.dataset.demoLiveJob === demoLiveJob)); }); const workspace = prd$("#demo-live-workspace", view); if (!workspace) return; if (!available.length) { workspace.innerHTML = `<div class="prd-empty-state prd-live-empty">暂无可执行的数字员工，请先在人才广场雇佣主号获客专家、副号获客专家、客服专员或矩阵视频发布专员。</div>`; return; } if (!available.some((item) => item.job === demoLiveJob)) demoLiveJob = available[0].job; if (typeof renderDemoLiveJob === "function") renderDemoLiveJob(demoLiveJob); }
+    const prdLiveRoleMap = { douyin:"lead-hunter", "douyin-advanced":"lead-hunter-advanced", "douyin-touch":"douyin-touch", service:"smart-reply", wujian:"ai-video" };
+    function prdRenderLiveGate() { const view = prd$('[data-view="demo-live"]'); if (!view) return; const tabs = prd$$('[data-demo-live-job]', view); const available = tabs.map((tab) => ({ job:tab.dataset.demoLiveJob, id:prdLiveRoleMap[tab.dataset.demoLiveJob] })).filter((item) => item.id && hiredEmployees.has(item.id)); tabs.forEach((tab) => { const roleId = prdLiveRoleMap[tab.dataset.demoLiveJob]; const enabled = Boolean(roleId && hiredEmployees.has(roleId)); tab.hidden = !enabled; tab.closest("[data-demo-live-job-wrap]")?.toggleAttribute("hidden", !enabled); tab.setAttribute("aria-selected", String(enabled && tab.dataset.demoLiveJob === demoLiveJob)); }); const workspace = prd$("#demo-live-workspace", view); if (!workspace) return; if (!available.length) { workspace.innerHTML = `<div class="prd-empty-state prd-live-empty">暂无可执行的数字员工，请先在人才广场雇佣主号获客专家、副号获客专家、抖音触达专员、客服专员或矩阵视频发布专员。</div>`; return; } if (!available.some((item) => item.job === demoLiveJob)) demoLiveJob = available[0].job; if (typeof renderDemoLiveJob === "function") renderDemoLiveJob(demoLiveJob); }
     window.renderLiveGate = prdRenderLiveGate;
-    const liveNav = prd$('[data-route="live"]'); if (liveNav) liveNav.setAttribute("aria-label", "实时工作，展示主号获客专家、副号获客专家、客服专员和矩阵视频发布专员");
+    const liveNav = prd$('[data-route="live"]'); if (liveNav) liveNav.setAttribute("aria-label", "实时工作，展示主号获客专家、副号获客专家、抖音触达专员、客服专员和矩阵视频发布专员");
     function prdNormalizeServiceStates() {
       const root = prd$(".demo-live-service-workspace"); if (!root) return;
       root.querySelectorAll("[data-demo-service-filter]").forEach((button) => { if (button.dataset.demoServiceFilter === "ai") button.textContent = "AI处理中"; if (button.dataset.demoServiceFilter === "human") button.textContent = "转人工"; });
@@ -21146,6 +21467,8 @@ window.setInterval(streamDemoQueueSignal, 4200);
         prd$("#first-run-content").innerHTML = `<div class="first-run-check-summary"><div><strong>${isVideoHire ? "雇佣条件" : `雇佣前检查 · ${escapeHTML(data.persona)}`}</strong><small>${summaryCopy}</small></div></div>${douyinAuthRail}<div class="prd-check-list">${items}</div>`;
         prd$("#first-run-footer").innerHTML = employee.id === "ai-video"
           ? `<small>${!ready ? "抖音营销授权未满足，暂不能雇佣。" : videoEnabledCount ? `已开启 ${videoEnabledCount} 个账号，确认后立即开始工作。` : "请至少开启 1 个账号。"}</small><div><button class="first-run-secondary" type="button" data-prd-close-hire>取消</button><button class="first-run-primary" type="button" data-prd-confirm-hire ${videoReady ? "" : "disabled"}>确认并雇佣矩阵视频发布专员 <span>→</span></button></div>`
+          : employee.id === "douyin-touch"
+          ? `<small>${ready ? `可用账号 ${prdDouyinTouchAvailable().length} 个，确认后立即开始工作。` : "抖音营销授权未满足，暂不能雇佣。"}</small><div><button class="first-run-secondary" type="button" data-prd-close-hire>取消</button><button class="first-run-primary" type="button" data-prd-confirm-hire ${ready ? "" : "disabled"}>确认并雇佣抖音触达专员 <span>→</span></button></div>`
           : `<small>${ready ? (douyinNeedsMore ? "已满足最低要求，可继续授权或进入配置。" : "账号池已就绪，完成后进入员工配置。") : "待处理项会阻止下一步。"}</small><div><button class="first-run-secondary" type="button" data-prd-close-hire>取消</button><button class="first-run-primary" type="button" data-prd-hire-config-next ${ready ? "" : "disabled"}>下一步：员工配置 <span>→</span></button></div>`;
       }
       modal.classList.add("is-open"); back?.classList.add("is-open"); modal.setAttribute("aria-hidden", "false"); back?.setAttribute("aria-hidden", "false");
@@ -21244,6 +21567,11 @@ window.setInterval(streamDemoQueueSignal, 4200);
           localStorage.setItem(prdAgentSettingsKey, JSON.stringify(settings));
           window.dispatchEvent(new CustomEvent("ai-office-settings-sync", { detail: { id, settings: settings["ai-video"] } }));
         } catch {}
+        return;
+      }
+      if (id === "douyin-touch") {
+        /* 首次雇佣默认开启全部可用账号（§9.1 验收 5）：可用 = 营销授权已完成且未被主号/副号占用 */
+        prdDouyinTouchAvailable().forEach((record) => prdSetLeadAccountService(record, id, true));
         return;
       }
       if (id === "smart-reply") {
@@ -23852,6 +24180,33 @@ window.setInterval(streamDemoQueueSignal, 4200);
         grid-column: 2;
         grid-row: 1;
       }
+    }
+  </style>
+  <style id="v74-touch-account-scope">
+    /* 抖音触达专员账号范围沿用主号/副号的页面外壳，但网格要单独走 4 列：
+       redesign 那套是账号路由布局（3 列、隐藏归属列），表头 4 个 span 会挤到第二行，
+       且「启用归属」整列为空——三方互斥的关键信息就看不到了。 */
+    .lead-account-manager--touch .lead-settings-account-head,
+    .lead-account-manager--touch .lead-account-row--rich {
+      grid-template-columns: minmax(0, 1.5fr) minmax(78px, .7fr) 64px auto;
+    }
+    .lead-account-manager--touch .lead-account-role { display: block !important; }
+    @media (max-width: 900px) {
+      /* 窄屏行内改成上下两段，表头跟着收掉，别留下 4 列标题压 2 列内容 */
+      .lead-account-manager--touch .lead-settings-account-head { display: none; }
+      .lead-account-manager--touch .lead-account-row--rich {
+        grid-template-columns: minmax(0, 1fr) auto;
+        gap: 6px 10px;
+      }
+      .lead-account-manager--touch .lead-account-role {
+        display: block !important;
+        grid-column: 1;
+        grid-row: 2;
+        padding-left: 45px;
+      }
+      .lead-account-manager--touch .lead-account-row__auth { grid-column: 2; grid-row: 1; }
+      .lead-account-manager--touch .lead-account-toggle,
+      .lead-account-manager--touch .lead-account-block { grid-column: 2; grid-row: 2; }
     }
   </style>
   <style id="v73-douyin-auth-actions">

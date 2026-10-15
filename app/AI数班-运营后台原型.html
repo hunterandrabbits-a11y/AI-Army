@@ -481,18 +481,27 @@ textarea.input{height:auto;padding:6px 10px;resize:vertical;line-height:1.5}
 const TODAY = '2026-08-27';
 
 const INDUSTRIES = ['二手车', '新车', '家居', '房地产'];
-const POSITIONS = ['主号获客专家', '副号获客专家', '客服专员', '矩阵视频发布专员'];
-// 可开高级结算的岗位（其余两个岗位固定基础结算）
+const POSITIONS = ['主号获客专家', '副号获客专家', '抖音触达专员', '客服专员', '矩阵视频发布专员'];
+// 可开高级结算的岗位（其余三个岗位固定基础结算；抖音触达专员不落结算方式配置项，§7.5）
 const ADVANCED_POSITIONS = ['主号获客专家', '副号获客专家'];
 // 刊例价：全行业统一、后台只读（§2.3）
-const LIST_PRICE = { '主号获客专家': 50, '副号获客专家': 50, '客服专员': 10, '矩阵视频发布专员': 2 };
+const LIST_PRICE = { '主号获客专家': 50, '副号获客专家': 50, '抖音触达专员': 20, '客服专员': 10, '矩阵视频发布专员': 2 };
+/* 刊例价的计费单位（§2.3 计费方式列），只用于拼输入框旁的参照文案。
+   套餐包里配的是实际消耗单价，刊例价只在人才市场对外展示、不参与计费；
+   抖音触达专员是全后台唯一一个参照值 20 不等于预置值 5 的计价项（v1.5 §7.3）。 */
+const LIST_PRICE_UNIT = { '主号获客专家': '有效线索', '副号获客专家': '有效线索', '抖音触达专员': '有效触达', '客服专员': '转化线索', '矩阵视频发布专员': '次发布' };
+/* 单价输入框旁的刊例价参照文案（§9.5 验收 8 / v1.5 §7.3）：文案标明是「刊例价」，
+   不写成「建议价」「默认值」——否则运营会把预置的 5 读成填错。 */
+function listPriceHint(position) {
+  return '刊例价 ' + LIST_PRICE[position] + ' 电力值 / ' + LIST_PRICE_UNIT[position];
+}
 /* 客服专员的转化线索按 AI 是否参与承接分两档，单价分开配置（§3.4）：
    会话里 AI 有回复即判「AI转化线索」，全程无 AI 回复判「自然转化线索」。
    人才市场的刊例价仍是单一价 10 电力/转化线索，不随分档变化。 */
 const LEAD_TYPES = ['自然转化线索', 'AI转化线索'];
 /* 计价项：套餐里可单独配价的最小单位。除客服专员外一个岗位一个计价项，
-   客服专员按转化线索类型拆两档，所以套餐里是 5 个格子而不是 4 个。 */
-const PRICE_KEYS = ['主号获客专家', '副号获客专家',
+   客服专员按转化线索类型拆两档，所以套餐里是 6 个格子而不是 5 个。 */
+const PRICE_KEYS = ['主号获客专家', '副号获客专家', '抖音触达专员',
   '客服专员·自然转化线索', '客服专员·AI转化线索', '矩阵视频发布专员'];
 // 岗位 + 转化类型 → 计价项；非客服岗位不使用转化类型
 function priceKeyOf(position, leadType) {
@@ -514,8 +523,8 @@ const GARAGE = [
 ];
 
 /* ---------- 套餐包 ----------
-   一份套餐 = 五个计价项的实际消耗单价 + 月最低消耗，整包生效、就地改价。
-   五个计价项（三个常规岗位 + 客服专员的自然/AI 两档转化线索）与月最低消耗
+   一份套餐 = 六个计价项的实际消耗单价 + 月最低消耗，整包生效、就地改价。
+   六个计价项（四个常规岗位 + 客服专员的自然/AI 两档转化线索）与月最低消耗
    都是必配项，留空即不予保存（§9.3）——因此计费链路上不存在"该计价项未
    配置、回落刊例价"的分支。
    套餐归属唯一一个行业（所属行业必填，§9.3）；一个行业名下可以有多个
@@ -526,37 +535,37 @@ const GARAGE = [
 const packages = [
   {
     id: 'p1', name: '二手车标准套餐', industry: '二手车', note: '',
-    prices: { '主号获客专家': 50, '副号获客专家': 50, '客服专员·自然转化线索': 5,
+    prices: { '主号获客专家': 50, '副号获客专家': 50, '抖音触达专员': 5, '客服专员·自然转化线索': 5,
       '客服专员·AI转化线索': 10, '矩阵视频发布专员': 2 },
     monthlyMinimum: 1200
   },
   {
     id: 'p2', name: '新车标准套餐', industry: '新车', note: '',
-    prices: { '主号获客专家': 45, '副号获客专家': 45, '客服专员·自然转化线索': 5,
+    prices: { '主号获客专家': 45, '副号获客专家': 45, '抖音触达专员': 5, '客服专员·自然转化线索': 5,
       '客服专员·AI转化线索': 10, '矩阵视频发布专员': 2 },
     monthlyMinimum: 1500
   },
   {
     id: 'p3', name: '家居标准套餐', industry: '家居', note: '',
-    prices: { '主号获客专家': 50, '副号获客专家': 50, '客服专员·自然转化线索': 5,
+    prices: { '主号获客专家': 50, '副号获客专家': 50, '抖音触达专员': 5, '客服专员·自然转化线索': 5,
       '客服专员·AI转化线索': 10, '矩阵视频发布专员': 2 },
     monthlyMinimum: 800
   },
   {
     id: 'p4', name: '房地产标准套餐', industry: '房地产', note: '',
-    prices: { '主号获客专家': 50, '副号获客专家': 50, '客服专员·自然转化线索': 5,
+    prices: { '主号获客专家': 50, '副号获客专家': 50, '抖音触达专员': 5, '客服专员·自然转化线索': 5,
       '客服专员·AI转化线索': 10, '矩阵视频发布专员': 2 },
     monthlyMinimum: 600
   },
   {
     id: 'p5', name: '骏驰专属套餐', industry: '二手车', note: '商务协议价',
-    prices: { '主号获客专家': 30, '副号获客专家': 50, '客服专员·自然转化线索': 5,
+    prices: { '主号获客专家': 30, '副号获客专家': 50, '抖音触达专员': 5, '客服专员·自然转化线索': 5,
       '客服专员·AI转化线索': 10, '矩阵视频发布专员': 2 },
     monthlyMinimum: 1200
   },
   {
     id: 'p6', name: '二手车高配套餐', industry: '二手车', note: '高配备选',
-    prices: { '主号获客专家': 60, '副号获客专家': 60, '客服专员·自然转化线索': 6,
+    prices: { '主号获客专家': 60, '副号获客专家': 60, '抖音触达专员': 5, '客服专员·自然转化线索': 6,
       '客服专员·AI转化线索': 12, '矩阵视频发布专员': 3 },
     monthlyMinimum: 1500
   }
@@ -786,7 +795,7 @@ fees.forEach(f => { f.snap = priceOfFee(f); });
 function effectivePackage(store) {
   return packageById(store.packageId) || packageById(industryDefault[store.industry]) || null;
 }
-// 基础结算：取生效套餐的计价项单价（§2.2）。五个计价项单价都是套餐的必配项，
+// 基础结算：取生效套餐的计价项单价（§2.2）。六个计价项单价都是套餐的必配项，
 // 不存在"该计价项未配置"；LIST_PRICE 分支是数据异常时的兜底，正常取不到。
 // 客服专员还要看转化类型——自然与 AI 两档在套餐里是两个独立的格子（§3.4）。
 // 套餐是整包的，且门店恒有关联，所以本店生效单价恒取本店关联套餐
@@ -1201,8 +1210,13 @@ function pkgBody(s) {
       ? '<td class="cell-num">' + priced[0].price + '</td>'
       : '<td class="cell-num"><span class="tier-pair">' + priced.map((x, i) =>
           '<span><b>' + x.price + '</b><small>' + esc(tiers[i]) + '</small></span>').join('') + '</span></td>';
+    // 抖音触达专员按「岗位名在上、单位在下」展示（§7.4）：本岗位单价按有效触达计，
+    // 单位与其它岗位不同，跟着岗位名走，避免被读成每条的单价
+    const nameCell = pos === '抖音触达专员'
+      ? '<td class="cell-strong nw">' + esc(pos) + '<div class="cell-sub">' + esc(LIST_PRICE_UNIT[pos]) + '</div></td>'
+      : '<td class="cell-strong nw">' + esc(pos) + '</td>';
     return '<tr>' +
-      '<td class="cell-strong nw">' + esc(pos) + '</td>' +
+      nameCell +
       cell +
       '</tr>';
   }).join('');
@@ -1384,12 +1398,13 @@ function renderPackages() {
     '<th rowspan="2">套餐名称</th><th rowspan="2">备注</th>' +
     '<th rowspan="2">' + esc(POSITIONS[0]) + '</th>' +
     '<th rowspan="2">' + esc(POSITIONS[1]) + '</th>' +
-    '<th colspan="2" class="th-group">' + esc(POSITIONS[2]) + '</th>' +
-    '<th rowspan="2">' + esc(POSITIONS[3]) + '</th>' +
+    '<th rowspan="2">' + esc(POSITIONS[2]) + '</th>' +
+    '<th colspan="2" class="th-group">' + esc(POSITIONS[3]) + '</th>' +
+    '<th rowspan="2">' + esc(POSITIONS[4]) + '</th>' +
     '<th rowspan="2">月最低消耗</th><th rowspan="2">所属行业</th><th rowspan="2">行业默认</th>' +
     '<th rowspan="2" class="col-op">操作</th>' +
     '</tr><tr>' + LEAD_TYPES.map(lt => '<th class="th-sub">' + esc(lt) + '</th>').join('') + '</tr></thead>' +
-    '<tbody>' + (rows || '<tr><td colspan="11"><div class="empty">暂无数据</div></td></tr>') + '</tbody></table></div>' +
+    '<tbody>' + (rows || '<tr><td colspan="12"><div class="empty">暂无数据</div></td></tr>') + '</tbody></table></div>' +
     '</div></div>';
 }
 
@@ -1593,7 +1608,7 @@ function openPkgEdit(pkgId) {
     (indLocked ? '<span class="inline-note" style="white-space:normal">该套餐' + reasons.join('，') + '，不可修改</span>' : '');
 
   // 一行一个数字员工；客服专员的两档转化线索在同一行内并排，档位名做输入框前缀，
-  // 因此套餐里是五个计价项，但表单里只有四行
+  // 因此套餐里是六个计价项，但表单里只有五行
   const priceRows = POSITIONS.map(pos => {
     const tiers = pos === '客服专员' ? LEAD_TYPES : [null];
     const controls = tiers.map(lt => {
@@ -1605,7 +1620,8 @@ function openPkgEdit(pkgId) {
           '<input class="input" ' + attrs + ' placeholder="必填"></span>'
         : '<input class="input input--sm" ' + attrs + ' placeholder="请输入">';
     }).join('');
-    return formRow(pos, controls);
+    // 输入框旁给刊例价参照（§9.5 验收 8）。客服专员的刊例价不分档，整行只给一个 10
+    return formRow(pos, controls + '<span class="inline-note">' + esc(listPriceHint(pos)) + '</span>');
   }).join('');
 
   const body =
@@ -1772,7 +1788,7 @@ document.addEventListener('click', function (e) {
     const min = parseInt($('#pkgMin').value, 10);
     if (!min || min < 1) { toast('请输入大于 0 的整数月最低消耗', true); return; }
 
-    // 四个岗位单价均为必配项，留空即不予保存（§9.3）
+    // 五个岗位单价均为必配项，留空即不予保存（§9.3）
     const prices = {};
     const blank = [];
     let invalid = null;
